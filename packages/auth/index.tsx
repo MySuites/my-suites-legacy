@@ -18,7 +18,10 @@ const ExpoSecureStoreAdapter = {
     if (!SecureStore || !SecureStore.getItemAsync) return Promise.resolve(null);
     try {
       const value = await SecureStore.getItemAsync(key);
-      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+      // By default avoid noisy repeated getItem logs. Enable by setting
+      // `EXPO_SECURE_STORE_DEBUG=true` in your environment if needed.
+      const shouldDebug = typeof __DEV__ !== 'undefined' && __DEV__ && process.env.EXPO_SECURE_STORE_DEBUG === 'true';
+      if (shouldDebug) {
         try {
           const parsed = value ? JSON.parse(value) : null;
           // eslint-disable-next-line no-console
