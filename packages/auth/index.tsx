@@ -13,20 +13,51 @@ const safeSecureStore = () => {
 };
 
 const ExpoSecureStoreAdapter = {
-  getItem: (key: string) => {
+  getItem: async (key: string) => {
     const SecureStore = safeSecureStore();
     if (!SecureStore || !SecureStore.getItemAsync) return Promise.resolve(null);
-    return SecureStore.getItemAsync(key);
+    try {
+      const value = await SecureStore.getItemAsync(key);
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        try {
+          const parsed = value ? JSON.parse(value) : null;
+          // eslint-disable-next-line no-console
+          console.debug('[ExpoSecureStoreAdapter] getItem', key, parsed ? { hasRefreshToken: !!parsed.refresh_token, keys: Object.keys(parsed) } : null);
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.debug('[ExpoSecureStoreAdapter] getItem (non-json)', key, value ? value.slice(0, 200) : null);
+        }
+      }
+      return value;
+    } catch (err) {
+      return null;
+    }
   },
-  setItem: (key: string, value: string) => {
+  setItem: async (key: string, value: string) => {
     const SecureStore = safeSecureStore();
     if (!SecureStore || !SecureStore.setItemAsync) return Promise.resolve();
-    return SecureStore.setItemAsync(key, value);
+    try {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        // eslint-disable-next-line no-console
+        console.debug('[ExpoSecureStoreAdapter] setItem', key, value ? (value.length > 200 ? value.slice(0, 200) + '...': value) : null);
+      }
+      return SecureStore.setItemAsync(key, value);
+    } catch (err) {
+      return;
+    }
   },
-  removeItem: (key: string) => {
+  removeItem: async (key: string) => {
     const SecureStore = safeSecureStore();
     if (!SecureStore || !SecureStore.deleteItemAsync) return Promise.resolve();
-    return SecureStore.deleteItemAsync(key);
+    try {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        // eslint-disable-next-line no-console
+        console.debug('[ExpoSecureStoreAdapter] removeItem', key);
+      }
+      return SecureStore.deleteItemAsync(key);
+    } catch (err) {
+      return;
+    }
   },
 };
 

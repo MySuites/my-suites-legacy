@@ -13,6 +13,7 @@ import {
 } from "react-native";
 
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useUITheme as useTheme } from '@mycsuite/ui';
 
 type Exercise = {
 	id: string;
@@ -33,6 +34,8 @@ function formatSeconds(s: number) {
 }
 
 export default function Workout() {
+
+	const theme = useTheme();
 	const [exercises, setExercises] = useState<Exercise[]>(() => [
 		{id: "1", name: "Push Ups", sets: 3, reps: 12, completedSets: 0},
 		{id: "2", name: "Squats", sets: 3, reps: 10, completedSets: 0},
@@ -177,6 +180,8 @@ export default function Workout() {
 
 	const current = exercises[currentIndex];
 
+	const styles = makeStyles(theme);
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.header}>
@@ -219,7 +224,7 @@ export default function Workout() {
 								<Text>◀ Prev</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.actionBtnPrimary} onPress={completeSet} accessibilityLabel="Complete set">
-								<Text style={{color: "white"}}>Complete Set</Text>
+								<Text style={styles.controlTextPrimary}>Complete Set</Text>
 							</TouchableOpacity>
 							<TouchableOpacity style={styles.actionBtn} onPress={nextExercise} accessibilityLabel="Next exercise">
 								<Text>Next ▶</Text>
@@ -229,7 +234,7 @@ export default function Workout() {
 						<Text style={styles.restText}>Rest: {restSeconds > 0 ? formatSeconds(restSeconds) : "—"}</Text>
 					</View>
 				) : (
-					<Text style={{color: "#666"}}>No current exercise</Text>
+					<Text style={{color: theme.icon}}>No current exercise</Text>
 				)}
 			</View>
 
@@ -242,7 +247,7 @@ export default function Workout() {
 						<View style={[styles.item, index === currentIndex ? styles.itemActive : null]}>
 							<View style={{flex: 1}}>
 								<Text style={styles.itemName}>{item.name}</Text>
-								<Text style={styles.itemMeta}>Sets: {item.sets} • Reps: {item.reps}</Text>
+									<Text style={styles.itemMeta}>Sets: {item.sets} • Reps: {item.reps}</Text>
 							</View>
 							<Text style={styles.itemDone}>{(item.completedSets || 0)}/{item.sets}</Text>
 						</View>
@@ -251,7 +256,7 @@ export default function Workout() {
 			</View>
 
 			<Modal visible={isAddModalOpen} animationType="slide" transparent={true}>
-				<View style={styles.modalBackdrop}>
+					<View style={styles.modalBackdrop}>
 					<View style={styles.modalCard}>
 						<Text style={styles.modalTitle}>Add Exercise</Text>
 						<TextInput placeholder="Name" value={newName} onChangeText={setNewName} style={styles.input} />
@@ -273,34 +278,35 @@ export default function Workout() {
 	);
 }
 
-const styles = StyleSheet.create({
-	container: {flex: 1, padding: 16, backgroundColor: "#fff"},
-	header: {flexDirection: "row", justifyContent: "space-between", alignItems: "center"},
-	title: {fontSize: 28, fontWeight: "700"},
-	timer: {fontSize: 14, color: "#666"},
-	controlsRow: {flexDirection: "row", gap: 8, marginVertical: 12},
-	controlButton: {padding: 10, borderRadius: 8, borderWidth: 1, borderColor: "#ddd", marginRight: 8},
-	controlButtonPrimary: {padding: 10, borderRadius: 8, backgroundColor: "#0a84ff"},
-	controlText: {color: "#111"},
-	controlTextPrimary: {color: "white", fontWeight: "600"},
-	currentContainer: {marginVertical: 8},
-	sectionTitle: {fontSize: 18, fontWeight: "600", marginBottom: 8},
-	currentCard: {padding: 12, borderRadius: 8, borderWidth: 1, borderColor: "#eee", backgroundColor: "#fafafa"},
-	currentName: {fontSize: 20, fontWeight: "700"},
-	currentInfo: {color: "#444", marginTop: 4},
-	currentActions: {flexDirection: "row", justifyContent: "space-between", marginTop: 12},
-	actionBtn: {padding: 8, borderRadius: 8, borderWidth: 1, borderColor: "#ddd"},
-	actionBtnPrimary: {padding: 8, borderRadius: 8, backgroundColor: "#0a84ff"},
-	restText: {marginTop: 8, color: "#999"},
-	listContainer: {flex: 1, marginTop: 12},
-	item: {padding: 12, borderBottomWidth: 1, borderBottomColor: "#f2f2f2", flexDirection: "row", alignItems: "center"},
-	itemActive: {backgroundColor: "#f0f8ff"},
-	itemName: {fontSize: 16, fontWeight: "600"},
-	itemMeta: {color: "#666"},
-	itemDone: {marginLeft: 12, color: "#0a84ff", fontWeight: "700"},
-	modalBackdrop: {flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.4)"},
-	modalCard: {width: "90%", padding: 16, borderRadius: 12, backgroundColor: "white"},
-	modalTitle: {fontSize: 18, fontWeight: "700", marginBottom: 8},
-	input: {borderWidth: 1, borderColor: "#eee", borderRadius: 8, padding: 10, marginBottom: 8},
-});
+const makeStyles = (theme: any) =>
+	StyleSheet.create({
+		container: {flex: 1, padding: 16, backgroundColor: theme.background},
+		header: {flexDirection: "row", justifyContent: "space-between", alignItems: "center"},
+		title: {fontSize: 28, fontWeight: "700", color: theme.text},
+		timer: {fontSize: 14, color: theme.icon},
+		controlsRow: {flexDirection: "row", gap: 8, marginVertical: 12},
+		controlButton: {padding: 10, borderRadius: 8, borderWidth: 1, borderColor: theme.surface, marginRight: 8, backgroundColor: theme.background},
+		controlButtonPrimary: {padding: 10, borderRadius: 8, backgroundColor: theme.primary},
+		controlText: {color: theme.text},
+		controlTextPrimary: {color: '#fff', fontWeight: "600"},
+		currentContainer: {marginVertical: 8},
+		sectionTitle: {fontSize: 18, fontWeight: "600", marginBottom: 8, color: theme.text},
+		currentCard: {padding: 12, borderRadius: 8, borderWidth: 1, borderColor: theme.surface, backgroundColor: theme.surface},
+		currentName: {fontSize: 20, fontWeight: "700", color: theme.text},
+		currentInfo: {color: theme.icon, marginTop: 4},
+		currentActions: {flexDirection: "row", justifyContent: "space-between", marginTop: 12},
+		actionBtn: {padding: 8, borderRadius: 8, borderWidth: 1, borderColor: theme.surface},
+		actionBtnPrimary: {padding: 8, borderRadius: 8, backgroundColor: theme.primary},
+		restText: {marginTop: 8, color: theme.icon},
+		listContainer: {flex: 1, marginTop: 12},
+		item: {padding: 12, borderBottomWidth: 1, borderBottomColor: theme.surface, flexDirection: "row", alignItems: "center"},
+		itemActive: {backgroundColor: theme.surface},
+		itemName: {fontSize: 16, fontWeight: "600", color: theme.text},
+		itemMeta: {color: theme.icon},
+		itemDone: {marginLeft: 12, color: theme.primary, fontWeight: "700"},
+		modalBackdrop: {flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.4)"},
+		modalCard: {width: "90%", padding: 16, borderRadius: 12, backgroundColor: theme.background},
+		modalTitle: {fontSize: 18, fontWeight: "700", marginBottom: 8, color: theme.text},
+		input: {borderWidth: 1, borderColor: theme.surface, borderRadius: 8, padding: 10, marginBottom: 8, color: theme.text},
+	});
 

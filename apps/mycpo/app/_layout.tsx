@@ -4,6 +4,7 @@ import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { AuthProvider, useAuth } from '@mycsuite/auth';
+import AppThemeProvider from './providers/AppThemeProvider';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -58,10 +59,12 @@ export default function RootLayout() {
   
   return (
     <AuthProvider>
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <RootLayoutNav />
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      <AppThemeProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <RootLayoutNav />
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </AppThemeProvider>
     </AuthProvider>
   );
 }

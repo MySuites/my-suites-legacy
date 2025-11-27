@@ -8,8 +8,14 @@ cssInterop(Text, { className: 'style' });
 
 export const SharedButton = ({ title, ...props }: { title: string } & PressableProps) => {
   return (
-    <Pressable {...props} className="p-4 my-4 bg-purple-600 rounded-lg active:bg-purple-800">
+    <Pressable
+      {...props}
+      className="p-4 my-4 bg-primary dark:bg-primary-dark rounded-lg active:opacity-80"
+      style={{ shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 6 }}>
       <Text className="text-center text-white font-bold">{title}</Text>
     </Pressable>
   );
 };
+
+export { UIThemeProvider, useUITheme } from './theme';
+export { ThemedCard } from './examples/ThemedCard';

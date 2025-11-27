@@ -48,13 +48,13 @@ export default function ProfileScreen() {
   return (
     <View className="flex-1 justify-center p-4">
       <TextInput
-        className="p-3 mb-4 border border-gray-300 rounded-lg"
+        className="p-3 mb-4 border border-border rounded-lg bg-background dark:bg-background-dark dark:border-border-dark text-apptext dark:text-apptext-dark"
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
       />
       <TextInput
-        className="p-3 mb-4 border border-gray-300 rounded-lg"
+        className="p-3 mb-4 border border-border rounded-lg bg-background dark:bg-background-dark dark:border-border-dark text-apptext dark:text-apptext-dark"
         placeholder="Full Name"
         value={fullName}
         onChangeText={setFullName}
