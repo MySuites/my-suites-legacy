@@ -38,11 +38,11 @@ export function FastUtilityButton() {
   const router = useRouter();
   const pathname = usePathname();
   const { activeButtonId, setActiveButtonId } = useFloatingButton();
-  const { isRunning, startWorkout, pauseWorkout } = useActiveWorkout();
+  const { isRunning, startWorkout, pauseWorkout, finishWorkout } = useActiveWorkout();
 
   // Determine current context and actions
   const currentActions = useMemo(() => {
-     if (pathname.includes('workout')) {
+     if (pathname.includes('active-workout')) {
          return [
             { 
                 id: 'toggle_workout', 
@@ -51,7 +51,15 @@ export function FastUtilityButton() {
                 action: 'toggle_workout' 
             },
             { id: 'log_weight', icon: 'scale.3d', label: 'Log Weight', action: 'log_weight' },
+            { id: 'finish_workout', icon: 'flag.checkered', label: 'Finish', action: 'finish_workout' },
+         ];
+     }
+     if (pathname.includes('workout') || pathname === '/') {
+        // General workout tab logic (or home if '/' maps there)
+         return [
             { id: 'create_routine', icon: 'list.bullet.clipboard', label: 'New Routine', action: 'create_routine' },
+            // TODO: Add a button to access all exercises
+            { id: 'log_weight', icon: 'scale.3d', label: 'Log Weight', action: 'log_weight' },
          ];
      }
      if (pathname.includes('profile')) return CONTEXT_ACTIONS['profile'];
@@ -68,13 +76,21 @@ export function FastUtilityButton() {
           }
           return;
       }
+      
+      if (item.action === 'finish_workout') {
+        finishWorkout();
+        router.dismissAll();
+        // Fallback or ensure we go to tabs if dismissAll isn't enough (it should be for a modal stack)
+        // Checks if can go back, else replace
+        return; 
+      }
 
       if (item.route) {
           router.push(item.route as any);
       } else {
           console.log('Trigger action:', item.action);
       }
-  }, [router, isRunning, startWorkout, pauseWorkout]);
+  }, [router, isRunning, startWorkout, pauseWorkout, finishWorkout]);
 
   // Map to RadialMenuItems
   // We use distributed angles, so we don't set angle explicitly

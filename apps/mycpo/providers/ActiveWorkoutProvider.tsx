@@ -19,6 +19,7 @@ interface ActiveWorkoutContextType {
     prevExercise: () => void;
     addExercise: (name: string, sets: string, reps: string) => void;
     exportSummary: () => void;
+    finishWorkout: () => void;
 }
 
 const ActiveWorkoutContext = createContext<ActiveWorkoutContextType | undefined>(undefined);
@@ -134,22 +135,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 		setExercises((exs) => exs.map((x) => ({...x, completedSets: 0})));
 	}, []);
 
-    const completeSet = useCallback(() => {
-        // We need to pass the current fresh state
-        // Note: calculateNextWorkoutState is a pure function from workout.logic
-        setExercises(currentExercises => {
-            // We need currentIndex too. This is tricky with callbacks if we rely on closure.
-            // Better to not use useCallback for this one OR use refs/functional updates carefully.
-            // But we need to update both exercises AND currentIndex.
-            // Let's accept that we might need to access the state directly or rewrite this.
-            // Since we're inside the provider, we have access to the state.
-            // But `setExercises` callback only gives us the exercises.
-            // We'll forego `useCallback` dependency optimization for a moment to ensure correctness,
-            // or include them in deps.
-            return currentExercises; // Placeholder to break out of this thought
-        });
-        // Actually, let's just use the state directly in the function scope, and include it in deps.
-    }, []); 
+    // completeSet removed as we use handleCompleteSet below
 
     // Re-implementing functions to use current state
     const addExercise = (name: string, sets: string, reps: string) => {
@@ -203,7 +189,8 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         nextExercise,
         prevExercise,
         addExercise,
-        exportSummary
+        exportSummary,
+        finishWorkout: resetWorkout // Using resetWorkout as the base for finish logic
     };
 
     return (
