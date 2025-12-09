@@ -44,14 +44,13 @@ export function FastUtilityButton() {
   const currentActions = useMemo(() => {
      if (isExpanded || pathname.includes('active-workout')) {
          return [
+            { id: 'finish_workout', icon: 'flag.checkered', label: 'Finish', action: 'finish_workout' },
             { 
                 id: 'toggle_workout', 
                 icon: isRunning ? 'pause.fill' : 'play.fill', 
                 label: isRunning ? 'Pause' : 'Start', 
                 action: 'toggle_workout' 
             },
-            { id: 'log_weight', icon: 'scale.3d', label: 'Log Weight', action: 'log_weight' },
-            { id: 'finish_workout', icon: 'flag.checkered', label: 'Finish', action: 'finish_workout' },
          ];
      }
      if (pathname.includes('workout') || pathname === '/') {
