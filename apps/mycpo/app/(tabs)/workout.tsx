@@ -42,7 +42,6 @@ export default function Workout() {
         currentIndex,
         startWorkout,
         pauseWorkout,
-        resetWorkout,
         completeSet,
         nextExercise,
         prevExercise,
@@ -173,9 +172,7 @@ export default function Workout() {
 						<Text style={styles.controlText}>Pause</Text>
 					</TouchableOpacity>
 				)}
-				<TouchableOpacity style={styles.controlButton} onPress={resetWorkout} accessibilityLabel="Reset workout">
-					<Text style={styles.controlText}>Reset</Text>
-				</TouchableOpacity>
+
 				<TouchableOpacity style={styles.controlButton} onPress={() => setSaveModalOpen(true)} accessibilityLabel="Save workout">
 					<Text style={styles.controlText}>Save</Text>
 				</TouchableOpacity>
