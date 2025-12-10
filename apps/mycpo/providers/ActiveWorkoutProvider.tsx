@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { Exercise } from '../hooks/useWorkoutManager'; 
-import { createExercise, generateSummary } from '../app/(tabs)/workout.logic';
+import { createExercise } from '../app/(tabs)/workout.logic';
 
 // Define the shape of our context
 interface ActiveWorkoutContextType {
@@ -24,7 +24,6 @@ interface ActiveWorkoutContextType {
     isExpanded: boolean;
     toggleExpanded: () => void;
     setExpanded: (expanded: boolean) => void;
-    exportSummary: () => void;
     finishWorkout: () => void;
     cancelWorkout: () => void;
     hasActiveSession: boolean;
@@ -210,19 +209,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         setRestSeconds(60); 
     };
 
-    const exportSummary = () => {
-        const json = generateSummary(workoutSeconds, exercises);
-		try {
-			if (typeof navigator !== "undefined" && (navigator as any).clipboard) {
-				(navigator as any).clipboard.writeText(json);
-				Alert.alert("Summary copied", "Workout summary JSON copied to clipboard.");
-				return;
-			}
-		} catch {
-			// fall through
-		}
-		Alert.alert("Workout Summary", json.slice(0, 1000));
-    }
+
 
 
     // Overlay expansion state
@@ -271,7 +258,6 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         prevExercise,
         addExercise,
         updateExercise,
-        exportSummary,
         finishWorkout: handleFinishWorkout,
         cancelWorkout: handleCancelWorkout,
         isExpanded,

@@ -47,8 +47,7 @@ export default function Workout() {
         completeSet,
         nextExercise,
         prevExercise,
-        addExercise: contextAddExercise,
-        exportSummary
+        addExercise: contextAddExercise
     } = useActiveWorkout();
 
 	const [isAddModalOpen, setAddModalOpen] = useState(false);
@@ -167,9 +166,6 @@ export default function Workout() {
 				)}
 				<TouchableOpacity style={styles.controlButton} onPress={resetWorkout} accessibilityLabel="Reset workout">
 					<Text style={styles.controlText}>Reset</Text>
-				</TouchableOpacity>
-				<TouchableOpacity style={styles.controlButton} onPress={exportSummary} accessibilityLabel="Export summary">
-					<Text style={styles.controlText}>Export</Text>
 				</TouchableOpacity>
 				<TouchableOpacity style={styles.controlButton} onPress={() => setSaveModalOpen(true)} accessibilityLabel="Save workout">
 					<Text style={styles.controlText}>Save</Text>
