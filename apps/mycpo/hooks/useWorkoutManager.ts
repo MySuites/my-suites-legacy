@@ -281,6 +281,15 @@ export function useWorkoutManager() {
     const [workoutHistory, setWorkoutHistory] = useState<WorkoutLog[]>([]);
     const [isSaving, setIsSaving] = useState(false);
 
+    // Active Routine progress state
+    const [activeRoutine, setActiveRoutine] = useState<
+        {
+            id: string;
+            dayIndex: number; // 0-based index in sequence
+            lastCompletedDate?: string;
+        } | null
+    >(null);
+
     // Load saved routines and saved workouts on mount
     useEffect(() => {
         // If user is signed in, fetch saved workouts from Supabase, otherwise load local
@@ -348,6 +357,10 @@ export function useWorkoutManager() {
                             "mycpo_workout_routines",
                         );
                         if (rawR) setRoutines(JSON.parse(rawR));
+                        const rawActive = window.localStorage.getItem(
+                            "mycpo_active_routine",
+                        );
+                        if (rawActive) setActiveRoutine(JSON.parse(rawActive));
                     }
                 }
             } catch {
@@ -369,11 +382,19 @@ export function useWorkoutManager() {
                     "mycpo_workout_routines",
                     JSON.stringify(routines),
                 );
+                if (activeRoutine) {
+                    window.localStorage.setItem(
+                        "mycpo_active_routine",
+                        JSON.stringify(activeRoutine),
+                    );
+                } else {
+                    window.localStorage.removeItem("mycpo_active_routine");
+                }
             }
         } catch {
             // ignore
         }
-    }, [savedWorkouts, routines]);
+    }, [savedWorkouts, routines, activeRoutine]);
 
     async function saveWorkout(
         workoutName: string,
@@ -628,9 +649,61 @@ export function useWorkoutManager() {
         return { data: result, error: null };
     }, [user]);
 
+    function startActiveRoutine(routineId: string) {
+        setActiveRoutine({
+            id: routineId,
+            dayIndex: 0,
+        });
+        Alert.alert("Routine Set", "Good luck!");
+    }
+
+    const markRoutineDayComplete = useCallback(() => {
+        if (!activeRoutine) return;
+        setActiveRoutine((prev) =>
+            prev
+                ? ({
+                    ...prev,
+                    lastCompletedDate: new Date().toISOString(),
+                })
+                : null
+        );
+    }, [activeRoutine]);
+
+    // Auto-advance routine day if completed on a previous day
+    useEffect(() => {
+        if (activeRoutine && activeRoutine.lastCompletedDate) {
+            const lastDate = new Date(activeRoutine.lastCompletedDate);
+            const today = new Date();
+            // Reset hours to compare only dates
+            lastDate.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+
+            if (lastDate.getTime() < today.getTime()) {
+                // It was completed yesterday or before -> Advance!
+                setActiveRoutine((prev) =>
+                    prev
+                        ? ({
+                            ...prev,
+                            dayIndex: prev.dayIndex + 1,
+                            lastCompletedDate: undefined, // Clear completion so it's fresh for new day
+                        })
+                        : null
+                );
+            }
+        }
+    }, [activeRoutine?.lastCompletedDate]); // Depend on the date string
+
+    function clearActiveRoutine() {
+        setActiveRoutine(null);
+    }
+
     return {
         savedWorkouts,
         routines,
+        activeRoutine,
+        startActiveRoutine,
+        markRoutineDayComplete,
+        clearActiveRoutine,
         isSaving,
         saveWorkout,
         deleteSavedWorkout,
