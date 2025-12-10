@@ -179,9 +179,7 @@ export default function Workout() {
 				<TouchableOpacity style={styles.controlButton} onPress={() => setSaveModalOpen(true)} accessibilityLabel="Save workout">
 					<Text style={styles.controlText}>Save</Text>
 				</TouchableOpacity>
-					<TouchableOpacity style={styles.controlButton} onPress={() => setWorkoutsListOpen(true)} accessibilityLabel="Workouts">
-						<Text style={styles.controlText}>Workouts</Text>
-					</TouchableOpacity>
+
 				<TouchableOpacity style={styles.controlButton} onPress={() => setCreateRoutineOpen(true)} accessibilityLabel="Create routine">
 					<Text style={styles.controlText}>Create Routine</Text>
 				</TouchableOpacity>
