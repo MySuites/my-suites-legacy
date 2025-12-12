@@ -78,6 +78,7 @@ export default function Workout() {
 
 
 	const [isCreateRoutineOpen, setCreateRoutineOpen] = useState(false);
+    const [editingRoutineId, setEditingRoutineId] = useState<string | null>(null);
 	const [routineDraftName, setRoutineDraftName] = useState("");
 	const [routineSequence, setRoutineSequence] = useState<any[]>([]);
 	const [isWorkoutsListOpen, setWorkoutsListOpen] = useState(false);
@@ -93,7 +94,8 @@ export default function Workout() {
         clearActiveRoutine,
  
         deleteSavedWorkout, 
-        saveRoutineDraft: saveRoutineDraftManager, 
+        saveRoutineDraft: saveRoutineDraftManager,
+        updateRoutine, 
     } = useWorkoutManager();
 
 
@@ -130,12 +132,33 @@ export default function Workout() {
 
 
 	async function saveRoutineDraft() {
-		saveRoutineDraftManager(routineDraftName, routineSequence, () => {
+        const onSuccess = () => {
 			setRoutineDraftName("");
 			setRoutineSequence([]);
+            setEditingRoutineId(null);
 			setCreateRoutineOpen(false);
-		});
+		};
+
+        if (editingRoutineId) {
+            updateRoutine(editingRoutineId, routineDraftName, routineSequence, onSuccess);
+        } else {
+            saveRoutineDraftManager(routineDraftName, routineSequence, onSuccess);
+        }
 	}
+
+    function handleEditRoutine(routine: any) {
+        setEditingRoutineId(routine.id);
+        setRoutineDraftName(routine.name);
+        setRoutineSequence(routine.sequence ? [...routine.sequence] : []);
+        setCreateRoutineOpen(true);
+    }
+
+    function handleCloseRoutineModal() {
+        setCreateRoutineOpen(false);
+        setRoutineSequence([]);
+        setRoutineDraftName('');
+        setEditingRoutineId(null);
+    }
 
 	function addDayToSequence(item: any) {
 		const newItem = createSequenceItem(item);
@@ -263,6 +286,7 @@ export default function Workout() {
                                 <RoutineCard 
                                     routine={item} 
                                     onPress={() => startActiveRoutine(item.id)}
+                                    onEdit={() => handleEditRoutine(item)}
                                     // onLongPress={() => deleteRoutine(item.id)} // Moved to routines screen
                                     // onDelete={() => deleteRoutine(item.id)} // Moved to routines screen
                                 />
@@ -310,11 +334,11 @@ export default function Workout() {
 				</View>
 			</Modal>
 
-			{/* Create routine (schedule) modal */}
+			{/* Create/Edit routine (schedule) modal */}
 			<Modal visible={isCreateRoutineOpen} animationType="slide" transparent={true}>
 				<View style={styles.modalBackdrop}>
 					<View style={[styles.modalCard, {maxHeight: '85%'}]}>
-						<Text style={styles.modalTitle}>Create Routine</Text>
+						<Text style={styles.modalTitle}>{editingRoutineId ? 'Edit Routine' : 'Create Routine'}</Text>
 						<TextInput placeholder="Routine name" value={routineDraftName} onChangeText={setRoutineDraftName} style={styles.input} />
 						<Text style={{color: theme.icon, marginBottom: 8}}>Add days from saved workouts or add Rest days.</Text>
 						<View style={{flexDirection: 'row', gap: 8, marginBottom: 8}}>
@@ -362,11 +386,11 @@ export default function Workout() {
 						)}
 
 						<View style={{flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12}}>
-							<TouchableOpacity onPress={() => { setCreateRoutineOpen(false); setRoutineSequence([]); setRoutineDraftName(''); }} style={[styles.controlButton, {marginRight: 8}]}> 
+							<TouchableOpacity onPress={handleCloseRoutineModal} style={[styles.controlButton, {marginRight: 8}]}> 
 								<Text>Cancel</Text>
 							</TouchableOpacity>
 							<TouchableOpacity disabled={isSaving} onPress={saveRoutineDraft} style={[styles.controlButtonPrimary, isSaving ? styles.controlButtonDisabled : null]}>
-								{isSaving ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.controlTextPrimary}>Save Routine</Text>}
+								{isSaving ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.controlTextPrimary}>{editingRoutineId ? 'Save Changes' : 'Create Routine'}</Text>}
 							</TouchableOpacity>
 						</View>
 					</View>

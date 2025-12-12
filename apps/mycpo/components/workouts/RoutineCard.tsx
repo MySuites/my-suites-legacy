@@ -14,9 +14,10 @@ interface RoutineCardProps {
   onPress: () => void;
   onLongPress?: () => void;
   onDelete?: () => void;
+  onEdit?: () => void;
 }
 
-export function RoutineCard({ routine, onPress, onLongPress, onDelete }: RoutineCardProps) {
+export function RoutineCard({ routine, onPress, onLongPress, onDelete, onEdit }: RoutineCardProps) {
   const theme = useUITheme();
   const styles = makeStyles(theme);
 
@@ -34,16 +35,30 @@ export function RoutineCard({ routine, onPress, onLongPress, onDelete }: Routine
         <Text style={[styles.name, {flex: 1}]} numberOfLines={1}>
           {routine.name}
         </Text>
-        {onDelete && (
-             <TouchableOpacity 
-                onPress={(e) => { 
-                    onDelete(); 
-                }} 
-                style={{padding: 4}}
-            >
-                <Text style={{color: theme.icon, fontSize: 18}}>×</Text>
-            </TouchableOpacity>
-        )}
+        <View style={{flexDirection: 'row', gap: 4}}>
+            {onEdit && (
+                <TouchableOpacity 
+                    onPress={(e) => { 
+                        // Stop propagation might not work on RN TouchableOpacity inside another, need to be careful with z-index or layout
+                        // But here they are siblings in header
+                        onEdit(); 
+                    }} 
+                    style={{padding: 4, marginRight: 4}}
+                >
+                    <Text style={{color: theme.primary, fontSize: 14, fontWeight: '600'}}>Edit</Text>
+                </TouchableOpacity>
+            )}
+            {onDelete && (
+                 <TouchableOpacity 
+                    onPress={(e) => { 
+                        onDelete(); 
+                    }} 
+                    style={{padding: 4}}
+                >
+                    <Text style={{color: theme.icon, fontSize: 18}}>×</Text>
+                </TouchableOpacity>
+            )}
+        </View>
       </View>
       
       <View style={styles.content}>

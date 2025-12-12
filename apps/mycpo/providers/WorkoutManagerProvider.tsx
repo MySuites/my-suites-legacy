@@ -296,6 +296,33 @@ async function persistRoutineToSupabase(
     return { data };
 }
 
+async function persistUpdateRoutineToSupabase(
+    user: any,
+    routineId: string,
+    routineName: string,
+    sequence: any[],
+) {
+    if (!user) return { error: "User not logged in" };
+
+    // Simply update the row
+    const { data, error } = await supabase
+        .from("routines")
+        .update({
+            routine_name: routineName.trim(),
+            description: JSON.stringify(sequence), // Assuming description is used for sequence storage as seen in fetch
+            // updated_at: new Date().toISOString() // Assuming there's a trigger or we let DB handle it
+        })
+        .eq("routine_id", routineId)
+        .select()
+        .single();
+
+    if (error || !data) {
+        return { error: error || "Failed to update routine" };
+    }
+
+    return { data };
+}
+
 
 // --- Context ---
 
@@ -314,6 +341,7 @@ interface WorkoutManagerContextType {
     saveWorkout: (name: string, exercises: Exercise[], onSuccess: () => void) => Promise<void>;
     deleteSavedWorkout: (id: string) => void;
     saveRoutineDraft: (name: string, sequence: any[], onSuccess: () => void) => Promise<void>;
+    updateRoutine: (id: string, name: string, sequence: any[], onSuccess: () => void) => Promise<void>;
     deleteRoutine: (id: string) => void;
     workoutHistory: WorkoutLog[];
     fetchWorkoutLogDetails: (logId: string) => Promise<{ data: any[], error: any }>;
@@ -654,6 +682,43 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
         Alert.alert("Saved", `Routine '${payload.name}' saved locally.`);
     }
 
+    async function updateRoutine(
+        id: string,
+        name: string,
+        sequence: any[],
+        onSuccess: () => void,
+    ) {
+        if (!name || name.trim() === "") {
+            Alert.alert("Name required", "Please enter a name for the routine.");
+            return;
+        }
+        if (sequence.length === 0) {
+            Alert.alert("Empty routine", "Please add at least one day.");
+            return;
+        }
+
+        if (user) {
+            setIsSaving(true);
+            try {
+                const { data, error } = await persistUpdateRoutineToSupabase(user, id, name, sequence);
+                if (error || !data) {
+                    Alert.alert("Error", "Failed to update routine on server.");
+                } else {
+                    setRoutines(prev => prev.map(r => r.id === id ? { ...r, name: data.routine_name, sequence } : r));
+                    onSuccess();
+                    Alert.alert("Updated", `Routine '${name}' updated.`);
+                }
+            } finally {
+                setIsSaving(false);
+            }
+        } else {
+            // Local update
+            setRoutines(prev => prev.map(r => r.id === id ? { ...r, name, sequence } : r));
+            onSuccess();
+            Alert.alert("Updated", `Routine '${name}' updated locally.`);
+        }
+    }
+
     function deleteRoutine(id: string) {
         Alert.alert("Delete routine", "Are you sure?", [
             { text: "Cancel", style: "cancel" },
@@ -780,6 +845,7 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
         saveWorkout,
         deleteSavedWorkout,
         saveRoutineDraft,
+        updateRoutine,
         deleteRoutine,
         workoutHistory,
         fetchWorkoutLogDetails,
