@@ -190,8 +190,37 @@ export default function Workout() {
                         />
                     )}
 
-                    {/* Routines Section */}
+                    {/* Saved Workouts Section (Quick Access) */}
                     <View style={styles.sectionHeader}>
+                         <Text style={styles.sectionTitle}>Saved Workouts</Text>
+                         <TouchableOpacity onPress={() => setWorkoutsListOpen(true)}>
+                            <Text style={{color: theme.primary}}>See All</Text>
+                        </TouchableOpacity>
+                    </View>
+                     {savedWorkouts.length === 0 ? (
+                        <Text style={{color: theme.icon}}>No saved workouts.</Text>
+                    ) : (
+                        <FlatList
+                            data={savedWorkouts.slice(0, 5)} // Show top 5
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={{paddingRight: 16}}
+                            keyExtractor={(i) => i.id}
+                            renderItem={({item}) => (
+                                <TouchableOpacity 
+                                    style={styles.workoutCard} 
+                                    onPress={() => loadWorkout(item.id)}
+                                    onLongPress={() => deleteSavedWorkout(item.id)}
+                                >
+                                    <Text style={styles.workoutCardTitle} numberOfLines={2}>{item.name}</Text>
+                                    <Text style={{color: theme.icon, fontSize: 12}}>{item.exercises?.length || 0} Exercises</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
+                    )}
+
+                    {/* Routines Section */}
+                    <View style={[styles.sectionHeader, {marginTop: 24}]}>
                         <Text style={styles.sectionTitle}>My Routines</Text>
                         <TouchableOpacity onPress={() => setCreateRoutineOpen(true)}>
                             <Text style={{color: theme.primary}}>+ New</Text>
@@ -217,35 +246,6 @@ export default function Workout() {
                                     onLongPress={() => deleteRoutine(item.id)}
                                     onDelete={() => deleteRoutine(item.id)}
                                 />
-                            )}
-                        />
-                    )}
-
-                    {/* Saved Workouts Section (Quick Access) */}
-                    <View style={[styles.sectionHeader, {marginTop: 24}]}>
-                         <Text style={styles.sectionTitle}>Saved Workouts</Text>
-                         <TouchableOpacity onPress={() => setWorkoutsListOpen(true)}>
-                            <Text style={{color: theme.primary}}>See All</Text>
-                        </TouchableOpacity>
-                    </View>
-                     {savedWorkouts.length === 0 ? (
-                        <Text style={{color: theme.icon}}>No saved workouts.</Text>
-                    ) : (
-                        <FlatList
-                            data={savedWorkouts.slice(0, 5)} // Show top 5
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{paddingRight: 16}}
-                            keyExtractor={(i) => i.id}
-                            renderItem={({item}) => (
-                                <TouchableOpacity 
-                                    style={styles.workoutCard} 
-                                    onPress={() => loadWorkout(item.id)}
-                                    onLongPress={() => deleteSavedWorkout(item.id)}
-                                >
-                                    <Text style={styles.workoutCardTitle} numberOfLines={2}>{item.name}</Text>
-                                    <Text style={{color: theme.icon, fontSize: 12}}>{item.exercises?.length || 0} Exercises</Text>
-                                </TouchableOpacity>
                             )}
                         />
                     )}
