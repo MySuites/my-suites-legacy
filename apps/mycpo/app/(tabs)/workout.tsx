@@ -178,7 +178,7 @@ export default function Workout() {
 			>
 					
                     {/* Active Routine Section */}
-                    {activeRoutineObj && (
+                    {activeRoutineObj ? (
                         <ActiveRoutineCard
                             activeRoutineObj={activeRoutineObj}
                             timelineDays={timelineDays}
@@ -188,6 +188,25 @@ export default function Workout() {
                             onStartWorkout={(exercises) => startWorkout(exercises)}
                             onMarkComplete={markRoutineDayComplete}
                         />
+                    ) : (
+                        <View style={{ marginBottom: 24 }}>
+                            <View style={styles.sectionHeader}>
+                                <Text style={styles.sectionTitle}>Active Routine</Text>
+                            </View>
+                            <View style={styles.activeRoutineCard}>
+                                <View style={{ padding: 20, alignItems: 'center' }}>
+                                    <Text style={{ fontSize: 16, fontWeight: '600', color: theme.text, marginBottom: 8 }}>
+                                        No active routine
+                                    </Text>
+                                    <Text style={{ color: theme.icon, textAlign: 'center', marginBottom: 16 }}>
+                                        Select a routine below to start tracking your progress.
+                                    </Text>
+                                    <TouchableOpacity onPress={() => setLoadModalOpen(true)} style={styles.controlButtonPrimary}>
+                                        <Text style={styles.controlTextPrimary}>Choose Routine</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
                     )}
 
                     {/* Saved Workouts Section (Quick Access) */}
