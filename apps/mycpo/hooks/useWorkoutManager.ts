@@ -202,6 +202,10 @@ async function persistWorkoutToSupabase(
 ) {
     if (!user) return { error: "User not logged in" };
 
+    if (workoutName.trim().toLowerCase() === "rest") {
+        return { error: "Cannot create a workout named 'Rest'" };
+    }
+
     const { data: wdata, error: wErr } = await supabase
         .from("workouts")
         .insert([{
@@ -320,20 +324,26 @@ export function useWorkoutManager() {
                     const { data: wData, error: wError } =
                         await fetchUserWorkouts(user);
                     if (!wError && Array.isArray(wData)) {
-                        const mapped = wData.map((w: any) => {
-                            let exercises = [];
-                            try {
-                                exercises = w.notes ? JSON.parse(w.notes) : [];
-                            } catch {
-                                // ignore parse error
-                            }
-                            return {
-                                id: w.workout_id,
-                                name: w.workout_name,
-                                exercises,
-                                createdAt: w.created_at,
-                            };
-                        });
+                        const mapped = wData
+                            .map((w: any) => {
+                                let exercises = [];
+                                try {
+                                    exercises = w.notes
+                                        ? JSON.parse(w.notes)
+                                        : [];
+                                } catch {
+                                    // ignore parse error
+                                }
+                                return {
+                                    id: w.workout_id,
+                                    name: w.workout_name,
+                                    exercises,
+                                    createdAt: w.created_at,
+                                };
+                            })
+                            .filter((w: any) =>
+                                w.name && w.name.trim().toLowerCase() !== "rest"
+                            ); // Filter out "Rest" workouts
                         setSavedWorkouts(mapped);
                     }
 
@@ -372,7 +382,17 @@ export function useWorkoutManager() {
                         const rawW = window.localStorage.getItem(
                             "mycpo_saved_workouts",
                         );
-                        if (rawW) setSavedWorkouts(JSON.parse(rawW));
+                        if (rawW) {
+                            const parsed = JSON.parse(rawW);
+                            // Filter out "Rest" workouts from local storage too
+                            const filtered = Array.isArray(parsed)
+                                ? parsed.filter((w: any) =>
+                                    w.name &&
+                                    w.name.trim().toLowerCase() !== "rest"
+                                )
+                                : [];
+                            setSavedWorkouts(filtered);
+                        }
                         const rawR = window.localStorage.getItem(
                             "mycpo_workout_routines",
                         );
@@ -425,6 +445,14 @@ export function useWorkoutManager() {
             Alert.alert(
                 "Name required",
                 "Please enter a name for the workout.",
+            );
+            return;
+        }
+
+        if (workoutName.trim().toLowerCase() === "rest") {
+            Alert.alert(
+                "Invalid Name",
+                "Workout cannot be named 'Rest'. This name is reserved.",
             );
             return;
         }
