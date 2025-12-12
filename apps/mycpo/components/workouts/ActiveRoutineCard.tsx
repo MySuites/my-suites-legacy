@@ -53,7 +53,7 @@ export function ActiveRoutineCard({
         </View>
       </View>
 
-      <View className="bg-surface dark:bg-surface_dark rounded-xl p-4 border border-black/5 dark:border-white/10">
+      <View className="bg-surface dark:bg-surface_dark rounded-xl p-4 border border-black/5 dark:border-white/10 shadow-sm">
         {timelineDays.length === 0 ? (
           <View className="p-5 items-center">
             <Text className="text-lg font-semibold text-primary dark:text-primary_dark mb-2">

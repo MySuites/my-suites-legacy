@@ -216,7 +216,7 @@ export default function Workout() {
 							keyExtractor={(i) => i.id}
 							renderItem={({item}) => (
 								<TouchableOpacity 
-									className="bg-surface dark:bg-surface_dark rounded-xl p-4 mb-3 flex-row items-center justify-between"
+									className="bg-surface dark:bg-surface_dark rounded-xl p-4 mb-3 flex-row items-center justify-between border border-black/5 dark:border-white/10 shadow-sm"
 									onPress={() => loadWorkout(item.id)}
 									onLongPress={() => deleteSavedWorkout(item.id)}
 								>
@@ -245,7 +245,7 @@ export default function Workout() {
                             <View className="flex-row justify-between items-center mb-3">
                                 <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">Active Routine</Text>
                             </View>
-                            <View className="bg-surface dark:bg-surface_dark rounded-xl p-4 border border-border dark:border-border_dark">
+                            <View className="bg-surface dark:bg-surface_dark rounded-xl p-4 border border-black/5 dark:border-white/10 shadow-sm">
                                 <View className="p-5 items-center">
                                     <Text className="text-base font-semibold text-apptext dark:text-apptext_dark mb-2">
                                         No active routine
