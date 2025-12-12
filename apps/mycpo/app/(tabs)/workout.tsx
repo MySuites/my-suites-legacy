@@ -200,23 +200,21 @@ export default function Workout() {
                      {savedWorkouts.length === 0 ? (
                         <Text style={{color: theme.icon}}>No saved workouts.</Text>
                     ) : (
-                        <FlatList
-                            data={savedWorkouts.slice(0, 5)} // Show top 5
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{paddingRight: 16}}
-                            keyExtractor={(i) => i.id}
-                            renderItem={({item}) => (
-                                <TouchableOpacity 
-                                    style={styles.workoutCard} 
-                                    onPress={() => loadWorkout(item.id)}
-                                    onLongPress={() => deleteSavedWorkout(item.id)}
-                                >
-                                    <Text style={styles.workoutCardTitle} numberOfLines={2}>{item.name}</Text>
-                                    <Text style={{color: theme.icon, fontSize: 12}}>{item.exercises?.length || 0} Exercises</Text>
-                                </TouchableOpacity>
-                            )}
-                        />
+						<FlatList
+							data={savedWorkouts}
+							scrollEnabled={false}
+							keyExtractor={(i) => i.id}
+							renderItem={({item}) => (
+								<TouchableOpacity 
+									style={styles.workoutCard} 
+									onPress={() => loadWorkout(item.id)}
+									onLongPress={() => deleteSavedWorkout(item.id)}
+								>
+									<Text style={[styles.workoutCardTitle, {flex: 1}]} numberOfLines={1}>{item.name}</Text>
+									<Text style={{color: theme.icon, fontSize: 12}}>{item.exercises?.length || 0} Exercises</Text>
+								</TouchableOpacity>
+							)}
+						/>
                     )}
 
                     {/* Routines Section */}
@@ -398,10 +396,10 @@ const makeStyles = (theme: any) =>
         workoutCard: {
             backgroundColor: theme.surface,
             borderRadius: 12,
-            padding: 12,
-            width: 140,
-            marginRight: 12,
-            height: 100,
+            padding: 16,
+            marginBottom: 12,
+            flexDirection: 'row',
+            alignItems: 'center',
             justifyContent: 'space-between',
         },
         workoutCardTitle: {
