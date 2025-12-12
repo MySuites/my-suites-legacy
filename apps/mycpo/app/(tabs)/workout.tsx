@@ -37,7 +37,6 @@ export default function Workout() {
     
 	// consume shared state
     const {
-        exercises,
         setExercises,
         isRunning,
         startWorkout,
@@ -156,9 +155,14 @@ export default function Workout() {
 
 
 					{!isRunning ? (
-						<TouchableOpacity style={styles.controlButtonPrimary} onPress={handleStartWorkout} accessibilityLabel="Start workout">
-							<Text style={styles.controlTextPrimary}>Start</Text>
-						</TouchableOpacity>
+						<>
+							<TouchableOpacity style={styles.controlButtonPrimary} onPress={handleStartWorkout} accessibilityLabel="Start workout">
+								<Text style={styles.controlTextPrimary}>Start</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.controlButton} onPress={() => startWorkout([])} accessibilityLabel="Start empty workout">
+								<Text style={styles.controlText}>Start Empty</Text>
+							</TouchableOpacity>
+						</>
 					) : (
 						<TouchableOpacity style={styles.controlButton} onPress={pauseWorkout} accessibilityLabel="Pause workout">
 							<Text style={styles.controlText}>Pause</Text>

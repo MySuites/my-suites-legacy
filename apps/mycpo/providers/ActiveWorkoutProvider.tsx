@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { Alert } from 'react-native';
 import { Exercise, useWorkoutManager } from '../hooks/useWorkoutManager'; 
 import { createExercise } from '../utils/workout-logic';
 
@@ -125,18 +124,15 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 
     // Actions
     const startWorkout = useCallback((exercisesToStart?: Exercise[]) => {
-        const targetExercises = exercisesToStart || exercises;
-		if (targetExercises.length === 0) {
-			Alert.alert("No exercises", "Please add at least one exercise.");
-			return;
-		}
+		// Allow empty workouts
+		// if (targetExercises.length === 0) { ... }
         if (exercisesToStart) {
             setExercises(exercisesToStart);
         }
 		setRunning(true);
         setHasActiveSession(true);
         setIsExpanded(true);
-	}, [exercises]);
+	}, []);
 
     const pauseWorkout = useCallback(() => {
 		setRunning(false);
