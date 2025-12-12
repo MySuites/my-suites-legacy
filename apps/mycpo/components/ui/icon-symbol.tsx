@@ -32,6 +32,8 @@ const MAPPING = {
   'scale.3d': 'scale',
   'play.fill': 'play-arrow',
   'ellipsis': 'menu',
+  'magnifyingglass': 'search',
+  'xmark.circle.fill': 'cancel',
 } as IconMapping;
 
 /**
