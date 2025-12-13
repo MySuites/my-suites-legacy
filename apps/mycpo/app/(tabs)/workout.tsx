@@ -85,6 +85,7 @@ export default function Workout() {
 	const [routineDraftName, setRoutineDraftName] = useState("");
 	const [routineSequence, setRoutineSequence] = useState<any[]>([]);
 	const [isWorkoutsListOpen, setWorkoutsListOpen] = useState(false);
+	const [isRoutinesListOpen, setRoutinesListOpen] = useState(false);
     
     // Edit Workout State
     const [editingWorkoutId, setEditingWorkoutId] = useState<string | null>(null);
@@ -120,8 +121,8 @@ export default function Workout() {
 
     // Toggle floating buttons visibility when modals are open
     React.useEffect(() => {
-        setIsHidden(isWorkoutsListOpen || isCreateRoutineOpen || isEditWorkoutModalOpen);
-    }, [isWorkoutsListOpen, isCreateRoutineOpen, isEditWorkoutModalOpen, setIsHidden]);
+        setIsHidden(isWorkoutsListOpen || isCreateRoutineOpen || isEditWorkoutModalOpen || isRoutinesListOpen);
+    }, [isWorkoutsListOpen, isCreateRoutineOpen, isEditWorkoutModalOpen, isRoutinesListOpen, setIsHidden]);
 
 
 	function loadWorkout(id: string) {
@@ -492,9 +493,14 @@ export default function Workout() {
                     {/* Routines Section */}
                     <View className="flex-row justify-between items-center mb-3 mt-6">
                         <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">My Routines</Text>
-                        <TouchableOpacity onPress={() => setCreateRoutineOpen(true)}>
-                            <Text className="text-primary dark:text-primary_dark">+ New</Text>
-                        </TouchableOpacity>
+                         <View className="flex-row items-center gap-4">
+                            <TouchableOpacity onPress={() => setCreateRoutineOpen(true)}>
+                                <Text className="text-primary dark:text-primary_dark">+ New</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setRoutinesListOpen(true)}>
+                                <Text className="text-primary dark:text-primary_dark">See All</Text>
+                            </TouchableOpacity>
+                         </View>
                     </View>
                     
                     {routines.length === 0 ? (
@@ -506,7 +512,7 @@ export default function Workout() {
                         </View>
                     ) : (
                         <FlatList
-                            data={routines}
+                            data={routines.slice(0, 5)}
                             scrollEnabled={false}
                             keyExtractor={(i) => i.id}
                             renderItem={({item}) => (
@@ -642,6 +648,53 @@ export default function Workout() {
 					</View>
 				</View>
 			</Modal>
+
+            {/* Routines List Modal */}
+            <Modal visible={isRoutinesListOpen} animationType="slide" transparent={true}>
+                <View className="flex-1 justify-center items-center bg-black/40">
+                    <View className="w-[90%] p-4 rounded-xl bg-background dark:bg-background_dark max-h-[80%]">
+                        <Text className="text-lg font-bold mb-2 text-apptext dark:text-apptext_dark">My Routines</Text>
+                        {routines.length === 0 ? (
+                            <Text className="text-gray-500 dark:text-gray-400">No routines found.</Text>
+                        ) : (
+                            <FlatList
+                                data={routines}
+                                keyExtractor={(i) => i.id}
+                                renderItem={({item}) => (
+                                    <View className="flex-row items-center justify-between py-2 border-b border-surface dark:border-surface_dark">
+                                        <View className="flex-1 mr-2">
+                                            <Text className="text-apptext dark:text-apptext_dark font-semibold text-base" numberOfLines={1}>{item.name}</Text>
+                                            <Text className="text-gray-500 dark:text-gray-400 text-xs">{item.sequence?.length || 0} Days</Text>
+                                        </View>
+                                        <View className="flex-row gap-2">
+                                            <TouchableOpacity 
+                                                onPress={() => {
+                                                    startActiveRoutine(item.id);
+                                                    setRoutinesListOpen(false);
+                                                }}
+                                                className="bg-primary dark:bg-primary_dark px-3 py-1.5 rounded-lg"
+                                            > 
+                                                <Text className="text-white text-xs font-semibold">Active</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity 
+                                                onPress={() => deleteRoutine(item.id)}
+                                                className="p-1.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark justify-center"
+                                            >
+                                                <Text className="text-red-500 font-bold text-xs">Del</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                )}
+                            />
+                        )}
+                        <View className="flex-row justify-end mt-3">
+                            <TouchableOpacity onPress={() => setRoutinesListOpen(false)} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
+                                <Text className="text-apptext dark:text-apptext_dark">Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
 
 
 
