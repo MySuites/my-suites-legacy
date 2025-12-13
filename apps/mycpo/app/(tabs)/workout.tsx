@@ -422,7 +422,7 @@ export default function Workout() {
 								<View 
 									className="bg-surface dark:bg-surface_dark rounded-xl p-4 mb-3 border border-black/5 dark:border-white/10 shadow-sm"
 								>
-                                    <View className="flex-row justify-between items-start mb-4">
+                                    <View className="flex-row justify-between items-center mb-0">
                                         <TouchableOpacity 
                                             className="flex-1 mr-2"
                                             onPress={() => loadWorkout(item.id)}
@@ -430,24 +430,25 @@ export default function Workout() {
                                             <Text className="font-semibold text-apptext dark:text-apptext_dark text-lg mb-1" numberOfLines={1}>{item.name}</Text>
                                             <Text className="text-gray-500 dark:text-gray-400 text-sm">{item.exercises?.length || 0} Exercises</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity 
-                                            onPress={() => {
-                                                console.log("Edit button pressed for:", item.name);
-                                                handleEditSavedWorkout(item);
-                                            }}
-                                            className="p-3 bg-gray-100 dark:bg-white/5 rounded-lg"
-                                        >
-                                            <Text className="text-primary dark:text-primary_dark font-medium text-sm">Edit</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    
-                                    <View className="flex-row justify-end">
-                                        <TouchableOpacity 
-                                            onPress={() => handleStartSavedWorkout(item)}
-                                            className="bg-primary dark:bg-primary_dark px-6 py-2 rounded-full"
-                                        >
-                                            <Text className="text-white font-semibold">Start</Text>
-                                        </TouchableOpacity>
+                                        
+                                        <View className="flex-row items-center gap-2">
+                                            <TouchableOpacity 
+                                                onPress={() => {
+                                                    console.log("Edit button pressed for:", item.name);
+                                                    handleEditSavedWorkout(item);
+                                                }}
+                                                className="p-3 bg-gray-100 dark:bg-white/5 rounded-lg"
+                                            >
+                                                <Text className="text-primary dark:text-primary_dark font-medium text-sm">Edit</Text>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity 
+                                                onPress={() => handleStartSavedWorkout(item)}
+                                                className="bg-primary dark:bg-primary_dark px-4 py-2 rounded-lg"
+                                            >
+                                                <Text className="text-white font-semibold">Start</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
 								</View>
 							)}
