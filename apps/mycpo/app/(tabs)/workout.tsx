@@ -298,12 +298,74 @@ export default function Workout() {
             name: exercise.name,
             sets: 3,
             reps: 10,
-            category: exercise.category
+            category: exercise.category,
+            setTargets: Array.from({ length: 3 }, () => ({ reps: 10, weight: 0 }))
         };
         setWorkoutDraftExercises(prev => [...prev, newExercise]);
         setIsAddingExercise(false);
         setExerciseSearchQuery("");
     }
+
+    // Helper to update specific set in draft
+    function updateSetTarget(exerciseIndex: number, setIndex: number, field: 'reps' | 'weight', value: string) {
+        setWorkoutDraftExercises(prev => {
+            const newArr = [...prev];
+            const ex = { ...newArr[exerciseIndex] };
+            // Ensure setTargets exists
+            if (!ex.setTargets) {
+                 ex.setTargets = Array.from({ length: ex.sets || 1 }, () => ({ reps: ex.reps || 0, weight: 0 }));
+            }
+            const newTargets = [...ex.setTargets];
+            newTargets[setIndex] = { ...newTargets[setIndex], [field]: Number(value) || 0 };
+            ex.setTargets = newTargets;
+            
+            if (field === 'reps' && setIndex === 0) {
+                ex.reps = Number(value) || 0;
+            }
+            newArr[exerciseIndex] = ex;
+            return newArr;
+        });
+    }
+
+    function addSetToDraft(exerciseIndex: number) {
+        setWorkoutDraftExercises(prev => {
+            const newArr = [...prev];
+            const ex = { ...newArr[exerciseIndex] };
+             if (!ex.setTargets) {
+                 ex.setTargets = Array.from({ length: ex.sets || 1 }, () => ({ reps: ex.reps || 0, weight: 0 }));
+            }
+            // Add new set copying previous one or default
+            const lastSet = ex.setTargets[ex.setTargets.length - 1] || { reps: 10, weight: 0 };
+            ex.setTargets = [...ex.setTargets, { ...lastSet }];
+            ex.sets = ex.setTargets.length;
+            newArr[exerciseIndex] = ex;
+            return newArr;
+        });
+    }
+
+    function removeSetFromDraft(exerciseIndex: number, setIndex: number) {
+        setWorkoutDraftExercises(prev => {
+            const newArr = [...prev];
+            const ex = { ...newArr[exerciseIndex] };
+             if (!ex.setTargets) {
+                 ex.setTargets = Array.from({ length: ex.sets || 1 }, () => ({ reps: ex.reps || 0, weight: 0 }));
+            }
+            if (ex.setTargets.length <= 1) {
+                return newArr;
+            }
+            ex.setTargets = ex.setTargets.filter((_: any, i: number) => i !== setIndex);
+            ex.sets = ex.setTargets.length;
+            
+            if (setIndex === 0 && ex.setTargets.length > 0) {
+                 ex.reps = ex.setTargets[0].reps;
+            }
+            newArr[exerciseIndex] = ex;
+            return newArr;
+        });
+    }
+
+    // New State for expanded exercise in draft
+    const [expandedDraftExerciseIndex, setExpandedDraftExerciseIndex] = useState<number | null>(null);
 
 	return (
 		<SafeAreaView className="flex-1 p-4 bg-background dark:bg-background_dark">
@@ -643,6 +705,7 @@ export default function Workout() {
                                     </TouchableOpacity>
                                 </View>
         
+
                                 {workoutDraftExercises.length === 0 ? (
                                     <View className="flex-1 justify-center items-center py-8 border border-dashed border-surface dark:border-surface_dark rounded-lg mb-4">
                                         <Text className="text-gray-500 dark:text-gray-400 mb-2">No exercises</Text>
@@ -655,25 +718,85 @@ export default function Workout() {
                                         data={workoutDraftExercises}
                                         keyExtractor={(item, index) => `${index}-${item.name}`} 
                                         className="flex-1 mb-4"
-                                        renderItem={({item, index}) => (
-                                            <View className="flex-row items-center justify-between py-2 border-b border-surface dark:border-surface_dark">
-                                                <View className="flex-1 mr-2">
-                                                    <Text className="text-apptext dark:text-apptext_dark font-medium">{item.name}</Text>
-                                                    <Text className="text-gray-500 dark:text-gray-400 text-xs">{item.sets} Sets {'•'} {item.reps} Reps</Text>
-                                                </View>
-                                                <View className="flex-row items-center">
-                                                    <TouchableOpacity onPress={() => moveWorkoutDraftExercise(index, -1)} className="p-2"> 
-                                                        <Text className="text-apptext dark:text-apptext_dark">↑</Text>
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity onPress={() => moveWorkoutDraftExercise(index, 1)} className="p-2"> 
-                                                        <Text className="text-apptext dark:text-apptext_dark">↓</Text>
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity onPress={() => removeWorkoutDraftExercise(index)} className="p-2 ml-1"> 
-                                                        <Text className="text-red-500 font-bold">×</Text>
-                                                    </TouchableOpacity>
-                                                </View>
+                                        renderItem={({item, index}) => {
+                                            const isExpanded = expandedDraftExerciseIndex === index;
+                                            // Initialize targets for display if missing
+                                            const currentTargets = item.setTargets || Array.from({ length: item.sets || 1 }, () => ({ reps: item.reps || 0, weight: 0 }));
+
+                                            return (
+                                            <View className="border-b border-surface dark:border-surface_dark">
+                                                <TouchableOpacity 
+                                                    onPress={() => setExpandedDraftExerciseIndex(isExpanded ? null : index)}
+                                                    className="flex-row items-center justify-between py-3"
+                                                >
+                                                    <View className="flex-1 mr-2">
+                                                        <Text className="text-apptext dark:text-apptext_dark font-medium text-base">{item.name}</Text>
+                                                        <Text className="text-gray-500 dark:text-gray-400 text-xs">
+                                                            {item.sets} Sets {'•'} {item.reps} Reps {isExpanded ? '(Tap to collapse)' : '(Tap to edit sets)'}
+                                                        </Text>
+                                                    </View>
+                                                    <View className="flex-row items-center">
+                                                        <TouchableOpacity onPress={(e) => { e.stopPropagation(); moveWorkoutDraftExercise(index, -1); }} className="p-2"> 
+                                                            <Text className="text-apptext dark:text-apptext_dark">↑</Text>
+                                                        </TouchableOpacity>
+                                                        <TouchableOpacity onPress={(e) => { e.stopPropagation(); moveWorkoutDraftExercise(index, 1); }} className="p-2"> 
+                                                            <Text className="text-apptext dark:text-apptext_dark">↓</Text>
+                                                        </TouchableOpacity>
+                                                        <TouchableOpacity onPress={(e) => { e.stopPropagation(); removeWorkoutDraftExercise(index); }} className="p-2 ml-1"> 
+                                                            <Text className="text-red-500 font-bold">×</Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                </TouchableOpacity>
+                                                
+                                                {/* Expanded Set Editor */}
+                                                {isExpanded && (
+                                                    <View className="pl-4 pr-2 pb-3">
+                                                        <View className="flex-row mb-2">
+                                                            <Text className="w-10 text-xs text-gray-500 font-semibold text-center">Set</Text>
+                                                            <Text className="flex-1 text-xs text-gray-500 font-semibold text-center">Reps</Text>
+                                                            <Text className="flex-1 text-xs text-gray-500 font-semibold text-center">Weight</Text>
+                                                            <View className="w-8" />
+                                                        </View>
+                                                        {currentTargets.map((set: any, setIdx: number) => (
+                                                            <View key={setIdx} className="flex-row items-center mb-2">
+                                                                <Text className="w-10 text-apptext dark:text-apptext_dark text-center font-medium">{setIdx + 1}</Text>
+                                                                <View className="flex-1 flex-row justify-center">
+                                                                     <TextInput 
+                                                                        value={String(set.reps || 0)} 
+                                                                        keyboardType="numeric"
+                                                                        onChangeText={(v) => updateSetTarget(index, setIdx, 'reps', v)}
+                                                                        className="bg-surface dark:bg-surfacemodal_dark border border-black/10 dark:border-white/10 rounded px-2 py-1 w-16 text-center text-apptext dark:text-apptext_dark"
+                                                                        selectTextOnFocus
+                                                                    />
+                                                                </View>
+                                                                <View className="flex-1 flex-row justify-center">
+                                                                     <TextInput 
+                                                                        value={String(set.weight || 0)} 
+                                                                        keyboardType="numeric"
+                                                                        onChangeText={(v) => updateSetTarget(index, setIdx, 'weight', v)}
+                                                                        className="bg-surface dark:bg-surfacemodal_dark border border-black/10 dark:border-white/10 rounded px-2 py-1 w-16 text-center text-apptext dark:text-apptext_dark"
+                                                                        selectTextOnFocus
+                                                                    />
+                                                                </View>
+                                                                <TouchableOpacity 
+                                                                    onPress={() => removeSetFromDraft(index, setIdx)}
+                                                                    className="w-8 items-center justify-center bg-gray-100 dark:bg-white/5 rounded h-8 ml-2"
+                                                                >
+                                                                    <IconSymbol name="minus" size={12} color="#ff4444" />
+                                                                </TouchableOpacity>
+                                                            </View>
+                                                        ))}
+                                                        <TouchableOpacity 
+                                                            onPress={() => addSetToDraft(index)}
+                                                            className="flex-row items-center justify-center p-2 mt-1 bg-surface dark:bg-white/5 rounded-lg border border-dashed border-black/10 dark:border-white/10"
+                                                        >
+                                                            <IconSymbol name="plus" size={14} color={theme.primary} />
+                                                            <Text className="ml-2 text-sm text-primary dark:text-primary_dark font-medium">Add Set</Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                )}
                                             </View>
-                                        )}
+                                        )}}
                                     />
                                 )}
         
