@@ -17,6 +17,10 @@ export type Exercise = {
     completedSets: number;
     logs?: SetLog[];
     type?: "reps" | "duration" | "bodyweight";
+    setTargets?: {
+        reps: number;
+        weight: number;
+    }[];
 };
 
 export type WorkoutLog = {

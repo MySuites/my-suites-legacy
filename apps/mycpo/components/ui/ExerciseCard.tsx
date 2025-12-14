@@ -49,8 +49,8 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onAddSet, onD
                 <View className="flex-row mb-2 px-1">
                     <Text className="text-[10px] items-center justify-center font-bold uppercase text-center w-[30px] text-gray-500">SET</Text>
                     <Text className="text-[10px] font-bold uppercase text-center text-gray-500 flex-1">PREVIOUS</Text>
-                    <Text className="text-[10px] font-bold uppercase text-center text-gray-500 w-[60px]">LBS</Text>
-                    <Text className="text-[10px] font-bold uppercase text-center text-gray-500 w-[60px]">REPS</Text>
+                    <Text className="text-[10px] font-bold uppercase text-center text-gray-500 w-[60px] mx-1">LBS</Text>
+                    <Text className="text-[10px] font-bold uppercase text-center text-gray-500 w-[60px] mx-1">REPS</Text>
                     <View className="w-[40px] items-center" />
                     <View className="w-[30px] items-center justify-center" />
                 </View>
@@ -62,9 +62,9 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onAddSet, onD
                     const isCurrentSet = !isCompleted && i === (exercise.logs?.length || 0);
                     
                     return (
-                        <View key={i} className={`flex-row items-center mb-2 h-11 bg-surface dark:bg-surface_dark rounded-lg ${isCurrentSet ? 'bg-black/5 dark:bg-white/5' : ''}`}>
+                        <View key={i} className={`flex-row items-center mb-2 h-11 bg-surface dark:bg-surface_dark rounded-lg px-1 ${isCurrentSet ? 'bg-black/5 dark:bg-white/5' : ''}`}>
                             {/* Set Number */}
-                            <View className="w-[30px]">
+                            <View className="w-[30px] items-center justify-center">
                                 <View className={`w-6 h-6 rounded-full items-center justify-center ${isCompleted ? 'bg-primary dark:bg-primary_dark' : 'bg-transparent'} ${isCurrentSet ? 'border border-primary dark:border-primary_dark' : ''}`}>
                                     <Text className={`text-xs font-bold ${isCompleted ? 'text-white' : 'text-gray-500'}`}>{i + 1}</Text>
                                 </View>
@@ -76,8 +76,8 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onAddSet, onD
                             {/* Inputs / Values */}
                             {isCompleted ? (
                                 <>
-                                    <Text className="w-[60px] text-center text-sm font-bold text-apptext dark:text-apptext_dark">{log.weight}</Text>
-                                    <Text className="w-[60px] text-center text-sm font-bold text-apptext dark:text-apptext_dark">{log.reps}</Text>
+                                    <Text className="w-[60px] text-center text-sm font-bold text-apptext dark:text-apptext_dark mx-1">{log.weight}</Text>
+                                    <Text className="w-[60px] text-center text-sm font-bold text-apptext dark:text-apptext_dark mx-1">{log.reps}</Text>
                                     <View className="w-[40px] items-center">
                                          <IconSymbol name="checkmark" size={16} color={theme.primary} />
                                     </View>
@@ -88,7 +88,7 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onAddSet, onD
                                         className="w-[60px] h-9 bg-background dark:bg-background_dark rounded-lg text-center text-base font-bold text-apptext dark:text-apptext_dark mx-1"
                                         value={weight} 
                                         onChangeText={setWeight} 
-                                        placeholder="-" 
+                                        placeholder={exercise.setTargets?.[i]?.weight?.toString() || "-"} 
                                         keyboardType="numeric" 
                                         placeholderTextColor={theme.icon || '#9ca3af'}
                                     />
@@ -96,7 +96,7 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onAddSet, onD
                                         className="w-[60px] h-9 bg-background dark:bg-background_dark rounded-lg text-center text-base font-bold text-apptext dark:text-apptext_dark mx-1"
                                         value={reps} 
                                         onChangeText={setReps} 
-                                        placeholder={exercise.reps.toString()}
+                                        placeholder={exercise.setTargets?.[i]?.reps?.toString() || exercise.reps.toString()}
                                         keyboardType="numeric" 
                                         placeholderTextColor={theme.icon || '#9ca3af'}
                                     />
@@ -109,8 +109,8 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onAddSet, onD
                                 </>
                             ) : (
                                 <>
-                                    <Text className="w-[60px] text-center text-sm text-gray-300">-</Text>
-                                    <Text className="w-[60px] text-center text-sm text-gray-300">-</Text>
+                                    <Text className="w-[60px] text-center text-sm text-gray-300 mx-1">-</Text>
+                                    <Text className="w-[60px] text-center text-sm text-gray-300 mx-1">-</Text>
                                     <View className="w-[40px] items-center" />
                                 </>
                             )}
