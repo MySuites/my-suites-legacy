@@ -98,20 +98,49 @@ async function fetchWorkoutHistory(user: any) {
 export async function fetchExercises(user: any) {
     if (!user) return { data: [], error: null };
 
-    // Fetch user specific exercises
-    // Fetch user specific exercises
+    // Fetch user specific exercises with muscle groups
     const { data, error } = await supabase
         .from("exercises")
-        .select("exercise_id, exercise_name, exercise_type")
+        .select(`
+            exercise_id, 
+            exercise_name, 
+            exercise_type,
+            exercise_muscle_groups (
+                role,
+                muscle_groups ( name )
+            )
+        `)
         .order("exercise_name", { ascending: true });
 
     if (error) return { data: [], error };
 
-    const mapped = data.map((e: any) => ({
-        id: e.exercise_id,
-        name: e.exercise_name,
-        category: e.exercise_type || "General", // map type to category
-    }));
+    const formatType = (t: string) => {
+        switch(t) {
+            case 'weight_reps': return 'Weight & Reps';
+            case 'bodyweight_reps': return 'Bodyweight Reps';
+            case 'weighted_bodyweight': return 'Weighted Bodyweight';
+            case 'duration': return 'Duration';
+            case 'distance_duration': return 'Distance & Duration';
+            case 'duration_weight': return 'Duration & Weight';
+            case 'distance_weight': return 'Distance & Weight';
+            default: return t;
+        }
+    };
+
+    const mapped = data.map((e: any) => {
+        // Get primary muscle group or first available
+        const muscles = e.exercise_muscle_groups || [];
+        const primary = muscles.find((m: any) => m.role === 'primary');
+        const firstMuscle = primary ? primary.muscle_groups?.name : (muscles[0]?.muscle_groups?.name);
+        
+        return {
+            id: e.exercise_id,
+            name: e.exercise_name,
+            category: firstMuscle || "General", 
+            type: formatType(e.exercise_type),
+            rawType: e.exercise_type
+        };
+    });
 
     return { data: mapped, error: null };
 }

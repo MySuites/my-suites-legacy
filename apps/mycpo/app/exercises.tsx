@@ -80,7 +80,9 @@ export default function ExercisesScreen() {
           >
             <View>
                 <ThemedText type="defaultSemiBold">{item.name}</ThemedText>
-                <ThemedText style={{color: theme.icon ?? '#888', fontSize: 12}}>{item.category}</ThemedText> 
+                <ThemedText style={{color: theme.icon ?? '#888', fontSize: 12}}>
+                    {item.category} • {item.type || item.rawType}
+                </ThemedText> 
             </View>
             <IconSymbol name="plus.circle" size={20} color={theme.primary} />
           </TouchableOpacity>

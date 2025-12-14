@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { IconSymbol } from '../components/ui/icon-symbol';
 import { useUITheme as useTheme } from '@mycsuite/ui';
@@ -39,6 +39,9 @@ export default function CreateWorkoutScreen() {
     const [availableExercises, setAvailableExercises] = useState<any[]>([]);
     const [isLoadingExercises, setIsLoadingExercises] = useState(false);
     const [exerciseSearchQuery, setExerciseSearchQuery] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("All");
+
+    const uniqueCategories = ["All", ...Array.from(new Set(availableExercises.map(e => e.category))).filter(Boolean).sort()];
 
     // Expanded exercise state
     const [expandedDraftExerciseIndex, setExpandedDraftExerciseIndex] = useState<number | null>(null);
@@ -201,6 +204,23 @@ export default function CreateWorkoutScreen() {
                         </TouchableOpacity>
                     </View>
                     
+                    {/* Filter Chips */}
+                    <View className="mb-4">
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+                            {uniqueCategories.map((category) => (
+                                <TouchableOpacity 
+                                    key={category} 
+                                    onPress={() => setSelectedCategory(category)}
+                                    className={`px-4 py-2 rounded-full mr-2 border ${selectedCategory === category ? 'bg-primary dark:bg-primary_dark border-transparent' : 'bg-transparent border-surface dark:border-white/10'}`}
+                                >
+                                    <Text className={`font-semibold ${selectedCategory === category ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                                        {category}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                    
                     <View className="flex-row items-center bg-surface dark:bg-surface_dark rounded-lg px-2.5 h-12 mb-4 border border-black/5 dark:border-white/10">
                         <IconSymbol name="magnifyingglass" size={20} color={theme.icon || '#888'} />
                         <TextInput
@@ -222,7 +242,11 @@ export default function CreateWorkoutScreen() {
                         <ActivityIndicator size="large" color={theme.primary} className="mt-4" />
                     ) : (
                         <FlatList
-                            data={availableExercises.filter(ex => ex.name.toLowerCase().includes(exerciseSearchQuery.toLowerCase()))}
+                            data={availableExercises.filter(ex => {
+                                const matchesSearch = ex.name.toLowerCase().includes(exerciseSearchQuery.toLowerCase());
+                                const matchesCategory = selectedCategory === "All" || ex.category === selectedCategory;
+                                return matchesSearch && matchesCategory;
+                            })}
                             keyExtractor={(item) => item.id}
                             className="flex-1"
                             renderItem={({ item }) => (
@@ -232,7 +256,9 @@ export default function CreateWorkoutScreen() {
                                 >
                                     <View>
                                         <Text className="text-apptext dark:text-apptext_dark font-medium text-lg">{item.name}</Text>
-                                        <Text className="text-gray-500 dark:text-gray-400 text-sm">{item.category}</Text> 
+                                        <Text className="text-gray-500 dark:text-gray-400 text-sm">
+                                            {item.category} • {item.type || item.rawType}
+                                        </Text> 
                                     </View>
                                     <IconSymbol name="plus.circle" size={28} color={theme.primary} />
                                 </TouchableOpacity>
