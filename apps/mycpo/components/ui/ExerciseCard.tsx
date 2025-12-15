@@ -125,7 +125,15 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                                     <Text className="w-[60px] text-center text-sm text-gray-500 mx-1">
                                         {exercise.setTargets?.[i]?.reps ?? exercise.reps}
                                     </Text>
-                                    <View className="w-[40px] items-center" />
+                                    <TouchableOpacity 
+                                        className="w-9 h-9 rounded-lg border-2 border-primary dark:border-primary_dark items-center justify-center ml-1" 
+                                        onPress={() => onCompleteSet({ 
+                                            weight: exercise.setTargets?.[i]?.weight?.toString(), 
+                                            reps: exercise.setTargets?.[i]?.reps?.toString() || exercise.reps.toString() 
+                                        })}
+                                    >
+                                        <IconSymbol name="checkmark" size={20} color={theme.primary} />
+                                    </TouchableOpacity>
                                 </>
                             )}
                             
