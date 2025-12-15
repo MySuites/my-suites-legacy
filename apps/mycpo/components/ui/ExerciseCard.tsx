@@ -124,8 +124,12 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                                 </>
                             ) : (
                                 <>
-                                    <Text className="w-[60px] text-center text-sm text-gray-300 mx-1">-</Text>
-                                    <Text className="w-[60px] text-center text-sm text-gray-300 mx-1">-</Text>
+                                    <Text className="w-[60px] text-center text-sm text-gray-500 mx-1">
+                                        {exercise.setTargets?.[i]?.weight ?? "-"}
+                                    </Text>
+                                    <Text className="w-[60px] text-center text-sm text-gray-500 mx-1">
+                                        {exercise.setTargets?.[i]?.reps ?? exercise.reps}
+                                    </Text>
                                     <View className="w-[40px] items-center" />
                                 </>
                             )}
