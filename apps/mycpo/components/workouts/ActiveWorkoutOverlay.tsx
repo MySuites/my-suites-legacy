@@ -120,21 +120,56 @@ export function ActiveWorkoutOverlay() {
                                     updateExercise(index, { logs: newLogs });
                                 }
                             }}
-                            onAddSet={() => updateExercise(index, { sets: exercise.sets + 1 })}
+                            onAddSet={() => {
+                                        const nextSetIndex = exercise.sets;
+                                        const previousTarget = exercise.setTargets?.[nextSetIndex - 1];
+                                        
+                                        // Default fallback or use previous values
+                                        const newTarget = previousTarget 
+                                            ? { ...previousTarget }
+                                            : { weight: 0, reps: exercise.reps };
+                                            
+                                        const currentTargets = exercise.setTargets ? [...exercise.setTargets] : [];
+                                        
+                                        // Ensure array continuity
+                                        while (currentTargets.length < nextSetIndex) {
+                                            currentTargets.push({ weight: 0, reps: exercise.reps });
+                                        }
+                                        
+                                        currentTargets[nextSetIndex] = newTarget;
+
+                                        updateExercise(index, { 
+                                            sets: exercise.sets + 1,
+                                            setTargets: currentTargets
+                                        });
+                                    }}
                                     onDeleteSet={(setIndex) => {
                                         const currentLogs = exercise.logs || [];
                                         const currentTarget = exercise.sets;
+                                        const currentSetTargets = exercise.setTargets ? [...exercise.setTargets] : [];
+
+                                        // Remove the target definition for this index if it exists
+                                        // This ensures that if we delete set 1, set 2's target becomes the new set 1 target
+                                        if (setIndex < currentSetTargets.length) {
+                                            currentSetTargets.splice(setIndex, 1);
+                                        }
                                         
                                         if (setIndex < currentLogs.length) {
+                                            // Deleting a completed set (log)
                                             const newLogs = [...currentLogs];
                                             newLogs.splice(setIndex, 1);
                                             updateExercise(index, { 
                                                 logs: newLogs, 
-                                                completedSets: (exercise.completedSets || 1) - 1,
-                                                sets: currentTarget > 0 ? currentTarget - 1 : 0
+                                                setTargets: currentSetTargets,
+                                                completedSets: Math.max(0, (exercise.completedSets || 1) - 1),
+                                                sets: Math.max(0, currentTarget - 1)
                                             });
                                         } else {
-                                            updateExercise(index, { sets: Math.max(0, currentTarget - 1) });
+                                            // Deleting a future/planned set
+                                            updateExercise(index, { 
+                                                sets: Math.max(0, currentTarget - 1),
+                                                setTargets: currentSetTargets
+                                            });
                                         }
                                     }}
                                 />

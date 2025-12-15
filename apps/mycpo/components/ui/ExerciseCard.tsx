@@ -1,5 +1,16 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, TouchableOpacity, TextInput, useWindowDimensions } from 'react-native';
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Animated, { 
+    useAnimatedStyle, 
+    useAnimatedReaction, 
+    runOnJS, 
+    interpolate, 
+    Extrapolation, 
+    SharedValue,
+    useSharedValue
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { IconSymbol } from './icon-symbol';
 import { formatSeconds } from '../../utils/formatting';
 import { Exercise } from '../../hooks/useWorkoutManager';
@@ -17,17 +28,186 @@ interface ExerciseCardProps {
     theme: any;
 }
 
+// Actions component that monitors drag distance (Adapted for Set Rows)
+const SetSwipeAction = ({ 
+    dragX, 
+    onDelete,
+    onSetReadyToDelete
+}: { 
+    dragX: SharedValue<number>; 
+    onDelete: () => void;
+    onSetReadyToDelete: (ready: boolean) => void;
+}) => {
+    const { width } = useWindowDimensions();
+    const hasTriggered = useSharedValue(false);
+    const TRIGGER_THRESHOLD = -width * 0.3; // 30% swipe to delete
+    
+    // Monitor drag value to trigger haptic feedback
+    useAnimatedReaction(
+        () => dragX.value,
+        (currentDrag) => {
+            if (currentDrag < TRIGGER_THRESHOLD && !hasTriggered.value) {
+                hasTriggered.value = true;
+                runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
+                runOnJS(onSetReadyToDelete)(true);
+            } else if (currentDrag > TRIGGER_THRESHOLD + 20 && hasTriggered.value) {
+                hasTriggered.value = false;
+                runOnJS(onSetReadyToDelete)(false);
+            }
+        }
+    );
+
+    const iconStyle = useAnimatedStyle(() => {
+        const scale = interpolate(dragX.value, [-60, -20], [1, 0.5], Extrapolation.CLAMP);
+        return {
+            transform: [{ scale }]
+        };
+    });
+
+    return (
+        <View className="justify-center items-end mb-2 h-11" style={{ width: 80 }}>
+             <Animated.View 
+                style={[
+                    { 
+                        backgroundColor: '#ef4444', 
+                        position: 'absolute', 
+                        right: 0, 
+                        height: '100%', 
+                        borderRadius: 8,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }, 
+                    useAnimatedStyle(() => ({
+                         width: -dragX.value,
+                         opacity: interpolate(dragX.value, [-20, 0], [1, 0])
+                    }))
+                ]} 
+            >
+                <TouchableOpacity onPress={onDelete} className="flex-1 justify-center items-center w-full">
+                     <Animated.View style={iconStyle}>
+                          <IconSymbol name="trash.fill" size={20} color="white" />
+                     </Animated.View>
+                </TouchableOpacity>
+            </Animated.View>
+        </View>
+    );
+};
+
+const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onUpdateLog, onDeleteSet, theme }: any) => {
+    const shouldDelete = useRef(false);
+    const swipeableRef = useRef<any>(null);
+    const log = exercise.logs?.[index];
+    const isCompleted = !!log;
+    const isCurrentSet = !isCompleted && index === (exercise.logs?.length || 0);
+
+    const getValue = (field: 'weight' | 'reps') => {
+        const target = exercise.setTargets?.[index]?.[field];
+        if (target === undefined || target === null) return '';
+        return target.toString();
+    };
+
+    return (
+        <Swipeable
+            ref={swipeableRef}
+            renderRightActions={(_, dragX) => (
+                <SetSwipeAction 
+                    dragX={dragX} 
+                    onDelete={() => {
+                        swipeableRef.current?.close();
+                        onDeleteSet(index);
+                    }}
+                    onSetReadyToDelete={(ready) => shouldDelete.current = ready}
+                />
+            )}
+            onSwipeableWillOpen={() => {
+                if (shouldDelete.current) {
+                    swipeableRef.current?.close();
+                    onDeleteSet(index); 
+                }
+            }}
+            rightThreshold={40}
+            overshootRight={true}
+            friction={2}
+            containerStyle={{ overflow: 'visible' }}
+        >
+             <View className={`flex-row items-center mb-2 h-11 bg-surface dark:bg-surface_dark rounded-lg px-1 ${isCurrentSet ? 'bg-black/5 dark:bg-white/5' : ''}`}>
+                 {/* Set Number */}
+                 <View className="w-[30px] items-center justify-center">
+                     <Text className="text-xs font-bold text-black dark:text-white">{index + 1}</Text>
+                 </View>
+
+                 <Text className="flex-1 text-center text-xs text-black dark:text-white">-</Text>
+
+                 {isCompleted ? (
+                      <>
+                        <TextInput 
+                            className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
+                            value={log.weight?.toString()}
+                            onChangeText={(t) => onUpdateLog?.(index, 'weight', t)}
+                            keyboardType="numeric" 
+                            placeholderTextColor={theme.text || '#000000'}
+                            textAlignVertical="center"
+                        />
+                        <TextInput 
+                            className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
+                            value={log.reps?.toString()}
+                            onChangeText={(t) => onUpdateLog?.(index, 'reps', t)}
+                            keyboardType="numeric" 
+                            placeholderTextColor={theme.text || '#000000'}
+                            textAlignVertical="center"
+                        />
+                        <TouchableOpacity 
+                            className="w-9 h-9 rounded-lg bg-primary dark:bg-primary_dark items-center justify-center ml-1"
+                            onPress={() => onUncompleteSet?.(index)}
+                        >
+                             <IconSymbol name="checkmark" size={20} color="#fff" />
+                        </TouchableOpacity>
+                      </>
+                 ) : (
+                      <>
+                        <TextInput 
+                            className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
+                            value={getValue('weight')}
+                            onChangeText={(t) => onUpdateSetTarget?.(index, 'weight', t)}
+                            placeholder={getValue('weight') || "-"} 
+                            keyboardType="numeric" 
+                            placeholderTextColor={theme.text || '#000000'}
+                            textAlignVertical="center"
+                        />
+                        <TextInput 
+                            className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
+                            value={getValue('reps')} 
+                            onChangeText={(t) => onUpdateSetTarget?.(index, 'reps', t)}
+                            placeholder={getValue('reps') || exercise.reps.toString()}
+                            keyboardType="numeric" 
+                            placeholderTextColor={theme.text || '#000000'}
+                            textAlignVertical="center"
+                        />
+                        <TouchableOpacity 
+                            className={`w-9 h-9 rounded-lg items-center justify-center ml-1 border-2 border-primary dark:border-primary_dark`}
+                            onPress={() => onCompleteSet({ 
+                                weight: getValue('weight'), 
+                                reps: getValue('reps') || exercise.reps.toString() 
+                            })}
+                        >
+                            <IconSymbol name="checkmark" size={20} color={theme.primary} />
+                        </TouchableOpacity>
+                      </>
+                 )}
+                 
+                 {/* Padding to balance the right side since delete button is gone */}
+                 <View className="w-[30px]" /> 
+             </View>
+        </Swipeable>
+    );
+};
+
 export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onUpdateLog, onAddSet, onDeleteSet, restSeconds, theme }: ExerciseCardProps) {
     // Derived state
     const completedSets = exercise.completedSets || 0;
     const isFinished = completedSets >= exercise.sets;
 
-    // Helper to get value for inputs
-    const getValue = (i: number, field: 'weight' | 'reps') => {
-        const target = exercise.setTargets?.[i]?.[field];
-        if (target === undefined || target === null) return '';
-        return target.toString();
-    };
+
 
     return (
         <View className={`rounded-2xl p-2 mb-3 w-full`}>
@@ -51,86 +231,19 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                 </View>
 
                 {/* Render Rows */}
-                {Array.from({ length: Math.max(exercise.sets, exercise.logs?.length || 0) }).map((_, i) => {
-                    const log = exercise.logs?.[i];
-                    const isCompleted = !!log;
-                    const isCurrentSet = !isCompleted && i === (exercise.logs?.length || 0);
-                    
-                    return (
-                        <View key={i} className={`flex-row items-center mb-2 h-11 bg-surface dark:bg-surface_dark rounded-lg px-1 ${isCurrentSet ? 'bg-black/5 dark:bg-white/5' : ''}`}>
-                            {/* Set Number */}
-                            <View className="w-[30px] items-center justify-center">
-                                <Text className="text-xs font-bold text-black dark:text-white">{i + 1}</Text>
-                            </View>
-
-
-                            <Text className="flex-1 text-center text-xs text-black dark:text-white">-</Text>
-
-                            {/* Inputs / Values */}
-                            {isCompleted ? (
-                                <>
-                                    <TextInput 
-                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
-                                        value={log.weight?.toString()}
-                                        onChangeText={(t) => onUpdateLog?.(i, 'weight', t)}
-                                        keyboardType="numeric" 
-                                        placeholderTextColor={theme.text || '#000000'}
-                                        textAlignVertical="center"
-                                    />
-                                    <TextInput 
-                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
-                                        value={log.reps?.toString()}
-                                        onChangeText={(t) => onUpdateLog?.(i, 'reps', t)}
-                                        keyboardType="numeric" 
-                                        placeholderTextColor={theme.text || '#000000'}
-                                        textAlignVertical="center"
-                                    />
-                                    <TouchableOpacity 
-                                        className="w-9 h-9 rounded-lg bg-primary dark:bg-primary_dark items-center justify-center ml-1"
-                                        onPress={() => onUncompleteSet?.(i)}
-                                    >
-                                         <IconSymbol name="checkmark" size={20} color="#fff" />
-                                    </TouchableOpacity>
-                                </>
-                            ) : (
-                                <>
-                                    <TextInput 
-                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
-                                        value={getValue(i, 'weight')}
-                                        onChangeText={(t) => onUpdateSetTarget?.(i, 'weight', t)}
-                                        placeholder={getValue(i, 'weight') || "-"} 
-                                        keyboardType="numeric" 
-                                        placeholderTextColor={theme.text || '#000000'}
-                                        textAlignVertical="center"
-                                    />
-                                    <TextInput 
-                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
-                                        value={getValue(i, 'reps')} 
-                                        onChangeText={(t) => onUpdateSetTarget?.(i, 'reps', t)}
-                                        placeholder={getValue(i, 'reps') || exercise.reps.toString()}
-                                        keyboardType="numeric" 
-                                        placeholderTextColor={theme.text || '#000000'}
-                                        textAlignVertical="center"
-                                    />
-                                    <TouchableOpacity 
-                                        className={`w-9 h-9 rounded-lg items-center justify-center ml-1 border-2 border-primary dark:border-primary_dark`}
-                                        onPress={() => onCompleteSet({ 
-                                            weight: getValue(i, 'weight'), 
-                                            reps: getValue(i, 'reps') || exercise.reps.toString() 
-                                        })}
-                                    >
-                                        <IconSymbol name="checkmark" size={20} color={theme.primary} />
-                                    </TouchableOpacity>
-                                </>
-                            )}
-                            
-                            {/* Delete Action */}
-                            <TouchableOpacity className="w-[30px] items-center justify-center" onPress={() => onDeleteSet(i)}>
-                                <IconSymbol name="trash" size={16} color={theme.icon || '#9ca3af'} />
-                            </TouchableOpacity>
-                        </View>
-                    );
-                })}
+                {Array.from({ length: Math.max(exercise.sets, exercise.logs?.length || 0) }).map((_, i) => (
+                    <SetRow 
+                        key={i} 
+                        index={i}
+                        exercise={exercise}
+                        onCompleteSet={onCompleteSet}
+                        onUncompleteSet={onUncompleteSet}
+                        onUpdateSetTarget={onUpdateSetTarget}
+                        onUpdateLog={onUpdateLog}
+                        onDeleteSet={onDeleteSet}
+                        theme={theme}
+                    />
+                ))}
 
                 {/* Rest Timer (Compact) */}
                 {isCurrent && restSeconds > 0 && (
