@@ -108,7 +108,19 @@ export function ActiveWorkoutOverlay() {
 
                                         updateExercise(index, { setTargets: currentTargets });
                                     }}
-                                    onAddSet={() => updateExercise(index, { sets: exercise.sets + 1 })}
+                                    
+                            onUpdateLog={(setIndex, key, value) => {
+                                const newLogs = [...(exercise.logs || [])];
+                                if (newLogs[setIndex]) {
+                                    // Cast to any to allow string intermediate state for better input UX, 
+                                    // or assumes SetLog handles string/number.
+                                    // If strict typing requires number, we might need a local state approach.
+                                    // For now, mirroring flexible behavior.
+                                    (newLogs[setIndex] as any)[key] = value;
+                                    updateExercise(index, { logs: newLogs });
+                                }
+                            }}
+                            onAddSet={() => updateExercise(index, { sets: exercise.sets + 1 })}
                                     onDeleteSet={(setIndex) => {
                                         const currentLogs = exercise.logs || [];
                                         const currentTarget = exercise.sets;

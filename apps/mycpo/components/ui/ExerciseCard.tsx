@@ -10,13 +10,14 @@ interface ExerciseCardProps {
     onCompleteSet: (input: { weight?: string, reps?: string, duration?: string }) => void;
     onUncompleteSet?: (index: number) => void;
     onUpdateSetTarget?: (index: number, key: 'weight' | 'reps', value: string) => void;
+    onUpdateLog?: (index: number, key: 'weight' | 'reps', value: string) => void;
     onAddSet: () => void;
     onDeleteSet: (index: number) => void;
     restSeconds: number;
     theme: any;
 }
 
-export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onAddSet, onDeleteSet, restSeconds, theme }: ExerciseCardProps) {
+export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onUpdateLog, onAddSet, onDeleteSet, restSeconds, theme }: ExerciseCardProps) {
     // Derived state
     const completedSets = exercise.completedSets || 0;
     const isFinished = completedSets >= exercise.sets;
@@ -69,8 +70,22 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                             {/* Inputs / Values */}
                             {isCompleted ? (
                                 <>
-                                    <Text className="w-[60px] text-center text-sm font-bold text-black dark:text-white mx-1">{log.weight}</Text>
-                                    <Text className="w-[60px] text-center text-sm font-bold text-black dark:text-white mx-1">{log.reps}</Text>
+                                    <TextInput 
+                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
+                                        value={log.weight?.toString()}
+                                        onChangeText={(t) => onUpdateLog?.(i, 'weight', t)}
+                                        keyboardType="numeric" 
+                                        placeholderTextColor={theme.text || '#000000'}
+                                        textAlignVertical="center"
+                                    />
+                                    <TextInput 
+                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
+                                        value={log.reps?.toString()}
+                                        onChangeText={(t) => onUpdateLog?.(i, 'reps', t)}
+                                        keyboardType="numeric" 
+                                        placeholderTextColor={theme.text || '#000000'}
+                                        textAlignVertical="center"
+                                    />
                                     <TouchableOpacity 
                                         className="w-9 h-9 rounded-lg bg-primary dark:bg-primary_dark items-center justify-center ml-1"
                                         onPress={() => onUncompleteSet?.(i)}
