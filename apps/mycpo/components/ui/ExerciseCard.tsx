@@ -91,10 +91,10 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                                     <Text className="w-[60px] text-center text-sm font-bold text-apptext dark:text-apptext_dark mx-1">{log.weight}</Text>
                                     <Text className="w-[60px] text-center text-sm font-bold text-apptext dark:text-apptext_dark mx-1">{log.reps}</Text>
                                     <TouchableOpacity 
-                                        className="w-[40px] items-center justify-center"
+                                        className="w-9 h-9 rounded-lg bg-primary dark:bg-primary_dark items-center justify-center ml-1"
                                         onPress={() => onUncompleteSet?.(i)}
                                     >
-                                         <IconSymbol name="checkmark" size={16} color={theme.primary} />
+                                         <IconSymbol name="checkmark" size={20} color="#fff" />
                                     </TouchableOpacity>
                                 </>
                             ) : isCurrentSet ? (
@@ -116,10 +116,10 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                                         placeholderTextColor={theme.icon || '#9ca3af'}
                                     />
                                     <TouchableOpacity 
-                                        className="w-9 h-9 rounded-lg bg-primary dark:bg-primary_dark items-center justify-center ml-1" 
+                                        className="w-9 h-9 rounded-lg border-2 border-primary dark:border-primary_dark items-center justify-center ml-1" 
                                         onPress={handleComplete}
                                     >
-                                        <IconSymbol name="checkmark" size={20} color="#fff" />
+                                        <IconSymbol name="checkmark" size={20} color={theme.primary} />
                                     </TouchableOpacity>
                                 </>
                             ) : (
