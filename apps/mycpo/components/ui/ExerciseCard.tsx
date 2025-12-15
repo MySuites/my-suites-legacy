@@ -81,20 +81,22 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                             ) : (
                                 <>
                                     <TextInput 
-                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0"
+                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
                                         value={getValue(i, 'weight')}
                                         onChangeText={(t) => onUpdateSetTarget?.(i, 'weight', t)}
                                         placeholder={getValue(i, 'weight') || "-"} 
                                         keyboardType="numeric" 
                                         placeholderTextColor={theme.text || '#000000'}
+                                        textAlignVertical="center"
                                     />
                                     <TextInput 
-                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0"
+                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0 -mt-[6px]"
                                         value={getValue(i, 'reps')} 
                                         onChangeText={(t) => onUpdateSetTarget?.(i, 'reps', t)}
                                         placeholder={getValue(i, 'reps') || exercise.reps.toString()}
                                         keyboardType="numeric" 
                                         placeholderTextColor={theme.text || '#000000'}
+                                        textAlignVertical="center"
                                     />
                                     <TouchableOpacity 
                                         className={`w-9 h-9 rounded-lg items-center justify-center ml-1 border-2 border-primary dark:border-primary_dark`}
