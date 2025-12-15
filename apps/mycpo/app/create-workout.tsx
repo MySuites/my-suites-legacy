@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Alert, ScrollView, Modal } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { IconSymbol } from '../components/ui/icon-symbol';
 import { useUITheme as useTheme } from '@mycsuite/ui';
 import { useAuth } from '@mycsuite/auth';
 import { useWorkoutManager, fetchExercises } from '../hooks/useWorkoutManager';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFloatingButton } from '../providers/FloatingButtonContext';
+import { ThemedView } from '../components/ui/ThemedView';
+import { ThemedText } from '../components/ui/ThemedText';
 
 export default function CreateWorkoutScreen() {
     const theme = useTheme();
@@ -185,128 +186,47 @@ export default function CreateWorkoutScreen() {
 
     if (isLoading) {
         return (
-            <SafeAreaView className="flex-1 justify-center items-center bg-background dark:bg-background_dark">
+            <ThemedView className="flex-1 justify-center items-center">
                 <ActivityIndicator size="large" color={theme.primary} />
-            </SafeAreaView>
+            </ThemedView>
         );
     }
 
     // --- Render ---
 
-    if (isAddingExercise) {
-        return (
-            <SafeAreaView className="flex-1 bg-background dark:bg-background_dark" edges={['top', 'left', 'right']}>
-                 <View className="flex-1 px-4 pt-6">
-                    <View className="flex-row items-center justify-between mb-4">
-                        <Text className="text-xl font-bold text-apptext dark:text-apptext_dark">Add Exercise</Text>
-                        <TouchableOpacity onPress={() => setIsAddingExercise(false)}>
-                            <Text className="text-primary dark:text-primary_dark text-lg">Cancel</Text>
-                        </TouchableOpacity>
-                    </View>
-                    
-                    {/* Filter Chips */}
-                    <View className="mb-4">
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
-                            {uniqueCategories.map((category) => (
-                                <TouchableOpacity 
-                                    key={category} 
-                                    onPress={() => setSelectedCategory(category)}
-                                    className={`px-4 py-2 rounded-full mr-2 border ${selectedCategory === category ? 'bg-primary dark:bg-primary_dark border-transparent' : 'bg-transparent border-surface dark:border-white/10'}`}
-                                >
-                                    <Text className={`font-semibold ${selectedCategory === category ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-                                        {category}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
-                    </View>
-                    
-                    <View className="flex-row items-center bg-surface dark:bg-surface_dark rounded-lg px-2.5 h-12 mb-4 border border-black/5 dark:border-white/10">
-                        <IconSymbol name="magnifyingglass" size={20} color={theme.icon || '#888'} />
-                        <TextInput
-                            className="flex-1 ml-2 text-base h-full text-apptext dark:text-apptext_dark"
-                            placeholder="Search exercises..."
-                            placeholderTextColor={theme.icon || '#888'}
-                            value={exerciseSearchQuery}
-                            onChangeText={setExerciseSearchQuery}
-                            autoCorrect={false}
-                        />
-                        {exerciseSearchQuery.length > 0 && (
-                            <TouchableOpacity onPress={() => setExerciseSearchQuery('')}>
-                                    <IconSymbol name="xmark.circle.fill" size={20} color={theme.icon || '#888'} />
-                            </TouchableOpacity>
-                        )}
-                    </View>
-
-                    {isLoadingExercises ? (
-                        <ActivityIndicator size="large" color={theme.primary} className="mt-4" />
-                    ) : (
-                        <FlatList
-                            data={availableExercises.filter(ex => {
-                                const matchesSearch = ex.name.toLowerCase().includes(exerciseSearchQuery.toLowerCase());
-                                const matchesCategory = selectedCategory === "All" || ex.category === selectedCategory;
-                                return matchesSearch && matchesCategory;
-                            })}
-                            keyExtractor={(item) => item.id}
-                            className="flex-1"
-                            renderItem={({ item }) => (
-                                <TouchableOpacity 
-                                    className="flex-row items-center justify-between py-3 border-b border-surface dark:border-surface_dark"
-                                    onPress={() => handleAddExerciseToDraft(item)}
-                                >
-                                    <View>
-                                        <Text className="text-apptext dark:text-apptext_dark font-medium text-lg">{item.name}</Text>
-                                        <Text className="text-gray-500 dark:text-gray-400 text-sm">
-                                            {item.category} • {item.type || item.rawType}
-                                        </Text> 
-                                    </View>
-                                    <IconSymbol name="plus.circle" size={28} color={theme.primary} />
-                                </TouchableOpacity>
-                            )}
-                            ListEmptyComponent={
-                                <Text className="text-center text-gray-500 mt-4">No exercises found.</Text>
-                            }
-                            showsVerticalScrollIndicator={false}
-                        />
-                    )}
-                </View>
-            </SafeAreaView>
-        );
-    }
-
     return (
-        <SafeAreaView className="flex-1 bg-background dark:bg-background_dark" edges={['top', 'left', 'right']}>
-             <View className="flex-1 px-4 pt-6">
-                <View className="flex-row justify-between items-center mb-4">
-                    <TouchableOpacity onPress={() => router.back()}>
-                         <Text className="text-primary dark:text-primary_dark text-lg">Cancel</Text>
-                    </TouchableOpacity>
-                    <Text className="text-xl font-bold text-apptext dark:text-apptext_dark">{editingWorkoutId ? 'Edit Workout' : 'Create Workout'}</Text>
-                    <TouchableOpacity disabled={isSaving} onPress={handleSaveWorkoutDraft}>
-                        {isSaving ? <ActivityIndicator size="small" /> : <Text className="text-primary dark:text-primary_dark text-lg font-bold">Save</Text>}
-                    </TouchableOpacity>
-                </View>
+        <ThemedView className="flex-1">
+             <View className="flex-row justify-between items-center p-4 border-b border-surface dark:border-white/10 pt-4 android:pt-10">
+                <TouchableOpacity onPress={() => router.back()} className="p-2">
+                     <ThemedText type="link">Cancel</ThemedText>
+                </TouchableOpacity>
+                <ThemedText type="subtitle">{editingWorkoutId ? 'Edit Workout' : 'Create Workout'}</ThemedText>
+                <TouchableOpacity disabled={isSaving} onPress={handleSaveWorkoutDraft} className="p-2">
+                    {isSaving ? <ActivityIndicator size="small" /> : <ThemedText type="link" style={{ fontWeight: 'bold' }}>Save</ThemedText>}
+                </TouchableOpacity>
+            </View>
 
+            <View className="flex-1 p-4">
                 <TextInput 
                     placeholder="Workout Name" 
                     value={workoutDraftName} 
                     onChangeText={setWorkoutDraftName} 
-                    className="border border-surface dark:border-surface_dark rounded-xl px-4 pb-1 h-14 mb-4 text-apptext dark:text-apptext_dark text-xl bg-surface dark:bg-surface_dark" 
-                    placeholderTextColor="#9CA3AF" 
+                    className="bg-surface dark:bg-surface_dark text-apptext dark:text-apptext_dark p-4 rounded-xl text-base border border-transparent dark:border-white/10 mb-6"
+                    placeholderTextColor={theme.icon}
                 />
                 
                 <View className="flex-row justify-between items-center mb-2">
-                    <Text className="font-semibold text-apptext dark:text-apptext_dark text-lg">Exercises</Text>
+                    <ThemedText type="defaultSemiBold">Exercises</ThemedText>
                     <TouchableOpacity onPress={handleOpenAddExercise}>
-                        <Text className="text-primary dark:text-primary_dark text-base font-semibold">+ Add Exercise</Text>
+                        <ThemedText type="link" style={{ fontSize: 16 }}>+ Add Exercise</ThemedText>
                     </TouchableOpacity>
                 </View>
 
                 {workoutDraftExercises.length === 0 ? (
                     <View className="flex-1 justify-center items-center opacity-50">
-                        <Text className="text-gray-500 dark:text-gray-400 mb-2 text-lg">No exercises added yet</Text>
+                        <ThemedText className="mb-2 text-lg" style={{ color: theme.icon }}>No exercises added yet</ThemedText>
                         <TouchableOpacity onPress={handleOpenAddExercise}>
-                            <Text className="text-primary dark:text-primary_dark text-lg">Add Exercise</Text>
+                            <ThemedText type="link" style={{ fontSize: 18 }}>Add Exercise</ThemedText>
                         </TouchableOpacity>
                     </View>
                 ) : (
@@ -326,7 +246,7 @@ export default function CreateWorkoutScreen() {
                                     className="flex-row items-center justify-between p-3"
                                 >
                                     <View className="flex-1 mr-2">
-                                        <Text className="text-apptext dark:text-apptext_dark font-medium text-lg">{item.name}</Text>
+                                        <ThemedText type="defaultSemiBold">{item.name}</ThemedText>
                                         <Text className="text-gray-500 dark:text-gray-400 text-sm">
                                             {item.sets} Sets {'•'} {item.reps} Reps
                                         </Text>
@@ -417,6 +337,93 @@ export default function CreateWorkoutScreen() {
                     </TouchableOpacity>
                 )}
             </View>
-        </SafeAreaView>
+
+            {/* Add Exercise Modal */}
+            <Modal
+                visible={isAddingExercise}
+                animationType="slide"
+                presentationStyle="pageSheet"
+                onRequestClose={() => setIsAddingExercise(false)}
+            >
+                <ThemedView className="flex-1">
+                    <View className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10 pt-4 android:pt-10">
+                        <TouchableOpacity onPress={() => setIsAddingExercise(false)} className="p-2">
+                             <ThemedText type="link">Cancel</ThemedText>
+                        </TouchableOpacity>
+                        <ThemedText type="subtitle">Add Exercise</ThemedText>
+                        <View style={{ width: 50 }} />
+                    </View>
+                    
+                    <View className="flex-1 p-4">
+                        {/* Filter Chips */}
+                        <View className="mb-4">
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+                                {uniqueCategories.map((category) => (
+                                    <TouchableOpacity 
+                                        key={category} 
+                                        onPress={() => setSelectedCategory(category)}
+                                        className={`px-4 py-2 rounded-full mr-2 border ${selectedCategory === category ? 'bg-primary dark:bg-primary_dark border-transparent' : 'bg-transparent border-surface dark:border-white/10'}`}
+                                    >
+                                        <Text className={`font-semibold ${selectedCategory === category ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                                            {category}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        </View>
+                        
+                        <View className="flex-row items-center bg-surface dark:bg-surface_dark rounded-lg px-2.5 h-12 mb-4 border border-black/5 dark:border-white/10">
+                            <IconSymbol name="magnifyingglass" size={20} color={theme.icon || '#888'} />
+                            <TextInput
+                                className="flex-1 ml-2 text-base h-full text-apptext dark:text-apptext_dark"
+                                placeholder="Search exercises..."
+                                placeholderTextColor={theme.icon || '#888'}
+                                value={exerciseSearchQuery}
+                                onChangeText={setExerciseSearchQuery}
+                                autoCorrect={false}
+                            />
+                            {exerciseSearchQuery.length > 0 && (
+                                <TouchableOpacity onPress={() => setExerciseSearchQuery('')}>
+                                        <IconSymbol name="xmark.circle.fill" size={20} color={theme.icon || '#888'} />
+                                </TouchableOpacity>
+                            )}
+                        </View>
+
+                        {isLoadingExercises ? (
+                            <ActivityIndicator size="large" color={theme.primary} className="mt-4" />
+                        ) : (
+                            <FlatList
+                                data={availableExercises.filter(ex => {
+                                    const matchesSearch = ex.name.toLowerCase().includes(exerciseSearchQuery.toLowerCase());
+                                    const matchesCategory = selectedCategory === "All" || ex.category === selectedCategory;
+                                    return matchesSearch && matchesCategory;
+                                })}
+                                keyExtractor={(item) => item.id}
+                                className="flex-1"
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity 
+                                        className="flex-row items-center justify-between py-3 border-b border-surface dark:border-surface_dark"
+                                        onPress={() => handleAddExerciseToDraft(item)}
+                                    >
+                                        <View>
+                                            <ThemedText type="defaultSemiBold" style={{ fontSize: 18 }}>{item.name}</ThemedText>
+                                            <Text className="text-gray-500 dark:text-gray-400 text-sm">
+                                                {item.category} • {item.type || item.rawType}
+                                            </Text> 
+                                        </View>
+                                        <IconSymbol name="plus.circle" size={28} color={theme.primary} />
+                                    </TouchableOpacity>
+                                )}
+                                ListEmptyComponent={
+                                    <Text className="text-center text-gray-500 mt-4">No exercises found.</Text>
+                                }
+                                showsVerticalScrollIndicator={false}
+                            />
+                        )}
+                    </View>
+                </ThemedView>
+            </Modal>
+        </ThemedView>
     );
 }
+
