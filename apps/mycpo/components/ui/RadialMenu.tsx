@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, ViewStyle, StyleProp } from 'react-native';
+
+import { View, ViewStyle, StyleProp, Dimensions } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -7,6 +8,7 @@ import Animated, {
   withSpring,
   runOnJS,
   SharedValue,
+  withTiming,
 } from 'react-native-reanimated';
 import { useUITheme } from '@mycsuite/ui';
 import { IconSymbol } from './icon-symbol';
@@ -15,6 +17,8 @@ import * as Haptics from 'expo-haptics';
 // Configuration
 const BUTTON_SIZE = 60;
 const ACTIVATION_DELAY = 100; 
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export type RadialMenuItem = {
   id: string;
@@ -166,6 +170,12 @@ export function RadialMenu({
 
   return (
     <View className="items-center justify-center overflow-visible" style={[style, { backgroundColor: 'transparent' }]} pointerEvents="box-none">
+       {/* Menu Backdrop */}
+       <MenuBackdrop isOpen={isOpen} />
+
+       {/* Fan Background */}
+       <FanBackground isOpen={isOpen} menuRadius={menuRadius} theme={theme} />
+
        {items.map((item, index) => (
            <RadialMenuItemComponent 
              key={item.id}
@@ -187,6 +197,61 @@ export function RadialMenu({
       </GestureDetector>
     </View>
   );
+}
+
+function MenuBackdrop({ isOpen }: { isOpen: SharedValue<number> }) {
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            opacity: withTiming(isOpen.value * 0.5, { duration: 40 }), // Darken screen
+        };
+    });
+
+    return (
+        <Animated.View 
+            style={[animatedStyle, {
+                position: 'absolute',
+                width: SCREEN_WIDTH * 2,
+                height: SCREEN_HEIGHT * 2,
+                backgroundColor: '#000',
+                zIndex: 500, // Lowest zIndex but visible
+                pointerEvents: 'none', // Don't block touches for now, just visual
+            }]}
+        />
+    );
+}
+
+function FanBackground({ isOpen, menuRadius, theme }: { isOpen: SharedValue<number>, menuRadius: number, theme: any }) {
+    const animatedStyle = useAnimatedStyle(() => {
+        const scale = isOpen.value;
+        const opacity = Math.min(isOpen.value * 2, 0.4); // Cap opacity at 0.4 for circle
+        return {
+            transform: [
+                { scale },
+            ],
+            opacity: withSpring(opacity),
+        };
+    });
+
+    const size = menuRadius * 2; 
+
+    return (
+        <Animated.View 
+            style={[animatedStyle, {
+                width: size,
+                height: size, // Full circle
+                borderRadius: size / 2,
+                backgroundColor: theme.primary,
+                position: 'absolute',
+                // Center vertically on the button center (which acts as origin 0,0 locally often, but we are in a container)
+                // Container aligns items-center justify-center.
+                // Button is 60px.
+                // If we put this absolutely centered, it should work.
+                // But let's check container.
+                bottom: -(size/2) + 30, // Offset to center on the 60px button (center is 30px from bottom)
+                zIndex: 1000, 
+            }]}
+        />
+    );
 }
 
 function RadialMenuItemComponent({
@@ -243,7 +308,7 @@ function RadialMenuItemComponent({
             <Animated.View style={[{ backgroundColor: theme.primary }, circleStyle]} className="w-[52px] h-[52px] rounded-full items-center justify-center shadow-sm">
                 <IconSymbol name={item.icon as any} size={28} color="#fff" />
             </Animated.View>
-             <Animated.Text style={[{ color: theme.text }, animatedLabelStyle]} className="absolute -top-7 text-xs font-semibold w-20 text-center">
+             <Animated.Text style={[{ color: '#fff', textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: {width: 0, height: 1}, textShadowRadius: 2 }, animatedLabelStyle]} className="absolute -top-7 text-xs font-semibold w-20 text-center">
                 {item.label}
              </Animated.Text>
         </Animated.View>
