@@ -81,7 +81,7 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                             ) : (
                                 <>
                                     <TextInput 
-                                        className="w-[60px] h-9 bg-transparent rounded-lg text-center text-base font-bold text-black dark:text-white mx-1"
+                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0"
                                         value={getValue(i, 'weight')}
                                         onChangeText={(t) => onUpdateSetTarget?.(i, 'weight', t)}
                                         placeholder={getValue(i, 'weight') || "-"} 
@@ -89,7 +89,7 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                                         placeholderTextColor={theme.text || '#000000'}
                                     />
                                     <TextInput 
-                                        className="w-[60px] h-9 bg-transparent rounded-lg text-center text-base font-bold text-black dark:text-white mx-1"
+                                        className="w-[60px] bg-transparent text-center text-sm font-bold text-black dark:text-white mx-1 p-0"
                                         value={getValue(i, 'reps')} 
                                         onChangeText={(t) => onUpdateSetTarget?.(i, 'reps', t)}
                                         placeholder={getValue(i, 'reps') || exercise.reps.toString()}
