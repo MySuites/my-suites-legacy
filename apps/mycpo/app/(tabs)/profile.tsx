@@ -6,6 +6,8 @@ import { ThemedView } from '../../components/ui/ThemedView';
 import { useRouter } from 'expo-router';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
+
 export default function ProfileScreen() {
   const { user } = useAuth();
   const router = useRouter();
@@ -38,12 +40,14 @@ export default function ProfileScreen() {
   
   return (
     <ThemedView className="flex-1 p-4">
-      <View className="flex-row justify-between items-center mb-6 mt-10">
-        <Text className="text-3xl font-bold text-apptext dark:text-apptext_dark">Profile</Text>
-        <TouchableOpacity onPress={() => router.push('/settings')}>
-          <IconSymbol name="gearshape.fill" size={24} color={theme.text} />
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader 
+        title="Profile" 
+        rightAction={
+            <TouchableOpacity onPress={() => router.push('/settings')}>
+              <IconSymbol name="gearshape.fill" size={24} color={theme.text} />
+            </TouchableOpacity>
+        } 
+      />
       
       <View className="mb-6">
         <View className="mb-4">

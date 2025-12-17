@@ -9,12 +9,10 @@ import {
     useWindowDimensions
 } from "react-native";
 
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemedView } from '../../components/ui/ThemedView';
 import { useRouter } from 'expo-router';
 // import { useUITheme as useTheme } from '@mycsuite/ui'; // Unused now
 import { useWorkoutManager } from '../../hooks/useWorkoutManager';
-
-
 
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { RoutineCard } from '../../components/workouts/RoutineCard';
@@ -35,7 +33,7 @@ import Animated, {
 import { IconSymbol } from '../../components/ui/icon-symbol';
 import * as Haptics from 'expo-haptics';
 
-
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 
 export default function Workout() {
 
@@ -100,13 +98,6 @@ export default function Workout() {
         deleteSavedWorkout,
     } = useWorkoutManager();
 
-
-
-
-
-
-
-    
     // Derived state for current routine
     const activeRoutineObj = routines.find(r => r.id === activeRoutine?.id);
     const dayIndex = activeRoutine?.dayIndex || 0;
@@ -124,11 +115,6 @@ export default function Workout() {
     function handleEditRoutine(routine: any) {
         router.push({ pathname: '/create-routine', params: { id: routine.id } });
     }
-
-
-
-
-
 
     const handleStartSavedWorkout = (workout: any) => {
         if (hasActiveSession) {
@@ -475,11 +461,8 @@ export default function Workout() {
     };
 
 	return (
-		<SafeAreaView className="flex-1 bg-background dark:bg-background_dark" edges={['top', 'left', 'right']}>
-			<View className="flex-1 px-4 pt-4">
-				<View className="flex-row justify-between items-center">
-					<Text className="text-2xl font-bold text-apptext dark:text-apptext_dark">Workout</Text>
-				</View>
+		<ThemedView className="flex-1 p-4">
+			<ScreenHeader title="Workout" />
 
 			{/* Dashboard: Routines & Saved Workouts */}
 			<ScrollView 
@@ -607,22 +590,6 @@ export default function Workout() {
                     )}
                     
 			</ScrollView>
-			</View>
-
-
-
-
-
-
-
-
-
-
-
-		</SafeAreaView>
-
+			</ThemedView>
 	);
 }
-
-
-
