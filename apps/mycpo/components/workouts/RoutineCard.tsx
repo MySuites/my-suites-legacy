@@ -21,7 +21,7 @@ export function RoutineCard({ routine, onPress, onLongPress, onDelete, onEdit }:
   const totalDays = routine.sequence.length;
 
   return (
-    <Card>
+    <Card onDelete={onDelete} onEdit={onEdit}>
       <View className="flex-row justify-between items-center mb-0">
         <TouchableOpacity 
             className="flex-1 mr-2"
@@ -38,30 +38,12 @@ export function RoutineCard({ routine, onPress, onLongPress, onDelete, onEdit }:
         </TouchableOpacity>
 
         <View className="flex-row items-center gap-2">
-             {onEdit && (
-                <TouchableOpacity 
-                    onPress={onEdit}
-                    className="bg-primary dark:bg-primary_dark px-4 py-2 rounded-lg"
-                >
-                    <Text className="text-white font-semibold">Edit</Text>
-                </TouchableOpacity>
-            )}
-
             <TouchableOpacity 
                 onPress={onPress}
                 className="bg-primary dark:bg-primary_dark px-4 py-2 rounded-lg"
             >
                 <Text className="text-white font-semibold">Set Active</Text>
             </TouchableOpacity>
-
-            {onDelete && (
-                  <TouchableOpacity 
-                    onPress={onDelete}
-                    className="p-2 ml-1"
-                >
-                    <Text className="text-red-500 font-bold text-lg">×</Text>
-                </TouchableOpacity>
-            )}
         </View>
       </View>
     </Card>
