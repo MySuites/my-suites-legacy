@@ -61,8 +61,12 @@ async function createAdminUser() {
     });
 
     if (existing.ok) {
-      const list = await existing.json();
+      const json = await existing.json();
+      const list = Array.isArray(json) ? json : (json.users || []);
+      console.log('DEBUG: Found specific users:', list.length);
       if (Array.isArray(list) && list.length > 0) return list[0];
+    } else {
+      console.error('DEBUG: Failed to search specific user:', existing.status, await existing.text());
     }
 
     // Fallback: fetch all admin users and match by email (case-insensitive)
@@ -75,17 +79,23 @@ async function createAdminUser() {
     });
 
     if (all.ok) {
-      const list = await all.json();
+      const json = await all.json();
+      const list = Array.isArray(json) ? json : (json.users || []);
+      console.log('DEBUG: Found all users:', list.length);
       if (Array.isArray(list) && list.length > 0) {
         const found = list.find(u => u.email && u.email.toLowerCase() === (DEMO_EMAIL || '').toLowerCase());
         if (found) return found;
+        console.error('DEBUG: User not found in list. Available emails:', list.map(u => u.email));
       }
+    } else {
+      console.error('DEBUG: Failed to list all users:', all.status, await all.text());
     }
   } catch (e) {
-    // ignore and throw below with original response text
+    console.error("DEBUG: Failed to find existing user:", e);
   }
 
   const text = await res.text();
+  console.error("DEBUG: Creation failed and could not find existing:", res.status, text);
   throw new Error(`Failed to create or find user: ${res.status} ${text}`);
 }
 
@@ -145,19 +155,17 @@ async function upsertProfile(userId) {
 
 async function signIn() {
   const url = `${SUPABASE_URL.replace(/\/$/, '')}/auth/v1/token`;
-  const params = new URLSearchParams();
-  params.append('grant_type', 'password');
-  params.append('email', DEMO_EMAIL);
-  params.append('password', DEMO_PASSWORD);
-
-  const res = await fetch(url, {
+  const res = await fetch(`${url}?grant_type=password`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json',
       apikey: ANON_KEY,
       Authorization: `Bearer ${ANON_KEY}`
     },
-    body: params.toString()
+    body: JSON.stringify({
+      email: DEMO_EMAIL,
+      password: DEMO_PASSWORD,
+    })
   });
 
   if (!res.ok) {

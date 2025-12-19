@@ -147,9 +147,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // AuthApiError like "Invalid Refresh Token: Refresh Token Not Found".
     (async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setSession(session);
-        setUser(session?.user ?? null);
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        setSession(data.session);
+        setUser(data.session?.user ?? null);
       } catch (err: any) {
         // If Supabase reports an invalid refresh token, clear local state
         // and remove any persisted session by signing out.
