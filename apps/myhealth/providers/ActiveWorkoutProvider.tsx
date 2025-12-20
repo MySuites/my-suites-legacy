@@ -54,11 +54,35 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 		try {
 			if (typeof window !== "undefined" && window.localStorage) {
 				window.localStorage.setItem("myhealth_workout_exercises", JSON.stringify(exercises));
+                window.localStorage.setItem("myhealth_workout_seconds", workoutSeconds.toString());
+                window.localStorage.setItem("myhealth_workout_name", workoutName);
+                window.localStorage.setItem("myhealth_workout_running", JSON.stringify(isRunning));
 			}
 		} catch {
 			// ignore
 		}
-	}, [exercises]);
+	}, [exercises, workoutSeconds, workoutName, isRunning]);
+
+    // Load from local storage
+    useEffect(() => {
+        try {
+            if (typeof window !== "undefined" && window.localStorage) {
+                const sec = window.localStorage.getItem("myhealth_workout_seconds");
+                if (sec) setWorkoutSeconds(parseInt(sec, 10));
+                
+                const name = window.localStorage.getItem("myhealth_workout_name");
+                if (name) setWorkoutName(name);
+
+                const running = window.localStorage.getItem("myhealth_workout_running");
+                if (running) {
+                    setRunning(JSON.parse(running));
+                    if (JSON.parse(running)) setHasActiveSession(true);
+                }
+            }
+        } catch {
+            // ignore
+        }
+    }, []);
 
 
 
@@ -215,6 +239,16 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         
         setHasActiveSession(false);
         setIsExpanded(false);
+
+        // Clear persistence
+        try {
+             if (typeof window !== "undefined" && window.localStorage) {
+                window.localStorage.removeItem("myhealth_workout_exercises");
+                window.localStorage.removeItem("myhealth_workout_seconds");
+                window.localStorage.removeItem("myhealth_workout_name");
+                window.localStorage.removeItem("myhealth_workout_running");
+            }
+        } catch {}
     }, [workoutName, exercises, workoutSeconds, saveCompletedWorkout]);
 
     const handleCancelWorkout = useCallback(() => {
@@ -228,6 +262,16 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         
         setHasActiveSession(false);
         setIsExpanded(false);
+
+        // Clear persistence
+        try {
+             if (typeof window !== "undefined" && window.localStorage) {
+                window.localStorage.removeItem("myhealth_workout_exercises");
+                window.localStorage.removeItem("myhealth_workout_seconds");
+                window.localStorage.removeItem("myhealth_workout_name");
+                window.localStorage.removeItem("myhealth_workout_running");
+            }
+        } catch {}
     }, []);
 
     const value = {
