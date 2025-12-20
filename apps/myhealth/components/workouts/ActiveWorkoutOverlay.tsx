@@ -53,7 +53,7 @@ export function ActiveWorkoutOverlay() {
             exiting={SlideOutUp.duration(400)}
         >
             <View className="flex-1">
-                <ScrollView contentContainerStyle={{ padding: 5, paddingBottom: 150 }}>
+                <ScrollView contentContainerStyle={{ padding: 5, paddingTop: 20, paddingBottom: 150 }}>
                      {(!exercises || exercises.length === 0) ? (
                         <View className="flex-1 items-center justify-center">
                              <Text className="text-xl text-apptext dark:text-apptext_dark mb-4">No exercises found</Text>
