@@ -21,8 +21,7 @@ const WorkoutHistoryItem = ({ item, onDelete, onPress }: { item: any, onDelete: 
             </Text>
             </View>
             <View className="flex-row items-center">
-            <Text className="text-sm text-gray-500 mr-2">{new Date(item.workoutTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</Text>
-            {item.notes && <Text className="text-sm text-gray-500" numberOfLines={1}>• {item.notes}</Text>}
+            {item.notes && <Text className="text-sm text-gray-500" numberOfLines={1}>{item.notes}</Text>}
             </View>
             <View className="mt-2 items-end">
                 <Text className="text-xs text-primary dark:text-primary_dark">Tap for details</Text>
