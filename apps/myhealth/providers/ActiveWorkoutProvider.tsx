@@ -12,7 +12,7 @@ interface ActiveWorkoutContextType {
     currentIndex: number;
     workoutName: string;
     setWorkoutName: (name: string) => void;
-    startWorkout: (exercisesToStart?: Exercise[], name?: string) => void;
+    startWorkout: (exercisesToStart?: Exercise[], name?: string, routineId?: string) => void;
     pauseWorkout: () => void;
     resetWorkout: () => void;
     completeSet: (index: number, input?: { weight?: number; reps?: number; duration?: number; distance?: number }) => void;
@@ -26,6 +26,7 @@ interface ActiveWorkoutContextType {
     finishWorkout: (note?: string) => void;
     cancelWorkout: () => void;
     hasActiveSession: boolean;
+    routineId: string | null;
 }
 
 const ActiveWorkoutContext = createContext<ActiveWorkoutContextType | undefined>(undefined);
@@ -38,6 +39,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 		{id: "3", name: "Plank (sec)", sets: 3, reps: 45, completedSets: 0},
 	]);
     const [workoutName, setWorkoutName] = useState("Current Workout");
+    const [routineId, setRoutineId] = useState<string | null>(null);
     const [hasActiveSession, setHasActiveSession] = useState(false);
     
     const [isRunning, setRunning] = useState(false);
@@ -56,12 +58,14 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 				window.localStorage.setItem("myhealth_workout_exercises", JSON.stringify(exercises));
                 window.localStorage.setItem("myhealth_workout_seconds", workoutSeconds.toString());
                 window.localStorage.setItem("myhealth_workout_name", workoutName);
+                if (routineId) window.localStorage.setItem("myhealth_workout_routine_id", routineId);
+                else window.localStorage.removeItem("myhealth_workout_routine_id");
                 window.localStorage.setItem("myhealth_workout_running", JSON.stringify(isRunning));
 			}
 		} catch {
 			// ignore
 		}
-	}, [exercises, workoutSeconds, workoutName, isRunning]);
+	}, [exercises, workoutSeconds, workoutName, isRunning, routineId]);
 
     // Load from local storage
     useEffect(() => {
@@ -72,6 +76,9 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
                 
                 const name = window.localStorage.getItem("myhealth_workout_name");
                 if (name) setWorkoutName(name);
+
+                const rId = window.localStorage.getItem("myhealth_workout_routine_id");
+                if (rId) setRoutineId(rId);
 
                 const running = window.localStorage.getItem("myhealth_workout_running");
                 if (running) {
@@ -124,7 +131,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 
 
     // Actions
-    const startWorkout = useCallback((exercisesToStart?: Exercise[], name?: string) => {
+    const startWorkout = useCallback((exercisesToStart?: Exercise[], name?: string, routineId?: string) => {
 		// Allow empty workouts
 		// if (targetExercises.length === 0) { ... }
         if (exercisesToStart) {
@@ -135,6 +142,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         } else {
              setWorkoutName("Current Workout");
         }
+        setRoutineId(routineId || null);
 		setRunning(true);
         setHasActiveSession(true);
         setIsExpanded(true);
@@ -228,7 +236,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 
     const handleFinishWorkout = useCallback((note?: string) => {
         // Save the workout
-        saveCompletedWorkout(workoutName, exercises, workoutSeconds, undefined, note);
+        saveCompletedWorkout(workoutName, exercises, workoutSeconds, undefined, note, routineId || undefined);
 
         // Reset state
 		setRunning(false);
@@ -249,7 +257,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
                 window.localStorage.removeItem("myhealth_workout_running");
             }
         } catch {}
-    }, [workoutName, exercises, workoutSeconds, saveCompletedWorkout]);
+    }, [workoutName, exercises, workoutSeconds, saveCompletedWorkout, routineId]);
 
     const handleCancelWorkout = useCallback(() => {
         // Cancel is effectively the same as finish for now (discard/reset)
@@ -269,6 +277,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
                 window.localStorage.removeItem("myhealth_workout_exercises");
                 window.localStorage.removeItem("myhealth_workout_seconds");
                 window.localStorage.removeItem("myhealth_workout_name");
+                window.localStorage.removeItem("myhealth_workout_routine_id");
                 window.localStorage.removeItem("myhealth_workout_running");
             }
         } catch {}
@@ -297,6 +306,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         toggleExpanded,
         setExpanded: setIsExpanded,
         setWorkoutName,
+        routineId,
     };
 
     return (

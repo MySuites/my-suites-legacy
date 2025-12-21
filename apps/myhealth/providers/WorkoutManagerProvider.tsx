@@ -563,12 +563,12 @@ interface WorkoutManagerContextType {
     deleteSavedWorkout: (id: string, options?: { onSuccess?: () => void; skipConfirmation?: boolean }) => void;
     updateSavedWorkout: (id: string, name: string, exercises: Exercise[], onSuccess: () => void) => Promise<void>;
     saveRoutineDraft: (name: string, sequence: any[], onSuccess: () => void) => Promise<void>;
-    updateRoutine: (id: string, name: string, sequence: any[], onSuccess: () => void) => Promise<void>;
+    updateRoutine: (id: string, name: string, sequence: any[], onSuccess: () => void, suppressAlert?: boolean) => Promise<void>;
     deleteRoutine: (id: string, onSuccess?: () => void) => void;
     createCustomExercise: (name: string, type: string, primary?: string, secondary?: string[]) => Promise<{ data?: any, error?: any }>;
     workoutHistory: WorkoutLog[];
     fetchWorkoutLogDetails: (logId: string) => Promise<{ data: any[], error: any }>;
-    saveCompletedWorkout: (name: string, exercises: Exercise[], duration: number, onSuccess?: () => void, note?: string) => Promise<void>;
+    saveCompletedWorkout: (name: string, exercises: Exercise[], duration: number, onSuccess?: () => void, note?: string, routineId?: string) => Promise<void>;
     deleteWorkoutLog: (id: string, options?: { onSuccess?: () => void; skipConfirmation?: boolean }) => void;
 }
 
@@ -787,7 +787,8 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
         exercises: Exercise[],
         duration: number,
         onSuccess?: () => void,
-        note?: string
+        note?: string,
+        routineId?: string
     ) {
         if (user) {
             setIsSaving(true);
@@ -807,6 +808,12 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
                     // Refresh history
                     const { data: hData } = await fetchWorkoutHistory(user);
                     if (hData) setWorkoutHistory(hData);
+
+                    // Check for routine completion
+                    if (routineId && activeRoutine?.id === routineId) {
+                        markRoutineDayComplete();
+                    }
+
                     onSuccess?.();
                 }
             } finally {
@@ -974,12 +981,13 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
         Alert.alert("Saved", `Routine '${payload.name}' saved locally.`);
     }
 
-    async function updateRoutine(
+    const updateRoutine = useCallback(async (
         id: string,
         name: string,
         sequence: any[],
         onSuccess: () => void,
-    ) {
+        suppressAlert?: boolean
+    ) => {
         if (!name || name.trim() === "") {
             Alert.alert("Name required", "Please enter a name for the routine.");
             return;
@@ -1013,7 +1021,7 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
 
                     setRoutines(prev => prev.map(r => r.id === id ? { ...r, name: data.routine_name, sequence: finalSequence } : r));
                     onSuccess();
-                    Alert.alert("Updated", `Routine '${name}' updated.`);
+                    if (!suppressAlert) Alert.alert("Updated", `Routine '${name}' updated.`);
                 }
             } finally {
                 setIsSaving(false);
@@ -1022,9 +1030,9 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
             // Local update
             setRoutines(prev => prev.map(r => r.id === id ? { ...r, name, sequence } : r));
             onSuccess();
-            Alert.alert("Updated", `Routine '${name}' updated locally.`);
+            if (!suppressAlert) Alert.alert("Updated", `Routine '${name}' updated locally.`);
         }
-    }
+    }, [user]);
 
     function deleteRoutine(id: string, onSuccess?: () => void) {
         Alert.alert("Delete routine", "Are you sure? This cannot be undone.", [
@@ -1152,6 +1160,8 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
 
     const markRoutineDayComplete = useCallback(() => {
         if (!activeRoutine) return;
+        
+        // 1. Mark today as complete
         setActiveRoutine((prev) =>
             prev
                 ? ({
@@ -1173,18 +1183,22 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
 
             if (lastDate.getTime() < today.getTime()) {
                 // It was completed yesterday or before -> Advance!
+                // Find routine to know length for wrapping
+                const routine = routines.find(r => r.id === activeRoutine.id);
+                const sequenceLength = routine?.sequence?.length || 1;
+                
                 setActiveRoutine((prev) =>
                     prev
                         ? ({
                             ...prev,
-                            dayIndex: prev.dayIndex + 1,
+                            dayIndex: (prev.dayIndex + 1) % sequenceLength,
                             lastCompletedDate: undefined, // Clear completion so it's fresh for new day
                         })
                         : null
                 );
             }
         }
-    }, [activeRoutine, activeRoutine?.lastCompletedDate]); // Depend on the date string
+    }, [activeRoutine, routines]); // Depend on routines for length check
 
     function clearActiveRoutine() {
         setActiveRoutine(null);

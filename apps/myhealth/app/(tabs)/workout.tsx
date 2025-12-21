@@ -77,7 +77,20 @@ export default function Workout() {
     // Derived state for current routine
     const activeRoutineObj = routines.find(r => r.id === activeRoutine?.id);
     const dayIndex = activeRoutine?.dayIndex || 0;
-    const timelineDays = activeRoutineObj?.sequence?.slice(dayIndex, dayIndex + 7) || [];
+    const timelineDays = React.useMemo(() => {
+        if (!activeRoutineObj?.sequence) return [];
+        const seq = activeRoutineObj.sequence;
+        const total = seq.length;
+        if (total === 0) return [];
+
+        const result = [];
+        // Show up to 7 days
+        for (let i = 0; i < 7; i++) {
+            const index = (dayIndex + i) % total;
+            result.push({ ...seq[index], originalIndex: index });
+        }
+        return result;
+    }, [activeRoutineObj, dayIndex]);
     
     // Check if the current day has been completed today
     const isDayCompleted = !!(activeRoutine?.lastCompletedDate && 
@@ -269,7 +282,7 @@ export default function Workout() {
                                 dayIndex={dayIndex}
                                 isDayCompleted={isDayCompleted}
                                 onClearRoutine={clearActiveRoutine}
-                                onStartWorkout={(exercises, name) => startWorkout(exercises, name)}
+                                onStartWorkout={(exercises, name) => startWorkout(exercises, name, activeRoutineObj.id)}
                                 onMarkComplete={markRoutineDayComplete}
                             />
                         ) : (
