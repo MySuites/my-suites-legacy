@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import { Exercise, useWorkoutManager } from '../hooks/useWorkoutManager'; 
 import { createExercise } from '../utils/workout-logic';
+import { useActiveWorkoutTimers } from '../hooks/useActiveWorkoutTimers';
+import { useActiveWorkoutPersistence } from '../hooks/useActiveWorkoutPersistence';
 
 // Define the shape of our context
 interface ActiveWorkoutContextType {
@@ -41,94 +43,33 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
     const [workoutName, setWorkoutName] = useState("Current Workout");
     const [routineId, setRoutineId] = useState<string | null>(null);
     const [hasActiveSession, setHasActiveSession] = useState(false);
-    
-    const [isRunning, setRunning] = useState(false);
-	const [workoutSeconds, setWorkoutSeconds] = useState(0);
-	const workoutTimerRef = useRef<number | null>(null as any);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isExpanded, setIsExpanded] = useState(false);
 
-	const [currentIndex, setCurrentIndex] = useState(0);
-	const [restSeconds, setRestSeconds] = useState(0);
-	const restTimerRef = useRef<number | null>(null as any);
+    // Hooks
+    const {
+        isRunning,
+        setRunning,
+        workoutSeconds,
+        setWorkoutSeconds,
+        restSeconds,
+        resetTimers,
+        startRestTimer,
+    } = useActiveWorkoutTimers();
 
-    // Effects
-    // Persist to local storage
-    useEffect(() => {
-		try {
-			if (typeof window !== "undefined" && window.localStorage) {
-				window.localStorage.setItem("myhealth_workout_exercises", JSON.stringify(exercises));
-                window.localStorage.setItem("myhealth_workout_seconds", workoutSeconds.toString());
-                window.localStorage.setItem("myhealth_workout_name", workoutName);
-                if (routineId) window.localStorage.setItem("myhealth_workout_routine_id", routineId);
-                else window.localStorage.removeItem("myhealth_workout_routine_id");
-                window.localStorage.setItem("myhealth_workout_running", JSON.stringify(isRunning));
-			}
-		} catch {
-			// ignore
-		}
-	}, [exercises, workoutSeconds, workoutName, isRunning, routineId]);
-
-    // Load from local storage
-    useEffect(() => {
-        try {
-            if (typeof window !== "undefined" && window.localStorage) {
-                const sec = window.localStorage.getItem("myhealth_workout_seconds");
-                if (sec) setWorkoutSeconds(parseInt(sec, 10));
-                
-                const name = window.localStorage.getItem("myhealth_workout_name");
-                if (name) setWorkoutName(name);
-
-                const rId = window.localStorage.getItem("myhealth_workout_routine_id");
-                if (rId) setRoutineId(rId);
-
-                const running = window.localStorage.getItem("myhealth_workout_running");
-                if (running) {
-                    setRunning(JSON.parse(running));
-                    if (JSON.parse(running)) setHasActiveSession(true);
-                }
-            }
-        } catch {
-            // ignore
-        }
-    }, []);
-
-
-
-
-    useEffect(() => {
-		if (isRunning) {
-			workoutTimerRef.current = setInterval(() => {
-				setWorkoutSeconds((s) => s + 1);
-			}, 1000) as any;
-		} else if (workoutTimerRef.current) {
-			clearInterval(workoutTimerRef.current as any);
-			workoutTimerRef.current = null;
-		}
-
-		return () => {
-			if (workoutTimerRef.current) clearInterval(workoutTimerRef.current as any);
-		};
-	}, [isRunning]);
-
-
-	useEffect(() => {
-		if (restSeconds > 0) {
-			restTimerRef.current = setInterval(() => {
-				setRestSeconds((r) => {
-					if (r <= 1) {
-						clearInterval(restTimerRef.current as any);
-						restTimerRef.current = null;
-						return 0;
-					}
-					return r - 1;
-				});
-			}, 1000) as any;
-		}
-
-		return () => {
-			if (restTimerRef.current) clearInterval(restTimerRef.current as any);
-		};
-	}, [restSeconds]);
-
+    const { clearPersistence } = useActiveWorkoutPersistence({
+        exercises,
+        workoutSeconds,
+        workoutName,
+        isRunning,
+        routineId,
+        setExercises,
+        setWorkoutSeconds,
+        setWorkoutName,
+        setRoutineId,
+        setRunning,
+        setHasActiveSession,
+    });
 
     // Actions
     const startWorkout = useCallback((exercisesToStart?: Exercise[], name?: string, routineId?: string) => {
@@ -146,23 +87,22 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 		setRunning(true);
         setHasActiveSession(true);
         setIsExpanded(true);
-	}, []);
+	}, [setRunning]);
 
     const pauseWorkout = useCallback(() => {
 		setRunning(false);
-	}, []);
+	}, [setRunning]);
 
-    const resetWorkout = useCallback(() => {
+	const resetWorkout = useCallback(() => {
 		// Keep running (or start if paused) as per user request to "continue counting" after reset
 		setRunning(true);
         // Ensure session determines visibility
         setHasActiveSession(true); 
         
-		setWorkoutSeconds(0);
-		setRestSeconds(0);
+		resetTimers();
 		setCurrentIndex(0);
 		setExercises((exs) => exs.map((x) => ({...x, completedSets: 0, logs: []})));
-	}, []);
+	}, [setRunning, resetTimers]);
 
 
 
@@ -220,15 +160,13 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
             });
         });
 
-        // Rest timer logic remains...
-        setRestSeconds(60); 
+        // Rest timer logic
+        startRestTimer(60); 
     };
 
 
 
 
-
-    const [isExpanded, setIsExpanded] = useState(false);
 
     const toggleExpanded = () => setIsExpanded(prev => !prev);
 
@@ -240,8 +178,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
 
         // Reset state
 		setRunning(false);
-		setWorkoutSeconds(0);
-		setRestSeconds(0);
+		resetTimers();
 		setCurrentIndex(0);
 		setExercises((exs) => exs.map((x) => ({...x, completedSets: 0, logs: []})));
         
@@ -249,22 +186,14 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         setIsExpanded(false);
 
         // Clear persistence
-        try {
-             if (typeof window !== "undefined" && window.localStorage) {
-                window.localStorage.removeItem("myhealth_workout_exercises");
-                window.localStorage.removeItem("myhealth_workout_seconds");
-                window.localStorage.removeItem("myhealth_workout_name");
-                window.localStorage.removeItem("myhealth_workout_running");
-            }
-        } catch {}
-    }, [workoutName, exercises, workoutSeconds, saveCompletedWorkout, routineId]);
+        clearPersistence();
+    }, [workoutName, exercises, workoutSeconds, saveCompletedWorkout, routineId, setRunning, resetTimers, clearPersistence]);
 
     const handleCancelWorkout = useCallback(() => {
         // Cancel is effectively the same as finish for now (discard/reset)
         // But we separate it for future distinction (Finish = Save potentially)
         setRunning(false);
-        setWorkoutSeconds(0);
-        setRestSeconds(0);
+        resetTimers();
         setCurrentIndex(0);
         setExercises((exs) => exs.map((x) => ({...x, completedSets: 0, logs: []})));
         
@@ -272,16 +201,8 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         setIsExpanded(false);
 
         // Clear persistence
-        try {
-             if (typeof window !== "undefined" && window.localStorage) {
-                window.localStorage.removeItem("myhealth_workout_exercises");
-                window.localStorage.removeItem("myhealth_workout_seconds");
-                window.localStorage.removeItem("myhealth_workout_name");
-                window.localStorage.removeItem("myhealth_workout_routine_id");
-                window.localStorage.removeItem("myhealth_workout_running");
-            }
-        } catch {}
-    }, []);
+        clearPersistence();
+    }, [setRunning, resetTimers, clearPersistence]);
 
     const value = {
         exercises,
