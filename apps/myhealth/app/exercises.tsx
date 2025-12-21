@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity, View, ActivityIndicator, TextInput } from 'react-native'; 
 import { useRouter } from 'expo-router';
-import { useActiveWorkout } from '../providers/ActiveWorkoutProvider';
+
 import { ThemedText } from '../components/ui/ThemedText';
 import { ThemedView } from '../components/ui/ThemedView';
 import { useUITheme } from '@mycsuite/ui';
@@ -12,7 +12,7 @@ import { IconSymbol } from '../components/ui/icon-symbol';
 export default function ExercisesScreen() {
   const router = useRouter();
   const theme = useUITheme();
-  const { addExercise } = useActiveWorkout();
+
   const { user } = useAuth();
   const [exercises, setExercises] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -74,8 +74,10 @@ export default function ExercisesScreen() {
           <TouchableOpacity 
             className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10"
             onPress={() => {
-                addExercise(item.name, "3", "10", item.properties); // Default sets/reps for now
-                router.back();
+                router.push({
+                    pathname: '/exercise-details',
+                    params: { exercise: JSON.stringify(item) }
+                });
             }}
           >
             <View>
