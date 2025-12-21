@@ -188,6 +188,84 @@ export async function fetchMuscleGroups() {
     return { data, error };
 }
 
+// Fetch stats for chart
+export async function fetchExerciseStats(user: any, exerciseId: string, metric: 'weight' | 'reps' | 'duration' | 'distance' = 'weight') {
+    if (!user) return { data: [], error: null };
+
+    const { data: setLogs, error } = await supabase
+        .from("set_logs")
+        .select(`
+            details,
+            created_at,
+            workout_log_id
+        `)
+        .eq("exercise_id", exerciseId)
+        .order("created_at", { ascending: true });
+
+    if (error) return { data: [], error };
+
+    // Aggregate by day
+    const grouped = new Map();
+    setLogs.forEach((log: any) => {
+        if (!log.details) return;
+        
+        const dateKey = new Date(log.created_at).toDateString(); // Group by calendar day
+        
+        // Determine value based on requested metric
+        let val = 0;
+        let valid = false;
+
+        if (metric === 'weight' && log.details.weight && !isNaN(parseFloat(log.details.weight))) {
+            val = parseFloat(log.details.weight);
+            valid = true;
+        } else if (metric === 'reps' && log.details.reps && !isNaN(parseFloat(log.details.reps))) {
+            val = parseFloat(log.details.reps);
+            valid = true;
+        } else if (metric === 'duration' && log.details.duration && !isNaN(parseFloat(log.details.duration))) {
+             val = parseFloat(log.details.duration);
+             valid = true;
+        } else if (metric === 'distance' && log.details.distance && !isNaN(parseFloat(log.details.distance))) {
+             val = parseFloat(log.details.distance);
+             valid = true;
+        }
+
+        // If looking for weight but it's 0 or missing, it might be bodyweight. 
+        // For now, if valid=false, we skip.
+
+        if (valid) {
+            if (!grouped.has(dateKey)) {
+                grouped.set(dateKey, { 
+                    date: log.created_at, 
+                    max: val, 
+                    total: val,
+                    dataPointText: val.toString()
+                });
+            } else {
+                const entry = grouped.get(dateKey);
+                // For weight, max is usually relevant. For reps, maybe max reps in a set? 
+                // Let's stick to MAX for now as "Personal Record" logic.
+                if (val > entry.max) {
+                    entry.max = val;
+                    entry.dataPointText = val.toString();
+                }
+                entry.total += val;
+            }
+        }
+    });
+
+    const sorted = Array.from(grouped.values()).sort((a: any, b: any) => 
+        new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
+    const chartData = sorted.map((item: any) => ({
+        value: item.max,
+        label: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        dataPointText: item.dataPointText
+    }));
+
+    return { data: chartData, error: null };
+}
+
 async function createCustomExerciseInSupabase(
     user: any,
     name: string,
