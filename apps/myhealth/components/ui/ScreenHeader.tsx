@@ -10,10 +10,10 @@ interface ScreenHeaderProps {
 export function ScreenHeader({ title, rightAction, className }: ScreenHeaderProps) {
   return (
     <View className={`px-4 pt-4 mt-10 ${className || ''}`}>
-      <View className="flex-row justify-between items-center">
-        <Text className="text-3xl font-bold text-apptext dark:text-apptext_dark">{title}</Text>
+      <View className="flex-row justify-center items-center relative">
+        <Text className="text-3xl font-bold text-apptext dark:text-apptext_dark text-center">{title}</Text>
         {rightAction && (
-          <View>
+          <View className="absolute right-0">
               {rightAction}
           </View>
         )}
