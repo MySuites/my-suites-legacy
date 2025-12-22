@@ -5,7 +5,7 @@ import { useUITheme } from '@mycsuite/ui';
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { formatSeconds } from '../../utils/formatting';
-import { IconSymbol } from './icon-symbol';
+import { IconSymbol } from '../ui/icon-symbol';
 
 export function WorkoutStickyHeader() {
     const theme = useUITheme();

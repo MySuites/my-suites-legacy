@@ -13,8 +13,8 @@ import { useRouter } from 'expo-router';
 import { useWorkoutManager } from '../../hooks/useWorkoutManager';
 
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
-import { RoutineCard } from '../../components/workouts/RoutineCard';
-import { ActiveRoutineCard } from '../../components/workouts/ActiveRoutineCard';
+import { RoutineCard } from '../../components/routines/RoutineCard';
+import { ActiveRoutineCard } from '../../components/routines/ActiveRoutineCard';
 import { SavedWorkoutItem } from '../../components/workouts/SavedWorkoutItem';
 import { WorkoutPreviewModal } from '../../components/workouts/WorkoutPreviewModal';
 import { useRoutineTimeline } from '../../hooks/useRoutineTimeline';

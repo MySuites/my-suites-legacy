@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import { RadialMenu } from '../components/ui/RadialMenu';
+import { RadialMenu } from '../components/ui/radial-menu/RadialMenu';
 
 // Mock Reanimated and Gesture Handler as they are heavy native deps
 jest.mock('react-native-reanimated', () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useUITheme } from '@mycsuite/ui';
-import { ExerciseCard } from '../ui/ExerciseCard';
+import { ExerciseCard } from '../exercises/ExerciseCard';
 
 interface ActiveWorkoutExerciseItemProps {
     exercise: any;

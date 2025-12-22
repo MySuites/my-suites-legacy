@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import { RoutineCard } from '../../components/workouts/RoutineCard';
+import { RoutineCard } from '../../components/routines/RoutineCard';
 
 // Mock Card since it might contain complex animations or gestures
 jest.mock('../../components/ui/Card');

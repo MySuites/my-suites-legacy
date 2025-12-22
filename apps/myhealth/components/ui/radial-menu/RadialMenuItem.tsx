@@ -4,7 +4,7 @@ import Animated, {
     withSpring,
     SharedValue
 } from 'react-native-reanimated';
-import { IconSymbol } from './icon-symbol';
+import { IconSymbol } from '../icon-symbol';
 
 export type RadialMenuItemType = {
   id: string;

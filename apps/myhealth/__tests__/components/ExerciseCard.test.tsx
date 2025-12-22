@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import { ExerciseCard } from '../../components/ui/ExerciseCard';
+import { ExerciseCard } from '../../components/exercises/ExerciseCard';
 import { Exercise } from '../../hooks/useWorkoutManager';
 
 // Mock Card

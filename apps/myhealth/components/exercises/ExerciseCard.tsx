@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { IconSymbol } from './icon-symbol';
+import { IconSymbol } from '../ui/icon-symbol';
 import { formatSeconds } from '../../utils/formatting';
 import { Exercise } from '../../hooks/useWorkoutManager';
-import { Card } from './Card';
+import { Card } from '../ui/Card';
 import { SetRow, getExerciseFields } from '../workouts/SetRow';
 
 interface ExerciseCardProps {

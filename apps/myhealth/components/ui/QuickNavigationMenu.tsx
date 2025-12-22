@@ -3,7 +3,7 @@ import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native
 import { useUITheme } from '@mycsuite/ui';
 import { usePathname, useRouter } from 'expo-router';
 
-import { RadialMenu, RadialMenuItem } from './RadialMenu';
+import { RadialMenu, RadialMenuItem } from './radial-menu/RadialMenu';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
 
 
