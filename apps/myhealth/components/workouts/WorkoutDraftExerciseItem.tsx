@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { ThemedText } from '@mycsuite/ui';
 import { IconSymbol } from '../ui/icon-symbol';
-import { useUITheme } from '@mycsuite/ui';
+import { useUITheme, ThemedText } from '@mycsuite/ui';
 
 interface WorkoutDraftExerciseItemProps {
     item: any;
@@ -14,6 +13,7 @@ interface WorkoutDraftExerciseItemProps {
     onUpdateSet: (setIndex: number, field: 'reps' | 'weight' | 'duration' | 'distance', value: string) => void;
     onAddSet: () => void;
     onRemoveSet: (setIndex: number) => void;
+    latestBodyWeight?: number | null;
 }
 
 export const WorkoutDraftExerciseItem = ({
@@ -25,7 +25,8 @@ export const WorkoutDraftExerciseItem = ({
     onRemove,
     onUpdateSet,
     onAddSet,
-    onRemoveSet
+    onRemoveSet,
+    latestBodyWeight
 }: WorkoutDraftExerciseItemProps) => {
     const theme = useUITheme();
     const currentTargets = item.setTargets || Array.from({ length: item.sets || 1 }, () => ({ reps: item.reps || 0, weight: 0 }));
@@ -76,7 +77,7 @@ export const WorkoutDraftExerciseItem = ({
                 <View className="px-3 pb-3 pt-1 bg-background/50 dark:bg-background_dark/30">
                     <View className="flex-row mb-2">
                         <Text className="w-10 text-xs text-gray-500 font-semibold text-center">Set</Text>
-                        {showBodyweight && <Text className="w-12 text-xs text-gray-500 font-semibold text-center">BW</Text>}
+                        {showBodyweight && <Text className="w-12 text-xs text-gray-500 font-semibold text-center">{latestBodyWeight ? 'Lbs' : 'BW'}</Text>}
                         {showWeight && <Text className="flex-1 text-xs text-gray-500 font-semibold text-center">Lbs</Text>}
                         {showReps && <Text className="flex-1 text-xs text-gray-500 font-semibold text-center">Reps</Text>}
                         {showDuration && <Text className="flex-1 text-xs text-gray-500 font-semibold text-center">Time</Text>}
@@ -89,7 +90,9 @@ export const WorkoutDraftExerciseItem = ({
                             
                             {showBodyweight && (
                                 <View className="w-12 items-center justify-center">
-                                    <Text className="text-sm font-bold text-black/50 dark:text-white/50">BW</Text>
+                                    <Text className="text-sm font-bold text-black/50 dark:text-white/50">
+                                        {latestBodyWeight ? `${latestBodyWeight}` : 'BW'}
+                                    </Text>
                                 </View>
                             )}
 

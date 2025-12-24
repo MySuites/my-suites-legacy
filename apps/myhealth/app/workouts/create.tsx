@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useUITheme as useTheme } from '@mycsuite/ui';
+import { useUITheme as useTheme, ThemedView, ThemedText } from '@mycsuite/ui';
 import { useAuth } from '@mycsuite/auth';
 import { useWorkoutManager, fetchExercises } from '../../hooks/workouts/useWorkoutManager';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
-import { ThemedView } from '@mycsuite/ui';
-import { ThemedText } from '@mycsuite/ui';
 import { useWorkoutDraft } from '../../hooks/workouts/useWorkoutDraft';
 import { WorkoutDraftExerciseItem } from '../../components/workouts/WorkoutDraftExerciseItem';
 import { ExerciseSelectorModal } from '../../components/workouts/ExerciseSelectorModal';
+import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 
 export default function CreateWorkoutScreen() {
     const theme = useTheme();
@@ -17,6 +16,7 @@ export default function CreateWorkoutScreen() {
     const { id } = useLocalSearchParams();
     const { user } = useAuth();
     const { setIsHidden } = useFloatingButton();
+    const { latestBodyWeight } = useActiveWorkout();
     
     useEffect(() => {
         setIsHidden(true);
@@ -169,6 +169,7 @@ export default function CreateWorkoutScreen() {
                                 onUpdateSet={(setIndex, field, value) => updateSetTarget(index, setIndex, field, value)}
                                 onAddSet={() => addSet(index)}
                                 onRemoveSet={(setIndex) => removeSet(index, setIndex)}
+                                latestBodyWeight={latestBodyWeight}
                             />
                         )}
                     />

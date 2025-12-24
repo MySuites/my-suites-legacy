@@ -17,9 +17,10 @@ interface ExerciseCardProps {
     onDeleteSet: (index: number) => void;
     restSeconds: number;
     theme: any;
+    latestBodyWeight?: number | null;
 }
 
-export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onUpdateLog, onAddSet, onDeleteSet, restSeconds, theme }: ExerciseCardProps) {
+export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onUpdateLog, onAddSet, onDeleteSet, restSeconds, theme, latestBodyWeight }: ExerciseCardProps) {
     // Derived state
     const completedSets = exercise.completedSets || 0;
     const isFinished = completedSets >= exercise.sets;
@@ -62,6 +63,7 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                         onUpdateLog={onUpdateLog}
                         onDeleteSet={onDeleteSet}
                         theme={theme}
+                        latestBodyWeight={latestBodyWeight}
                     />
                 ))}
 

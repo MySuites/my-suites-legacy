@@ -25,9 +25,10 @@ interface SetRowProps {
     onUpdateLog?: (index: number, key: 'weight' | 'reps' | 'duration' | 'distance', value: string) => void;
     onDeleteSet: (index: number) => void;
     theme: any;
+    latestBodyWeight?: number | null;
 }
 
-export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onUpdateLog, onDeleteSet, theme }: SetRowProps) => {
+export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onUpdateLog, onDeleteSet, theme, latestBodyWeight }: SetRowProps) => {
     const shouldDelete = useRef(false);
     const swipeableRef = useRef<any>(null);
     const log = exercise.logs?.[index];
@@ -84,7 +85,9 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                       <>
                         {showBodyweight && (
                             <View className="w-[60px] items-center justify-center mx-1">
-                                <Text className="text-sm font-bold text-black/50 dark:text-white/50">BW</Text>
+                                <Text className="text-sm font-bold text-black/50 dark:text-white/50">
+                                    {latestBodyWeight ? `${latestBodyWeight}` : 'BW'}
+                                </Text>
                             </View>
                         )}
                         {showWeight && (
@@ -138,7 +141,9 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                       <>
                         {showBodyweight && (
                             <View className="w-[60px] items-center justify-center mx-1">
-                                <Text className="text-sm font-bold text-black/50 dark:text-white/50">BW</Text>
+                                <Text className="text-sm font-bold text-black/50 dark:text-white/50">
+                                    {latestBodyWeight ? `${latestBodyWeight}` : 'BW'}
+                                </Text>
                             </View>
                         )}
                         {showWeight && (

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useUITheme } from '@mycsuite/ui';
 import { ExerciseCard } from '../exercises/ExerciseCard';
+import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 
 interface ActiveWorkoutExerciseItemProps {
     exercise: any;
@@ -20,6 +21,7 @@ export function ActiveWorkoutExerciseItem({
     updateExercise,
 }: ActiveWorkoutExerciseItemProps) {
     const theme = useUITheme();
+    const { latestBodyWeight } = useActiveWorkout();
 
     return (
         <ExerciseCard 
@@ -27,6 +29,7 @@ export function ActiveWorkoutExerciseItem({
             isCurrent={isCurrent}
             restSeconds={restSeconds}
             theme={theme}
+            latestBodyWeight={latestBodyWeight}
             onCompleteSet={(setIndex, input) => {
                 const parsedInput = {
                     weight: input?.weight ? parseFloat(input.weight) : undefined,

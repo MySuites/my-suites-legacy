@@ -3,6 +3,7 @@ import { Exercise, useWorkoutManager } from '../hooks/workouts/useWorkoutManager
 import { createExercise } from '../utils/workout-logic';
 import { useActiveWorkoutTimers } from '../hooks/workouts/useActiveWorkoutTimers';
 import { useActiveWorkoutPersistence } from '../hooks/workouts/useActiveWorkoutPersistence';
+import { useLatestBodyWeight } from '../hooks/useLatestBodyWeight';
 import uuid from 'react-native-uuid';
 
 // Define the shape of our context
@@ -31,6 +32,7 @@ interface ActiveWorkoutContextType {
     hasActiveSession: boolean;
     routineId: string | null;
     sourceWorkoutId: string | null;
+    latestBodyWeight: number | null;
 }
 
 const ActiveWorkoutContext = createContext<ActiveWorkoutContextType | undefined>(undefined);
@@ -59,6 +61,8 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         resetTimers,
         startRestTimer,
     } = useActiveWorkoutTimers();
+
+    const { weight: latestBodyWeight } = useLatestBodyWeight();
 
     const { clearPersistence } = useActiveWorkoutPersistence({
         exercises,
@@ -243,6 +247,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         setWorkoutName,
         routineId,
         sourceWorkoutId,
+        latestBodyWeight,
     };
 
     return (
