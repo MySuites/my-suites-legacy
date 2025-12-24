@@ -2,13 +2,15 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { ThemedView, ThemedText } from '@mycsuite/ui';
 import { IconSymbol } from '../ui/icon-symbol';
+import { BodyWeightChart } from './BodyWeightChart';
 
 interface BodyWeightCardProps {
   weight: number | null;
+  history: { value: number; label: string; date: string }[];
   onLogWeight: () => void;
 }
 
-export function BodyWeightCard({ weight, onLogWeight }: BodyWeightCardProps) {
+export function BodyWeightCard({ weight, history, onLogWeight }: BodyWeightCardProps) {
   return (
     <ThemedView className="p-4 rounded-xl mb-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
       <View className="flex-row justify-between items-center mb-2">
@@ -28,9 +30,12 @@ export function BodyWeightCard({ weight, onLogWeight }: BodyWeightCardProps) {
       
       <View className="mt-2">
         {weight ? (
-            <View className="flex-row items-baseline">
-                <ThemedText className="text-3xl font-bold mr-1">{weight}</ThemedText>
-                <Text className="text-gray-500 text-sm">lbs</Text>
+            <View>
+                <View className="flex-row items-baseline mb-2">
+                    <ThemedText className="text-3xl font-bold mr-1">{weight}</ThemedText>
+                    <Text className="text-gray-500 text-sm">lbs</Text>
+                </View>
+                <BodyWeightChart data={history} />
             </View>
         ) : (
             <Text className="text-gray-400 text-sm italic">No weight recorded</Text>

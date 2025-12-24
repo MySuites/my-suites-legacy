@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useAuth, supabase } from '@mycsuite/auth';
 import { SharedButton, useUITheme, ThemedText, ThemedView } from '@mycsuite/ui';
@@ -15,6 +15,7 @@ export default function ProfileScreen() {
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
   const [latestWeight, setLatestWeight] = useState<number | null>(null);
+  const [weightHistory, setWeightHistory] = useState<{ value: number; label: string; date: string }[]>([]);
   const [isWeightModalVisible, setIsWeightModalVisible] = useState(false);
   const theme = useUITheme();
   
@@ -35,34 +36,11 @@ export default function ProfileScreen() {
     }
   }, [user]);
 
-  useEffect(() => {
-     let mounted = true;
-     const fetch = async () => {
-        if (!user) return;
-        const { data, error } = await supabase
-          .from('body_measurements')
-          .select('weight')
-          .eq('user_id', user.id)
-          .order('date', { ascending: false })
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (error) {
-            console.log('Error fetching weight:', error);
-        } else if (data && mounted) {
-            setLatestWeight(data.weight);
-        }
-     };
-     fetch();
-     return () => { mounted = false; };
-  }, [user]);
-
-  const fetchLatestWeight = async () => {
+  const fetchLatestWeight = useCallback(async () => {
     if (!user) return;
     
     // Fetch the most recent weight entry
-    const { data, error } = await supabase
+    const { data: latestData, error: latestError } = await supabase
       .from('body_measurements')
       .select('weight')
       .eq('user_id', user.id)
@@ -71,12 +49,38 @@ export default function ProfileScreen() {
       .limit(1)
       .maybeSingle();
 
-    if (error) {
-        console.log('Error fetching weight:', error);
-    } else if (data) {
-        setLatestWeight(data.weight);
+    if (latestError) {
+        console.log('Error fetching weight:', latestError);
+    } else if (latestData) {
+        setLatestWeight(latestData.weight);
     }
-  };
+    
+    // Fetch history
+    const { data: historyData, error: historyError } = await supabase
+      .from('body_measurements')
+      .select('weight, date')
+      .eq('user_id', user.id)
+      .order('date', { ascending: true })
+      .limit(20); 
+      
+    if (historyError) {
+        console.log('Error fetching weight history:', historyError);
+    } else if (historyData) {
+        // Format for chart
+        const formattedHistory = historyData.map(item => ({
+            value: item.weight,
+            label: new Date(item.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+            date: item.date
+        }));
+        setWeightHistory(formattedHistory);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+        fetchLatestWeight();
+    }
+  }, [user, fetchLatestWeight]);
 
   const handleSaveWeight = async (weight: number, date: Date) => {
     if (!user) return;
@@ -126,6 +130,7 @@ export default function ProfileScreen() {
 
       <BodyWeightCard 
         weight={latestWeight} 
+        history={weightHistory}
         onLogWeight={() => setIsWeightModalVisible(true)} 
       />
 
