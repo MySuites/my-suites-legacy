@@ -2,9 +2,17 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
 import { BodyWeightChart } from './BodyWeightChart';
+import { SegmentedControl, SegmentedControlOption } from '../ui/SegmentedControl';
 
 // Defined locally to avoid circular dependencies if any
 type DateRange = 'Day' | 'Week' | 'Month' | 'All';
+
+const RANGE_OPTIONS: SegmentedControlOption<DateRange>[] = [
+  { label: 'Day', value: 'Day' },
+  { label: 'Week', value: 'Week' },
+  { label: 'Month', value: 'Month' },
+  { label: 'All', value: 'All' },
+];
 
 interface BodyWeightCardProps {
   weight: number | null;
@@ -52,83 +60,11 @@ export function BodyWeightCard({
                         <Text className="text-gray-500 text-sm">lbs</Text>
                     </View>
                     
-                    <View className="flex-row bg-gray-100 dark:bg-zinc-800 rounded-lg p-0.5">
-                        <Pressable
-                            onPress={() => onRangeChange('Day')}
-                            className="px-3 py-1 rounded-md"
-                            style={{ 
-                                backgroundColor: selectedRange === 'Day' ? 'white' : 'transparent',
-                                shadowOpacity: selectedRange === 'Day' ? 0.1 : 0,
-                                shadowOffset: { width: 0, height: 1 },
-                                shadowRadius: 2,
-                                elevation: selectedRange === 'Day' ? 2 : 0,
-                            }}
-                        >
-                            <Text 
-                                className="text-xs font-medium"
-                                style={{ color: selectedRange === 'Day' ? '#111827' : '#6b7280' }}
-                            >
-                                Day
-                            </Text>
-                        </Pressable>
-
-                        <Pressable
-                            onPress={() => onRangeChange('Week')}
-                            className="px-3 py-1 rounded-md"
-                            style={{ 
-                                backgroundColor: selectedRange === 'Week' ? 'white' : 'transparent',
-                                shadowOpacity: selectedRange === 'Week' ? 0.1 : 0,
-                                shadowOffset: { width: 0, height: 1 },
-                                shadowRadius: 2,
-                                elevation: selectedRange === 'Week' ? 2 : 0,
-                            }}
-                        >
-                            <Text 
-                                className="text-xs font-medium"
-                                style={{ color: selectedRange === 'Week' ? '#111827' : '#6b7280' }}
-                            >
-                                Week
-                            </Text>
-                        </Pressable>
-
-                        <Pressable
-                            onPress={() => onRangeChange('Month')}
-                            className="px-3 py-1 rounded-md"
-                            style={{ 
-                                backgroundColor: selectedRange === 'Month' ? 'white' : 'transparent',
-                                shadowOpacity: selectedRange === 'Month' ? 0.1 : 0,
-                                shadowOffset: { width: 0, height: 1 },
-                                shadowRadius: 2,
-                                elevation: selectedRange === 'Month' ? 2 : 0,
-                            }}
-                        >
-                            <Text 
-                                className="text-xs font-medium"
-                                style={{ color: selectedRange === 'Month' ? '#111827' : '#6b7280' }}
-                            >
-                                Month
-                            </Text>
-                        </Pressable>
-
-                        <Pressable
-                            onPress={() => onRangeChange('All')}
-                            className="px-3 py-1 rounded-md"
-                            style={{ 
-                                backgroundColor: selectedRange === 'All' ? 'white' : 'transparent',
-                                shadowOpacity: selectedRange === 'All' ? 0.1 : 0,
-                                shadowOffset: { width: 0, height: 1 },
-                                shadowRadius: 2,
-                                elevation: selectedRange === 'All' ? 2 : 0,
-                            }}
-                        >
-                            <Text 
-                                className="text-xs font-medium"
-                                style={{ color: selectedRange === 'All' ? '#111827' : '#6b7280' }}
-                            >
-                                All
-                            </Text>
-                        </Pressable>
-                    </View>
+                    <SegmentedControl
+                        options={RANGE_OPTIONS}
+                        value={selectedRange}
+                        onChange={onRangeChange}
+                    />
                 </View>
                 <BodyWeightChart 
                     data={history} 

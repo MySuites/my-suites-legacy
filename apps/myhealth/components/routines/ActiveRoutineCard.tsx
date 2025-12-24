@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View } from 'react-native';
 import { ActiveRoutineHeader } from './ActiveRoutineHeader';
 import { ActiveRoutineCompletion } from './ActiveRoutineCompletion';
 import { ActiveRoutineTimelineItem } from './ActiveRoutineTimelineItem';
+import { SegmentedControl, SegmentedControlOption } from '../ui/SegmentedControl';
+
+type ViewMode = 'next_3' | 'next_7' | 'week';
+
+const VIEW_MODE_OPTIONS: SegmentedControlOption<ViewMode>[] = [
+  { label: 'Next 3', value: 'next_3' },
+  { label: 'Next 7', value: 'next_7' },
+  { label: 'Week', value: 'week' },
+];
 
 interface ActiveRoutineCardProps {
   activeRoutineObj: {
@@ -18,8 +27,8 @@ interface ActiveRoutineCardProps {
   onMarkComplete: () => void;
   onJumpToDay: (index: number) => void;
   onWorkoutPress: (workout: any) => void;
-  viewMode: 'next_3' | 'next_7' | 'week';
-  onViewModeChange: (mode: 'next_3' | 'next_7' | 'week') => void;
+  viewMode: ViewMode;
+  onViewModeChange: (mode: ViewMode) => void;
 }
 
 export function ActiveRoutineCard({
@@ -53,21 +62,12 @@ export function ActiveRoutineCard({
           <ActiveRoutineCompletion onClearRoutine={onClearRoutine} />
         ) : (
           <View className="py-2">
-            <View className="flex-row justify-end items-center mb-2 px-4">
-              <TouchableOpacity 
-                onPress={() => {
-                    Alert.alert("View Options", "Choose how many upcoming items to see", [
-                        { text: "Next 3 Workouts", onPress: () => onViewModeChange('next_3') },
-                        { text: "Next 7 Workouts", onPress: () => onViewModeChange('next_7') },
-                        { text: "Next Week", onPress: () => onViewModeChange('week') },
-                        { text: "Cancel", style: "cancel" }
-                    ]);
-                }}
-              >
-                <Text className="text-primary dark:text-primary_dark font-medium">
-                    {viewMode === 'next_3' ? 'Next 3' : viewMode === 'next_7' ? 'Next 7' : 'Next Week'}
-                </Text>
-              </TouchableOpacity>
+            <View className="flex-row justify-end items-center mb-4 px-1">
+              <SegmentedControl
+                options={VIEW_MODE_OPTIONS}
+                value={viewMode}
+                onChange={onViewModeChange}
+              />
             </View>
             {daysToShow.map((item: any, index: number) => (
               <ActiveRoutineTimelineItem
