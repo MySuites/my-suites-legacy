@@ -50,6 +50,7 @@ export function RadialMenu({
   const isOpen = useSharedValue(0);
   const scale = useSharedValue(1);
   const selectedItemIndex = useSharedValue(-1);
+  const isPressed = useSharedValue(0);
 
   const triggerHaptic = (style: Haptics.ImpactFeedbackStyle) => {
     Haptics.impactAsync(style);
@@ -87,6 +88,15 @@ export function RadialMenu({
   // Gesture Logic
   const gesture = Gesture.Pan()
     .activateAfterLongPress(ACTIVATION_DELAY) 
+    .onTouchesDown(() => {
+        isPressed.value = withSpring(1, { mass: 0.5 });
+    })
+    .onTouchesUp(() => {
+        isPressed.value = withSpring(0);
+    })
+    .onFinalize(() => { // Ensures reset if gesture is cancelled or fails
+        isPressed.value = withSpring(0);
+    })
     .onStart(() => {
       isOpen.value = withSpring(1);
       scale.value = withSpring(1.1);
@@ -162,6 +172,12 @@ export function RadialMenu({
     };
   });
 
+  const strongGradientStyle = useAnimatedStyle(() => {
+      return {
+          opacity: isPressed.value,
+      };
+  });
+
   return (
     <View className="items-center justify-center overflow-visible" style={[style, { backgroundColor: 'transparent' }]} pointerEvents="box-none">
        {/* Menu Backdrop */}
@@ -197,7 +213,7 @@ export function RadialMenu({
             {/* Gradient Overlay for Smooth Convex Effect */}
             <LinearGradient
                 colors={theme.dark ? ['hsla(0, 0%, 100%, 0.25)', 'hsla(0, 0%, 0%, 0.3)'] : ['hsla(0, 0%, 98%, 0.9)', 'hsla(0, 0%, 80%, 0.05)']}
-                locations={[0.5, 1]}
+                locations={[0.3, 1]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={{
@@ -209,6 +225,28 @@ export function RadialMenu({
                     borderRadius: buttonSize / 2,
                 }}
             />
+
+            {/* Stronger Gradient Overlay for Press State */}
+            <Animated.View style={[
+                {
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: buttonSize / 2,
+                    overflow: 'hidden', // Ensure gradient stays within bounds
+                },
+                strongGradientStyle
+            ]}>
+                <LinearGradient
+                    colors={theme.dark ? ['hsla(0, 0%, 100%, 0.25)', 'hsla(0, 0%, 0%, 0.3)'] : ['hsla(0, 0%, 98%, 0.9)', 'hsla(0, 0%, 80%, 0.05)']}
+                    locations={[0.5, 1]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{ flex: 1 }}
+                />
+            </Animated.View>
 
            <IconSymbol name={icon as any} size={buttonSize * 0.5} color={theme.text} />
          </Animated.View>
