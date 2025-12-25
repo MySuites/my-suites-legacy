@@ -1,13 +1,14 @@
 "use client"
 
 import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, BackHandler } from 'react-native';
+import { View, ScrollView, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { ActiveWorkoutEmptyState } from './ActiveWorkoutEmptyState';
 import { ActiveWorkoutExerciseItem } from './ActiveWorkoutExerciseItem';
+import { HollowedButton } from '@mysuite/ui';
 
 export function ActiveWorkoutOverlay() {
     const router = useRouter();
@@ -69,12 +70,12 @@ export function ActiveWorkoutOverlay() {
                                     />
                                 </View>
                             ))}
-                            <TouchableOpacity 
-                                className="mt-5 p-4 rounded-xl border border-dashed border-primary dark:border-primary-dark items-center justify-center"
+                            <HollowedButton
+                                title="+ Add Exercise"
                                 onPress={() => router.push('/exercises')}
-                            >
-                                <Text className="text-base font-semibold text-primary dark:text-primary-dark">+ Add Exercise</Text>
-                            </TouchableOpacity>
+                                className="mt-5"
+                                textClassName="text-base font-semibold text-primary dark:text-primary-dark"
+                            />
                         </>
                      )}
                 </ScrollView>

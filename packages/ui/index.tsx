@@ -8,6 +8,8 @@ cssInterop(Pressable, { className: 'style' });
 cssInterop(Text, { className: 'style' });
 
 export { RaisedButton } from './RaisedButton';
+export { HollowedButton } from './HollowedButton';
+
 
 export { UIThemeProvider, useUITheme } from './theme';
 export { ThemedCard } from './examples/ThemedCard';
