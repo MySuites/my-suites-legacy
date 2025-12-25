@@ -21,21 +21,16 @@ export function RoutineCard({ routine, onPress, onLongPress, onDelete, onEdit }:
   const totalDays = routine.sequence.length;
 
   return (
-    <RaisedCard onDelete={onDelete} onEdit={onEdit}>
+    <RaisedCard onDelete={onDelete} onEdit={onEdit} onPress={onPress}>
       <View className="flex-row justify-between items-center mb-0">
-        <TouchableOpacity 
-            className="flex-1 mr-2"
-            onPress={onPress}
-            onLongPress={onLongPress}
-            activeOpacity={0.7}
-        >
+        <View className="flex-1 mr-2">
             <Text className="text-lg font-bold text-light dark:text-dark mb-1" numberOfLines={1}>
             {routine.name}
             </Text>
             <Text className="text-sm text-light-muted dark:text-dark-muted">
             {totalDays} Days • {workoutCount} Workouts
             </Text>
-        </TouchableOpacity>
+        </View>
 
         <View className="flex-row items-center gap-2">
             <TouchableOpacity 

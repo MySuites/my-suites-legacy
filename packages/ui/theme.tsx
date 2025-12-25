@@ -32,6 +32,7 @@ export const getAppTheme = (appId: keyof typeof appThemes, scheme: 'light' | 'da
     accent: brand.accent,
     tabIconSelected: brand.primary,
     highlight: base.highlight,
+    dark: scheme === 'dark',
   };
 };
 
