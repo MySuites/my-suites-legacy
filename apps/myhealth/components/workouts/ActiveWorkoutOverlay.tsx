@@ -52,21 +52,22 @@ export function ActiveWorkoutOverlay() {
             exiting={SlideOutUp.duration(400)}
         >
             <View className="flex-1">
-                <ScrollView contentContainerStyle={{ padding: 5, paddingTop: 20, paddingBottom: 150 }}>
+                <ScrollView contentContainerStyle={{ padding: 12, paddingTop: 30, paddingBottom: 120 }}>
                      {(!exercises || exercises.length === 0) ? (
                         <ActiveWorkoutEmptyState />
                      ) : (
                         <>
                             {exercises.map((exercise, index) => (
-                                <ActiveWorkoutExerciseItem
-                                    key={index}
-                                    exercise={exercise}
-                                    index={index}
-                                    isCurrent={index === currentIndex}
-                                    restSeconds={restSeconds}
-                                    completeSet={completeSet}
-                                    updateExercise={updateExercise}
-                                />
+                                <View key={index} className="mb-6">
+                                    <ActiveWorkoutExerciseItem
+                                        exercise={exercise}
+                                        index={index}
+                                        isCurrent={index === currentIndex}
+                                        restSeconds={restSeconds}
+                                        completeSet={completeSet}
+                                        updateExercise={updateExercise}
+                                    />
+                                </View>
                             ))}
                             <TouchableOpacity 
                                 className="mt-5 p-4 rounded-xl border border-dashed border-primary dark:border-primary-dark items-center justify-center"
