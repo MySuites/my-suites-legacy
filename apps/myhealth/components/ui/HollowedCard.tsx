@@ -16,9 +16,9 @@ interface CardProps extends ViewProps {
 
 export function HollowedCard({ children, style, className, onPress, activeOpacity = 0.9, onDelete, onEdit, ...props }: CardProps) {
   const { width } = useWindowDimensions();
-  // Inverted styling from RaisedCard: highlight on bottom, simulated shadow on top
-  // Refined: Darker background and stronger top shadow for a more "hollowed" look
-  const baseClassName = `bg-light-darker dark:bg-dark-darker rounded-xl p-3 w-full mb-1 border border-light dark:border-dark border-b-highlight dark:border-b-highlight-dark border-t-black/20 dark:border-t-white/10 ${className || ''}`;
+  // Refined Neumorphic HollowedCard: "inset" look
+  // Slightly darker background than page, with internal shadow (dark top-left) and edge highlight (light bottom-right)
+  const baseClassName = `bg-light-darker dark:bg-dark-darker rounded-xl p-3 w-full mb-1 border border-light dark:border-dark border-t-black/10 dark:border-t-black/50 border-l-black/10 dark:border-l-black/50 border-b-highlight dark:border-b-highlight-dark border-r-highlight dark:border-r-highlight-dark ${className || ''}`;
   
   // No outer shadow for inset look
   const shadowStyle = { 

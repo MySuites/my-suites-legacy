@@ -16,14 +16,14 @@ interface CardProps extends ViewProps {
 
 export function RaisedCard({ children, style, className, onPress, activeOpacity = 0.9, onDelete, onEdit, ...props }: CardProps) {
   const { width } = useWindowDimensions();
-  // Base styling from RoutineCard
-  const baseClassName = `bg-light-darker dark:bg-dark-lighter rounded-xl p-3 w-full mb-1 border border-light dark:border-dark border-t-highlight dark:border-t-highlight-dark ${className || ''}`;
+  // Refined Neumorphic RaisedCard: matches background, uses highlight top-border and soft bottom shadow
+  const baseClassName = `bg-light dark:bg-dark rounded-xl p-3 w-full mb-1 border border-light dark:border-dark border-t-highlight dark:border-t-highlight-dark border-l-highlight dark:border-l-highlight-dark ${className || ''}`;
   const shadowStyle = { 
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 }, 
-      shadowOpacity: 0.20, 
-      shadowRadius: 3, 
-      elevation: 8,
+      shadowOffset: { width: 2, height: 4 }, 
+      shadowOpacity: 0.15, 
+      shadowRadius: 5, 
+      elevation: 6,
       overflow: 'visible' as const
   };
 

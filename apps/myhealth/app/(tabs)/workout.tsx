@@ -165,9 +165,9 @@ export default function Workout() {
 					</TouchableOpacity>
 				</View>
 					
-                <View className="px-4">
+                <View>
                     {/* Saved Workouts Section (Quick Access) */}
-                    <View className="flex-row justify-between items-center mb-3">
+                    <View className="flex-row justify-between items-center mb-3 px-4">
                          <Text className="text-lg font-semibold mb-2 text-light dark:text-dark">Saved Workouts</Text>
                          <View className="flex-row items-center gap-4">
                             <TouchableOpacity onPress={handleCreateSavedWorkout}>
@@ -179,17 +179,19 @@ export default function Workout() {
                          </View>
                     </View>
                      {savedWorkouts.length === 0 ? (
-                        <View className="p-4 items-center justify-center border border-dashed border-light dark:border-dark rounded-xl">
+                        <View className="p-4 mx-4 items-center justify-center border border-dashed border-light dark:border-dark rounded-xl">
                             <Text className="text-gray-500 dark:text-gray-400 mb-2">No saved workouts.</Text>
                             <TouchableOpacity onPress={handleCreateSavedWorkout} className="p-2.5 rounded-lg border border-light dark:border-dark bg-light dark:bg-dark">
                                 <Text className="text-light dark:text-dark">Create a Workout</Text>
                             </TouchableOpacity>
                         </View>
                     ) : (
-						<FlatList
+ 						<FlatList
 							data={savedWorkouts}
 							scrollEnabled={false}
 							keyExtractor={(i) => i.id}
+                            style={{ overflow: 'visible' }}
+                            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 8 }}
                             ItemSeparatorComponent={() => <View className="h-2" />}
 							renderItem={({item}) => {
                                 const isExpanded = expandedWorkoutId === item.id;
@@ -211,44 +213,46 @@ export default function Workout() {
                     <View className="h-6" />
 
                     {/* Active Routine Section */}
-                    <View className="px-4">
+                    <View>
                         {activeRoutineObj ? (
-                            <ActiveRoutineCard
-                                activeRoutineObj={activeRoutineObj}
-                                timelineDays={timelineDays}
-                                dayIndex={dayIndex}
-                                isDayCompleted={isDayCompleted}
-                                onClearRoutine={clearActiveRoutine}
-                                onStartWorkout={(exercises, name, workoutId) => {
-                                    console.log("Workout.tsx: onStartWorkout called. ID:", workoutId);
-                                    
-                                    let exercisesToStart = exercises;
-                                    // Try to find fresh version from saved workouts if ID exists
-                                    let fresh;
-                                    
-                                    if (workoutId) {
-                                        fresh = savedWorkouts.find(w => w.id === workoutId);
-                                    }
+                            <View className="px-4">
+                                <ActiveRoutineCard
+                                    activeRoutineObj={activeRoutineObj}
+                                    timelineDays={timelineDays}
+                                    dayIndex={dayIndex}
+                                    isDayCompleted={isDayCompleted}
+                                    onClearRoutine={clearActiveRoutine}
+                                    onStartWorkout={(exercises, name, workoutId) => {
+                                        console.log("Workout.tsx: onStartWorkout called. ID:", workoutId);
+                                        
+                                        let exercisesToStart = exercises;
+                                        // Try to find fresh version from saved workouts if ID exists
+                                        let fresh;
+                                        
+                                        if (workoutId) {
+                                            fresh = savedWorkouts.find(w => w.id === workoutId);
+                                        }
 
-                                    // Fallback to name match if ID failed
-                                    if (!fresh && name) {
-                                        fresh = savedWorkouts.find(w => w.name.trim() === name.trim());
-                                    }
+                                        // Fallback to name match if ID failed
+                                        if (!fresh && name) {
+                                            fresh = savedWorkouts.find(w => w.name.trim() === name.trim());
+                                        }
 
-                                    if (fresh && fresh.exercises && fresh.exercises.length > 0) {
-                                        exercisesToStart = fresh.exercises;
-                                    }
+                                        if (fresh && fresh.exercises && fresh.exercises.length > 0) {
+                                            exercisesToStart = fresh.exercises;
+                                        }
 
-                                    startWorkout(exercisesToStart, name, activeRoutineObj.id);
-                                }}
-                                onMarkComplete={markRoutineDayComplete}
-                                onJumpToDay={setActiveRoutineIndex}
-                                onWorkoutPress={setPreviewWorkout}
-                                viewMode={routineViewMode}
-                                onViewModeChange={setRoutineViewMode}
-                            />
+                                        startWorkout(exercisesToStart, name, activeRoutineObj.id);
+                                    }}
+                                    onMarkComplete={markRoutineDayComplete}
+                                    onJumpToDay={setActiveRoutineIndex}
+                                    onWorkoutPress={setPreviewWorkout}
+                                    viewMode={routineViewMode}
+                                    onViewModeChange={setRoutineViewMode}
+                                />
+                            </View>
                         ) : (
-                            <View className="mb-6">
+                            <View className="mb-6 px-4">
                                 <View className="flex-row justify-between items-center mb-3">
                                     <Text className="text-lg font-semibold mb-2 text-light dark:text-dark">Active Routine</Text>
                                 </View>
@@ -270,8 +274,8 @@ export default function Workout() {
                     </View>
 
                     {/* Routines Section */}
-                    <View className="px-4">
-                        <View className="flex-row justify-between items-center mb-3 mt-6">
+                    <View>
+                        <View className="flex-row justify-between items-center mb-3 mt-6 px-4">
                             <Text className="text-lg font-semibold mb-2 text-light dark:text-dark">My Routines</Text>
                              <View className="flex-row items-center gap-4">
                                 <TouchableOpacity onPress={handleCreateRoutine}>
@@ -284,17 +288,19 @@ export default function Workout() {
                         </View>
                         
                         {routines.length === 0 ? (
-                            <View className="p-4 items-center justify-center border border-dashed border-light dark:border-dark rounded-xl">
+                            <View className="p-4 mx-4 items-center justify-center border border-dashed border-light dark:border-dark rounded-xl">
                                 <Text className="text-gray-500 dark:text-gray-400 mb-2">No routines yet.</Text>
                                 <TouchableOpacity onPress={handleCreateRoutine} className="p-2.5 rounded-lg border border-light dark:border-dark bg-light dark:bg-dark">
                                     <Text className="text-light dark:text-dark">Create a Routine</Text>
                                 </TouchableOpacity>
                             </View>
                         ) : (
-                            <FlatList
+                             <FlatList
                                 data={routines.slice(0, 5)}
                                 scrollEnabled={false}
                                 keyExtractor={(i) => i.id}
+                                style={{ overflow: 'visible' }}
+                                contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 8 }}
                                 renderItem={({item}) => (
                                     <RoutineCard 
                                         routine={item} 
