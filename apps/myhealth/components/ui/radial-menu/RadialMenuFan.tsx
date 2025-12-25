@@ -25,7 +25,7 @@ export function RadialMenuFan({ isOpen, menuRadius, theme }: { isOpen: SharedVal
                 width: size,
                 height: size, // Full circle
                 borderRadius: size / 2,
-                backgroundColor: theme.primary,
+                backgroundColor: theme.bgLight,
                 position: 'absolute',
                 // Center vertically on the button center (which acts as origin 0,0 locally often, but we are in a container)
                 // Container aligns items-center justify-center.
