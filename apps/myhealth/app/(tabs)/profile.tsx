@@ -260,7 +260,7 @@ export default function ProfileScreen() {
   };
   
   return (
-    <View className="flex-1 p-4 bg-light dark:bg-dark">
+    <View className="flex-1 bg-light dark:bg-dark">
       <ScreenHeader 
         title={username || 'Profile'} 
         rightAction={

@@ -1,15 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUITheme } from '@mysuite/ui';
-import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { formatSeconds } from '../../utils/formatting';
 import { IconSymbol } from '../ui/icon-symbol';
 
 export function WorkoutStickyHeader() {
     const theme = useUITheme();
-    const insets = useSafeAreaInsets();
     
 
     const { isRunning, workoutSeconds, workoutName, isExpanded, toggleExpanded, hasActiveSession } = useActiveWorkout();
@@ -32,11 +30,16 @@ export function WorkoutStickyHeader() {
 
     return (
         <Animated.View 
-            layout={Layout.springify()}
-            entering={FadeIn.duration(300)}
-            exiting={FadeOut.duration(300)}
-            style={{ paddingTop: insets.top + 8 }}
-            className="absolute top-0 left-0 right-0 z-[1001] pb-6 px-4 border-b border-black/5 bg-light-lighter dark:bg-border-dark"
+            style={{ 
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.15,
+                shadowRadius: 4,
+                elevation: 6,
+                zIndex: 1001,
+                top: 0, // Reset, using marginTop in className
+            }}
+            className="absolute left-0 right-0 pt-14 pb-6 px-4 bg-light dark:bg-dark rounded-b-3xl"
         >
             <TouchableOpacity 
                 className="flex-row items-center justify-between"
