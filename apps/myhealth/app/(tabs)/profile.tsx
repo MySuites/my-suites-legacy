@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useAuth, supabase } from '@mysuite/auth';
-import { SharedButton, useUITheme, ThemedView } from '@mysuite/ui';
+import { useUITheme } from '@mysuite/ui';
 import { useRouter } from 'expo-router';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 import { BodyWeightCard } from '../../components/profile/BodyWeightCard';
@@ -264,7 +264,7 @@ export default function ProfileScreen() {
   };
   
   return (
-    <ThemedView className="flex-1 p-4">
+    <View className="flex-1 p-4 bg-light dark:bg-dark">
       <ScreenHeader 
         title={username || 'Profile'} 
         rightAction={
@@ -290,8 +290,6 @@ export default function ProfileScreen() {
         onClose={() => setIsWeightModalVisible(false)}
         onSave={handleSaveWeight}
       />
-
-      <SharedButton title="Sign Out" onPress={handleSignOut} />
-    </ThemedView>
+    </View>
   );
 }

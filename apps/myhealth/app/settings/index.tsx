@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Alert, ScrollView, TextInput } from 'react-native';
 import { useAuth, supabase } from '@mysuite/auth';
-import { useUITheme, ThemedView } from '@mysuite/ui';
+import { useUITheme } from '@mysuite/ui';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
@@ -73,7 +73,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ThemedView className="flex-1">
+    <View className="flex-1 bg-light dark:bg-dark">
       <ScreenHeader title="Settings" />
 
       <ScrollView contentContainerStyle={{ padding: 16 }}>
@@ -144,6 +144,6 @@ export default function SettingsScreen() {
         
         <Text className="text-center text-xs text-gray-500 mt-6">Version 1.0.0</Text>
       </ScrollView>
-    </ThemedView>
+    </View>
   );
 }

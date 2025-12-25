@@ -1,10 +1,9 @@
 // apps/mycfo/app/(tabs)/profile.tsx
 import { useState, useEffect } from 'react';
-import { TextInput, Alert, StyleSheet } from 'react-native';
+import { View, TextInput, Alert, StyleSheet } from 'react-native';
 import { useAuth, supabase } from '@mysuite/auth';
 import { SharedButton } from '@mysuite/ui';
 import ThemeToggle from '@/components/ui/ThemeToggle';
-import { ThemedView } from '@/components/themed-view';
 import { useUITheme } from '@mysuite/ui';
 
 export default function ProfileScreen() {
@@ -54,7 +53,7 @@ export default function ProfileScreen() {
   const border = theme.surface;
 
   return (
-    <ThemedView style={styles.container}>
+    <View className="bg-light dark:bg-dark" style={styles.container}>
       <ThemeToggle />
       <TextInput
         style={[styles.input, { backgroundColor: bg, borderColor: border, color: text }]}
@@ -72,7 +71,7 @@ export default function ProfileScreen() {
       />
       <SharedButton title="Update Profile" onPress={handleUpdateProfile} />
       <SharedButton title="Sign Out" onPress={handleSignOut} />
-    </ThemedView>
+    </View>
   );
 }
 

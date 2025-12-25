@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, Modal, ActivityIndicator, ScrollView } from 'react-native';
-import { ThemedView } from '@mysuite/ui';
-import { ThemedText } from '@mysuite/ui';
+import { ThemedText, useUITheme } from '@mysuite/ui';
 import { IconSymbol } from '../ui/icon-symbol';
-import { useUITheme } from '@mysuite/ui';
+
 
 interface ExerciseSelectorModalProps {
     visible: boolean;
@@ -33,7 +32,7 @@ export const ExerciseSelectorModal = ({
             presentationStyle="pageSheet"
             onRequestClose={onClose}
         >
-            <ThemedView className="flex-1">
+            <View className="flex-1 bg-light dark:bg-dark">
                 <View className="flex-row items-center justify-between p-4 border-b border-light dark:border-white/10 pt-4 android:pt-10">
                     <TouchableOpacity onPress={onClose} className="p-2">
                             <ThemedText type="link">Cancel</ThemedText>
@@ -112,7 +111,7 @@ export const ExerciseSelectorModal = ({
                         />
                     )}
                 </View>
-            </ThemedView>
+            </View>
         </Modal>
     );
 };

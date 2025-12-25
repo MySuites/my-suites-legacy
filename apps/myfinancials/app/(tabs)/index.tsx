@@ -1,15 +1,13 @@
-// apps/mycfo/app/(tabs)/index.tsx
-import { StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { SharedButton } from '@mysuite/ui';
 
 export default function HomeScreen() {
   return (
-    <ThemedView style={styles.container}>
+    <View className="bg-light dark:bg-dark" style={styles.container}>
       <ThemedText type="title">Tab One</ThemedText>
       <SharedButton title="This is a v4 NativeWind button!" />
-    </ThemedView>
+    </View>
   );
 }
 

@@ -11,8 +11,8 @@ const baseColors = {
     border: 'hsl(0, 0%, 89%)',
   },
   dark: {
-    bgLight: 'hsl(0, 0%, 10%)',
-    bg: 'hsl(0, 0%, 5%)',
+    bgLight: 'hsl(0, 0%, 15%)',
+    bg: 'hsl(0, 0%, 10%)',
     bgDark: 'hsl(0, 0%, 0%)',
     text: 'hsl(0, 0%, 95%)',
     textMuted: 'hsl(0, 0%, 70%)',

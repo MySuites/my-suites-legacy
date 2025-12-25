@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Modal, TouchableOpacity, FlatList } from 'react-native';
-import { ThemedText, ThemedView, useUITheme } from '@mysuite/ui';
+import { ThemedText, useUITheme } from '@mysuite/ui';
 import { IconSymbol } from './icon-symbol';
 interface SelectionModalProps {
     visible: boolean;
@@ -30,7 +30,7 @@ export const SelectionModal = ({
             presentationStyle="pageSheet"
             onRequestClose={onClose}
         >
-            <ThemedView className="flex-1">
+            <View className="flex-1 bg-light dark:bg-dark">
                 <View className="flex-row items-center justify-between p-4 border-b border-light dark:border-white/10 pt-4 android:pt-10">
                     <TouchableOpacity onPress={onClose} className="p-2">
                         <ThemedText type="link">Done</ThemedText>
@@ -57,7 +57,7 @@ export const SelectionModal = ({
                         );
                     }}
                 />
-            </ThemedView>
+            </View>
         </Modal>
     );
 };

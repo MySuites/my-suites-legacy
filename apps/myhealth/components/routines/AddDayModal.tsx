@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
-import { ThemedView } from '@mysuite/ui';
-import { ThemedText } from '@mysuite/ui';
+import { ThemedText, useUITheme } from '@mysuite/ui';
 import { IconSymbol } from '../ui/icon-symbol';
-import { useUITheme } from '@mysuite/ui';
+
 
 interface AddDayModalProps {
     visible: boolean;
@@ -29,7 +28,7 @@ export const AddDayModal = ({
             presentationStyle="pageSheet"
             onRequestClose={onClose}
         >
-            <ThemedView className="flex-1">
+            <View className="flex-1 bg-light dark:bg-dark">
                 <View className="flex-row items-center justify-between p-4 border-b border-light dark:border-white/10 pt-4 android:pt-10">
                     <TouchableOpacity onPress={onClose} className="p-2">
                             <ThemedText type="link">Cancel</ThemedText>
@@ -68,7 +67,7 @@ export const AddDayModal = ({
                     )}
                     <View className="h-20" /> 
                 </ScrollView>
-            </ThemedView>
+            </View>
         </Modal>
     );
 };

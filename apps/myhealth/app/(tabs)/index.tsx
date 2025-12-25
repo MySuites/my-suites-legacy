@@ -1,10 +1,10 @@
-import { ThemedView } from '@mysuite/ui';
+import { View } from 'react-native';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 
 export default function HomeScreen() {
   return (
-    <ThemedView className="flex-1 p-4">
+    <View className="flex-1 p-4 bg-light dark:bg-dark">
           <ScreenHeader title="Home" />
-    </ThemedView>
+    </View>
   );
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity, View, ActivityIndicator, TextInput, Alert } from 'react-native'; 
 import { useRouter } from 'expo-router';
 
-import { ThemedText, ThemedView, useUITheme } from '@mysuite/ui';
+import { ThemedText, useUITheme } from '@mysuite/ui';
 import { useAuth } from '@mysuite/auth';
 import { fetchExercises } from '../../hooks/workouts/useWorkoutManager';
 import { IconSymbol } from '../../components/ui/icon-symbol';
@@ -42,8 +42,8 @@ export default function ExercisesScreen() {
   }, [user]);
 
   return (
-    <ThemedView className="flex-1">
-      <ThemedView className="flex-row items-center justify-between p-4 border-b border-bg-dark dark:border-white/10">
+    <View className="flex-1 bg-light dark:bg-dark">
+      <View className="flex-row items-center justify-between p-4 border-b border-bg-dark dark:border-white/10">
         <TouchableOpacity onPress={() => router.back()} className="p-2">
            <ThemedText type="link">Close</ThemedText>
         </TouchableOpacity>
@@ -51,7 +51,7 @@ export default function ExercisesScreen() {
         <TouchableOpacity onPress={() => router.push('/exercises/create')} className="p-2">
             <ThemedText type="link">Create</ThemedText>
         </TouchableOpacity> 
-      </ThemedView>
+      </View>
       
       <View className="px-4 py-3 border-b border-bg-dark dark:border-white/10">
         <View className="flex-row items-center bg-light dark:bg-dark rounded-lg px-2.5 h-10">
@@ -114,6 +114,6 @@ export default function ExercisesScreen() {
         showsVerticalScrollIndicator={false}
       />
       )}
-    </ThemedView>
+    </View>
   );
 }

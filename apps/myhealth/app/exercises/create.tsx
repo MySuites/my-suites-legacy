@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ThemedView } from '@mysuite/ui';
 import { ThemedText } from '@mysuite/ui';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 import { SelectionModal } from '../../components/ui/SelectionModal';
@@ -91,7 +90,7 @@ export default function CreateExerciseScreen() {
   };
 
   return (
-    <ThemedView className="flex-1">
+    <View className="flex-1 bg-light dark:bg-dark">
       <View className="flex-row items-center justify-between p-4 border-b border-light dark:border-white/10 pt-4 android:pt-10">
         <TouchableOpacity onPress={() => router.back()} className="p-2">
             <ThemedText type="link">Cancel</ThemedText>
@@ -190,6 +189,6 @@ export default function CreateExerciseScreen() {
           multiSelect={true}
       />
 
-    </ThemedView>
+    </View>
   );
 }

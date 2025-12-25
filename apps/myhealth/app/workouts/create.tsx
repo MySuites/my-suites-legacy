@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useUITheme as useTheme, ThemedView, ThemedText } from '@mysuite/ui';
+import { useUITheme as useTheme, ThemedText } from '@mysuite/ui';
 import { useAuth } from '@mysuite/auth';
 import { useWorkoutManager, fetchExercises } from '../../hooks/workouts/useWorkoutManager';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
@@ -111,14 +111,14 @@ export default function CreateWorkoutScreen() {
 
     if (isLoading) {
         return (
-            <ThemedView className="flex-1 justify-center items-center">
+            <View className="flex-1 justify-center items-center bg-light dark:bg-dark">
                 <ActivityIndicator size="large" color={theme.primary} />
-            </ThemedView>
+            </View>
         );
     }
 
     return (
-        <ThemedView className="flex-1">
+        <View className="flex-1 bg-light dark:bg-dark">
              <View className="flex-row justify-between items-center p-4 border-b border-bg-dark dark:border-white/10 pt-4 android:pt-10">
                 <TouchableOpacity onPress={() => router.back()} className="p-2">
                      <ThemedText type="link">Cancel</ThemedText>
@@ -208,6 +208,6 @@ export default function CreateWorkoutScreen() {
                 exercises={availableExercises}
                 isLoading={isLoadingExercises}
             />
-        </ThemedView>
+        </View>
     );
 }

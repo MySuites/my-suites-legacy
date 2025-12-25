@@ -17,7 +17,7 @@ interface CardProps extends ViewProps {
 export function Card({ children, style, className, onPress, activeOpacity = 0.9, onDelete, onEdit, ...props }: CardProps) {
   const { width } = useWindowDimensions();
   // Base styling from RoutineCard
-  const baseClassName = `bg-light dark:bg-dark rounded-xl p-3 w-full mb-1 border border-light dark:border-dark ${className || ''}`;
+  const baseClassName = `bg-light-darker dark:bg-dark-lighter rounded-xl p-3 w-full mb-1 border border-light dark:border-dark ${className || ''}`;
 
   // Track if we are deep enough to delete
   const shouldDelete = useRef(false);

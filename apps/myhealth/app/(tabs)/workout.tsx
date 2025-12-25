@@ -8,7 +8,7 @@ import {
     ScrollView,
 } from "react-native";
 
-import { ThemedView } from '@mysuite/ui';
+
 import { useRouter } from 'expo-router';
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 
@@ -142,7 +142,7 @@ export default function Workout() {
     }
 
 	return (
-		<ThemedView className="flex-1">
+		<View className="flex-1 bg-light dark:bg-dark">
 			<ScreenHeader title="Workout" />
 
 			{/* Dashboard: Routines & Saved Workouts */}
@@ -314,6 +314,6 @@ export default function Workout() {
                 workout={previewWorkout}
                 onClose={() => setPreviewWorkout(null)}
             />
-		</ThemedView>
+		</View>
 	);
 }

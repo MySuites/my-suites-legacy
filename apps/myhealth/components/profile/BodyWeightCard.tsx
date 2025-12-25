@@ -3,6 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
 import { BodyWeightChart } from './BodyWeightChart';
 import { SegmentedControl, SegmentedControlOption } from '../ui/SegmentedControl';
+import { Card } from '../ui/Card';
 
 // Defined locally to avoid circular dependencies if any
 type DateRange = 'Week' | 'Month' | '6Month' | 'Year';
@@ -65,7 +66,7 @@ export function BodyWeightCard({
   };
 
   return (
-    <View className="p-4 rounded-xl mb-4 bg-light-lighter dark:bg-dark-lighter border border-bg-dark dark:border-bg-dark-dark">
+    <Card className="p-4 mb-4">
       <View className="flex-row justify-between items-center mb-2">
         <View className="flex-row items-center">
             <View className="w-8 h-8 rounded-full bg-primary/10 items-center justify-center mr-3">
@@ -120,6 +121,6 @@ export function BodyWeightCard({
             <Text className="text-gray-400 text-sm italic">No weight recorded</Text>
         )}
       </View>
-    </View>
+    </Card>
   );
 }

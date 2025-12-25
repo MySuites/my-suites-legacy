@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ThemedText, ThemedView, useUITheme } from '@mysuite/ui';
+import { ThemedText, useUITheme } from '@mysuite/ui';
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
@@ -55,14 +55,14 @@ export default function RoutinesScreen() {
   };
 
   return (
-    <ThemedView className="flex-1">
-      <ThemedView className="flex-row items-center justify-between p-4 border-b border-bg-dark dark:border-white/10">
+    <View className="flex-1 bg-light dark:bg-dark">
+      <View className="flex-row items-center justify-between p-4 border-b border-bg-dark dark:border-white/10">
         <TouchableOpacity onPress={() => router.back()} className="p-2">
            <ThemedText type="link">Close</ThemedText>
         </TouchableOpacity>
         <ThemedText type="subtitle">My Routines</ThemedText>
         <View className="w-[50px]" /> 
-      </ThemedView>
+      </View>
       
       {routines.length === 0 ? (
           <View className="flex-1 items-center justify-center p-8">
@@ -100,6 +100,6 @@ export default function RoutinesScreen() {
             contentContainerStyle={{ paddingBottom: 120 }}
           />
       )}
-    </ThemedView>
+    </View>
   );
 }

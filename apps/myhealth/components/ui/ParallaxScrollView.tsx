@@ -6,7 +6,7 @@ import Animated, {
   useScrollOffset,
 } from 'react-native-reanimated';
 
-import { ThemedView } from './ThemedView';
+import { View } from 'react-native';
 import { useColorScheme } from '../../hooks/ui/use-color-scheme';
 import { useUITheme } from '@mysuite/ui';
 
@@ -57,7 +57,7 @@ export default function ParallaxScrollView({
         ]}>
         {headerImage}
       </Animated.View>
-      <ThemedView className="flex-1 p-8 gap-4 overflow-hidden">{children}</ThemedView>
+      <View className="flex-1 p-8 gap-4 overflow-hidden bg-light dark:bg-dark">{children}</View>
     </Animated.ScrollView>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ThemedView } from '@mysuite/ui';
+
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
@@ -104,7 +104,7 @@ export default function EndWorkoutScreen() {
     };
 
     return (
-        <ThemedView className="flex-1 p-4">
+        <View className="flex-1 p-4 bg-light dark:bg-dark">
             <ScreenHeader title="Workout Summary" />
             
             <ScrollView className="flex-1 mt-4">
@@ -166,6 +166,6 @@ export default function EndWorkoutScreen() {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-        </ThemedView>
+        </View>
     );
 }
