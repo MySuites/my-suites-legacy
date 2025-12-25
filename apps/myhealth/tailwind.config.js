@@ -21,7 +21,9 @@ module.exports = {
         'dark-darker': baseColors.dark.bgDark,
 
         primary: brand.light.primary,
+        'primary-muted': brand.light.primaryMuted,
         'primary-dark': brand.dark.primary,
+        'primary-muted-dark': brand.dark.primaryMuted,
         accent: brand.light.accent,
         'accent-dark': brand.dark.accent,
       },
@@ -32,7 +34,9 @@ module.exports = {
         'dark-muted': baseColors.dark.textMuted,
 
         primary: brand.light.primary,
+        'primary-muted': brand.light.primaryMuted,
         'primary-dark': brand.dark.primary,
+        'primary-muted-dark': brand.dark.primaryMuted,
         accent: brand.light.accent,
         'accent-dark': brand.dark.accent,
       },
@@ -41,7 +45,9 @@ module.exports = {
         'dark': baseColors.dark.border,
 
         primary: brand.light.primary,
+        'primary-muted': brand.light.primaryMuted,
         'primary-dark': brand.dark.primary,
+        'primary-muted-dark': brand.dark.primaryMuted,
         accent: brand.light.accent,
         'accent-dark': brand.dark.accent,
       },

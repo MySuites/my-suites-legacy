@@ -14,12 +14,12 @@ const baseColors = {
     bgLight: 'hsl(0, 0%, 10%)',
     bg: 'hsl(0, 0%, 5%)',
     bgDark: 'hsl(0, 0%, 0%)',
-    text: 'hsl(0, 100%, 95%)',
+    text: 'hsl(0, 0%, 95%)',
     textMuted: 'hsl(0, 0%, 70%)',
-    icon: 'hsl(0, 100%, 98%)',
-    tabIconDefault: 'hsl(0, 17%, 21%)',
+    icon: 'hsl(0, 0%, 5%)',
+    tabIconDefault: 'hsl(0, 0%, 89%)',
     error: 'hsl(0, 84%, 60%)',
-    border: 'hsl(0, 17%, 21%)',
+    border: 'hsl(0, 0%, 89%)',
   }
 };
 
@@ -27,20 +27,24 @@ const appThemes = {
   myhealth: {
     light: {
       primary: 'hsl(8, 100%, 67%)',
+      primaryMuted: 'hsl(8, 40%, 94%)',
       accent: 'hsl(117, 20%, 61%)',
     },
     dark: {
       primary: 'hsl(5, 100%, 75%)',
+      primaryMuted: 'hsl(5, 40%, 15%)',
       accent: 'hsl(122, 37%, 74%)',
     }
   },
   myfinancials: {
     light: {
       primary: 'hsl(210, 100%, 50%)',
+      primaryMuted: 'hsl(210, 40%, 94%)',
       accent: 'hsl(150, 40%, 40%)',
     },
     dark: {
       primary: 'hsl(210, 100%, 70%)',
+      primaryMuted: 'hsl(210, 40%, 15%)',
       accent: 'hsl(150, 40%, 60%)',
     }
   }

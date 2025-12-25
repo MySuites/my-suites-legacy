@@ -2,6 +2,7 @@ import { createContext, useContext } from 'react';
 
 export type AppTheme = {
   primary: string;
+  primaryMuted?: string;
   accent: string;
   bgLight: string;
   bg?: string;
@@ -26,6 +27,7 @@ export const getAppTheme = (appId: keyof typeof appThemes, scheme: 'light' | 'da
   return {
     ...base,
     primary: brand.primary,
+    primaryMuted: brand.primaryMuted,
     accent: brand.accent,
     tabIconSelected: brand.primary,
   };

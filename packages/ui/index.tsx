@@ -7,7 +7,7 @@ import { useUITheme } from './theme';
 cssInterop(Pressable, { className: 'style' });
 cssInterop(Text, { className: 'style' });
 
-export const SharedButton = ({ title, className, style, ...props }: { title: string; className?: string } & PressableProps) => {
+export const SharedButton = ({ title, className, textClassName, style, ...props }: { title: string; className?: string; textClassName?: string } & PressableProps) => {
   const defaultClasses = 'p-4 my-4 rounded-lg active:opacity-80 items-center justify-center bg-primary dark:bg-primary-dark ios:shadow-sm';
   const combined = `${defaultClasses}${className ? ' ' + className : ''}`;
 
@@ -16,7 +16,7 @@ export const SharedButton = ({ title, className, style, ...props }: { title: str
       {...props}
       className={combined}
       style={[style] as any}>
-      <Text className="text-center text-white font-bold">{title}</Text>
+      <Text className={textClassName || "text-center text-white font-bold"}>{title}</Text>
     </Pressable>
   );
 };

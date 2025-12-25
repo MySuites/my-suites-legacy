@@ -11,19 +11,22 @@ export const ThemeToggle = () => {
       <SharedButton
         title="Light"
         onPress={() => setPreference('light')}
-        className={`px-3 py-2 my-0 mr-2 rounded-md ${preference === 'light' ? 'bg-primary/90 dark:bg-primary-dark/90' : 'bg-light dark:bg-light-lighter'}`}
+        className={`px-3 py-2 my-0 mr-2 rounded-md ${preference === 'light' ? 'bg-primary' : 'bg-light dark:bg-dark opacity-70'}`}
+        textClassName={preference === 'light' ? 'text-white' : 'text-light dark:text-dark'}
       />
 
       <SharedButton
         title="Dark"
         onPress={() => setPreference('dark')}
-        className={`px-3 py-2 my-0 mr-2 rounded-md ${preference === 'dark' ? 'bg-primary/90 dark:bg-primary-dark/90' : 'bg-light dark:bg-light-lighter'}`}
+        className={`px-3 py-2 my-0 mr-2 rounded-md ${preference === 'dark' ? 'bg-primary dark:bg-primary-dark' : 'bg-light dark:bg-dark opacity-70'}`}
+        textClassName={preference === 'dark' ? 'text-white' : 'text-light dark:text-dark'}
       />
 
       <SharedButton
         title="System"
         onPress={() => setPreference('system')}
-        className={`px-3 py-2 my-0 rounded-md ${preference === 'system' ? 'bg-primary/90 dark:bg-primary-dark/90' : 'bg-light dark:bg-light-lighter'}`}
+        className={`px-3 py-2 my-0 rounded-md ${preference === 'system' ? 'bg-primary dark:bg-primary-dark' : 'bg-light dark:bg-dark opacity-70'}`}
+        textClassName={preference === 'system' ? 'text-white' : 'text-light dark:text-dark'}
       />
     </View>
   );
