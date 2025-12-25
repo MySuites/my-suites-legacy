@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Card } from '../ui/Card';
+import { RaisedCard } from '../ui/RaisedCard';
 
 
 interface RoutineCardProps {
@@ -21,7 +21,7 @@ export function RoutineCard({ routine, onPress, onLongPress, onDelete, onEdit }:
   const totalDays = routine.sequence.length;
 
   return (
-    <Card onDelete={onDelete} onEdit={onEdit}>
+    <RaisedCard onDelete={onDelete} onEdit={onEdit}>
       <View className="flex-row justify-between items-center mb-0">
         <TouchableOpacity 
             className="flex-1 mr-2"
@@ -46,6 +46,6 @@ export function RoutineCard({ routine, onPress, onLongPress, onDelete, onEdit }:
             </TouchableOpacity>
         </View>
       </View>
-    </Card>
+    </RaisedCard>
   );
 }

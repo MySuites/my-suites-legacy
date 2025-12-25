@@ -14,7 +14,7 @@ interface CardProps extends ViewProps {
   onEdit?: () => void;
 }
 
-export function Card({ children, style, className, onPress, activeOpacity = 0.9, onDelete, onEdit, ...props }: CardProps) {
+export function RaisedCard({ children, style, className, onPress, activeOpacity = 0.9, onDelete, onEdit, ...props }: CardProps) {
   const { width } = useWindowDimensions();
   // Base styling from RoutineCard
   const baseClassName = `bg-light-darker dark:bg-dark-lighter rounded-xl p-3 w-full mb-1 border border-light dark:border-dark border-t-highlight dark:border-t-highlight-dark ${className || ''}`;

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
 import { formatSeconds } from '../../utils/formatting';
 import { Exercise } from '../../hooks/workouts/useWorkoutManager';
-import { Card } from '../ui/Card';
+import { RaisedCard } from '../ui/RaisedCard';
 import { SetRow, getExerciseFields } from '../workouts/SetRow';
 
 interface ExerciseCardProps {
@@ -28,7 +28,7 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
     const { showBodyweight, showWeight, showReps, showDuration, showDistance } = getExerciseFields(exercise.properties);
 
     return (
-        <Card>
+        <RaisedCard>
 
             <View className="flex-row justify-between items-center mb-0">
                 <View>
@@ -84,7 +84,7 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                      <Text className="text-sm font-semibold text-primary dark:text-primary-dark">Add Set</Text>
                 </TouchableOpacity>
             </View>
-        </Card>
+        </RaisedCard>
     );
 }
 
