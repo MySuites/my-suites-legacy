@@ -92,7 +92,7 @@ export default function CreateExerciseScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <View className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10 pt-4 android:pt-10">
+      <View className="flex-row items-center justify-between p-4 border-b border-light dark:border-white/10 pt-4 android:pt-10">
         <TouchableOpacity onPress={() => router.back()} className="p-2">
             <ThemedText type="link">Cancel</ThemedText>
         </TouchableOpacity>
@@ -109,7 +109,7 @@ export default function CreateExerciseScreen() {
         <View className="mb-6">
             <ThemedText type="defaultSemiBold" className="mb-2">Name</ThemedText>
             <TextInput 
-                className="bg-surface dark:bg-surface_dark text-apptext dark:text-apptext_dark p-4 rounded-xl text-base border border-transparent dark:border-white/10"
+                className="bg-light-lighter dark:bg-border-dark text-light dark:text-dark p-4 rounded-xl text-base border border-transparent dark:border-white/10"
                 placeholder="e.g. Bench Press" 
                 placeholderTextColor={theme.icon}
                 value={name}
@@ -121,7 +121,7 @@ export default function CreateExerciseScreen() {
             <ThemedText type="defaultSemiBold" className="mb-2">Properties</ThemedText>
             <TouchableOpacity 
                 onPress={() => setShowTypeModal(true)}
-                className="bg-surface dark:bg-surface_dark p-4 rounded-xl border border-transparent dark:border-white/10 flex-row justify-between items-center"
+                className="bg-light-lighter dark:bg-border-dark p-4 rounded-xl border border-transparent dark:border-white/10 flex-row justify-between items-center"
             >
                 <ThemedText numberOfLines={1}>
                     {properties.length > 0 
@@ -136,7 +136,7 @@ export default function CreateExerciseScreen() {
             <ThemedText type="defaultSemiBold" className="mb-2">Primary Muscle Group</ThemedText>
             <TouchableOpacity 
                 onPress={() => setShowPrimaryModal(true)}
-                className="bg-surface dark:bg-surface_dark p-4 rounded-xl border border-transparent dark:border-white/10 flex-row justify-between items-center"
+                className="bg-light-lighter dark:bg-border-dark p-4 rounded-xl border border-transparent dark:border-white/10 flex-row justify-between items-center"
             >
                 <ThemedText>{primaryMuscle ? primaryMuscle.name : 'Select Primary Muscle'}</ThemedText>
                 <IconSymbol name="chevron.right" size={16} color={theme.icon || '#888'} />
@@ -147,7 +147,7 @@ export default function CreateExerciseScreen() {
             <ThemedText type="defaultSemiBold" className="mb-2">Secondary Muscle Groups</ThemedText>
             <TouchableOpacity 
                 onPress={() => setShowSecondaryModal(true)}
-                className="bg-surface dark:bg-surface_dark p-4 rounded-xl border border-transparent dark:border-white/10 flex-row justify-between items-center"
+                className="bg-light-lighter dark:bg-border-dark p-4 rounded-xl border border-transparent dark:border-white/10 flex-row justify-between items-center"
             >
                 <ThemedText numberOfLines={1}>
                     {secondaryMuscles.length > 0 

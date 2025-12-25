@@ -5,10 +5,10 @@ import { ThemedCard } from '../../../../packages/ui/examples/ThemedCard';
 
 jest.mock('../../../../packages/ui/theme', () => ({
     useUITheme: () => ({
-        surface: 'white',
-        surface_dark: 'black',
-        apptext: 'black',
-        apptext_dark: 'white',
+        bgLight: 'white',
+        'border-dark': 'black',
+        text: 'black',
+        'text-dark': 'white',
     }),
 }));
 

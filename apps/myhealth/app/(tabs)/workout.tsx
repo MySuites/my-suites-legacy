@@ -153,35 +153,35 @@ export default function Workout() {
 			>
 				{/* Controls Row */}
 				<View className="flex-row gap-2 my-3 px-4">
-                    <TouchableOpacity className="flex-1 mr-0 p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark" onPress={() => router.push('/exercises' as any)} accessibilityLabel="Exercises">
-						<Text className="text-apptext dark:text-apptext_dark text-center">Exercises</Text>
+                    <TouchableOpacity className="flex-1 mr-0 p-2.5 rounded-lg border border-light dark:border-dark bg-light dark:bg-dark" onPress={() => router.push('/exercises' as any)} accessibilityLabel="Exercises">
+						<Text className="text-light dark:text-dark text-center">Exercises</Text>
 					</TouchableOpacity>
-					<TouchableOpacity className="flex-1 mr-0 p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark" onPress={handleStartEmpty} accessibilityLabel="Start empty workout">
-						<Text className="text-apptext dark:text-apptext_dark text-center">Start Empty</Text>
+					<TouchableOpacity className="flex-1 mr-0 p-2.5 rounded-lg border border-light dark:border-dark bg-light dark:bg-dark" onPress={handleStartEmpty} accessibilityLabel="Start empty workout">
+						<Text className="text-light dark:text-dark text-center">Start Empty</Text>
 					</TouchableOpacity>
-					<TouchableOpacity className="flex-1 mr-0 p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark" onPress={() => router.push('/workouts/history' as any)} accessibilityLabel="History">
-						<Text className="text-apptext dark:text-apptext_dark text-center">History</Text>
+					<TouchableOpacity className="flex-1 mr-0 p-2.5 rounded-lg border border-light dark:border-dark bg-light dark:bg-dark" onPress={() => router.push('/workouts/history' as any)} accessibilityLabel="History">
+						<Text className="text-light dark:text-dark text-center">History</Text>
 					</TouchableOpacity>
 				</View>
 					
                 <View className="px-4">
                     {/* Saved Workouts Section (Quick Access) */}
                     <View className="flex-row justify-between items-center mb-3">
-                         <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">Saved Workouts</Text>
+                         <Text className="text-lg font-semibold mb-2 text-light dark:text-dark">Saved Workouts</Text>
                          <View className="flex-row items-center gap-4">
                             <TouchableOpacity onPress={handleCreateSavedWorkout}>
-                                <Text className="text-primary dark:text-primary_dark">+ New</Text>
+                                <Text className="text-primary dark:text-primary-dark">+ New</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => router.push('/workouts/saved')}>
-                                <Text className="text-primary dark:text-primary_dark">See All</Text>
+                                <Text className="text-primary dark:text-primary-dark">See All</Text>
                             </TouchableOpacity>
                          </View>
                     </View>
                      {savedWorkouts.length === 0 ? (
-                        <View className="p-4 items-center justify-center border border-dashed border-surface dark:border-surface_dark rounded-xl">
+                        <View className="p-4 items-center justify-center border border-dashed border-light dark:border-dark rounded-xl">
                             <Text className="text-gray-500 dark:text-gray-400 mb-2">No saved workouts.</Text>
-                            <TouchableOpacity onPress={handleCreateSavedWorkout} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
-                                <Text className="text-apptext dark:text-apptext_dark">Create a Workout</Text>
+                            <TouchableOpacity onPress={handleCreateSavedWorkout} className="p-2.5 rounded-lg border border-light dark:border-dark bg-light dark:bg-dark">
+                                <Text className="text-light dark:text-dark">Create a Workout</Text>
                             </TouchableOpacity>
                         </View>
                     ) : (
@@ -249,17 +249,17 @@ export default function Workout() {
                         ) : (
                             <View className="mb-6">
                                 <View className="flex-row justify-between items-center mb-3">
-                                    <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">Active Routine</Text>
+                                    <Text className="text-lg font-semibold mb-2 text-light dark:text-dark">Active Routine</Text>
                                 </View>
-                                <View className="bg-surface dark:bg-surface_dark rounded-xl p-4 border border-black/5 dark:border-white/10">
+                                <View className="bg-light-lighter dark:bg-border-dark rounded-xl p-4 border border-black/5 dark:border-white/10">
                                     <View className="p-5 items-center">
-                                        <Text className="text-base font-semibold text-apptext dark:text-apptext_dark mb-2">
+                                        <Text className="text-base font-semibold text-light dark:text-dark mb-2">
                                             No active routine
                                         </Text>
                                         <Text className="text-gray-500 dark:text-gray-400 text-center mb-4">
                                             Select a routine below to start tracking your progress.
                                         </Text>
-                                        <TouchableOpacity onPress={() => router.push('/routines' as any)} className="p-2.5 rounded-lg bg-primary dark:bg-primary_dark">
+                                        <TouchableOpacity onPress={() => router.push('/routines' as any)} className="p-2.5 rounded-lg bg-primary dark:bg-primary-dark">
                                             <Text className="text-white font-semibold">Choose Routine</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -271,22 +271,22 @@ export default function Workout() {
                     {/* Routines Section */}
                     <View className="px-4">
                         <View className="flex-row justify-between items-center mb-3 mt-6">
-                            <Text className="text-lg font-semibold mb-2 text-apptext dark:text-apptext_dark">My Routines</Text>
+                            <Text className="text-lg font-semibold mb-2 text-light dark:text-dark">My Routines</Text>
                              <View className="flex-row items-center gap-4">
                                 <TouchableOpacity onPress={handleCreateRoutine}>
-                                    <Text className="text-primary dark:text-primary_dark">+ New</Text>
+                                    <Text className="text-primary dark:text-primary-dark">+ New</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => router.push('/routines')}>
-                                    <Text className="text-primary dark:text-primary_dark">See All</Text>
+                                    <Text className="text-primary dark:text-primary-dark">See All</Text>
                                 </TouchableOpacity>
                              </View>
                         </View>
                         
                         {routines.length === 0 ? (
-                            <View className="p-4 items-center justify-center border border-dashed border-surface dark:border-surface_dark rounded-xl">
+                            <View className="p-4 items-center justify-center border border-dashed border-light dark:border-dark rounded-xl">
                                 <Text className="text-gray-500 dark:text-gray-400 mb-2">No routines yet.</Text>
-                                <TouchableOpacity onPress={handleCreateRoutine} className="p-2.5 rounded-lg border border-surface dark:border-surface_dark bg-background dark:bg-background_dark">
-                                    <Text className="text-apptext dark:text-apptext_dark">Create a Routine</Text>
+                                <TouchableOpacity onPress={handleCreateRoutine} className="p-2.5 rounded-lg border border-light dark:border-dark bg-light dark:bg-dark">
+                                    <Text className="text-light dark:text-dark">Create a Routine</Text>
                                 </TouchableOpacity>
                             </View>
                         ) : (

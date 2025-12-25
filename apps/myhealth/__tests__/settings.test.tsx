@@ -34,7 +34,7 @@ jest.mock('@mysuite/ui', () => ({
   useUITheme: () => ({
     text: '#000',
     background: '#fff',
-    surface: '#eee',
+    bgLight: '#eee',
     primary: 'blue',
     icon: '#ccc',
   }),

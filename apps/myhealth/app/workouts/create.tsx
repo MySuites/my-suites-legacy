@@ -134,7 +134,7 @@ export default function CreateWorkoutScreen() {
                     placeholder="Workout Name" 
                     value={workoutDraftName} 
                     onChangeText={setWorkoutDraftName} 
-                    className="bg-bg-default dark:bg-bg-default-dark text-apptext dark:text-apptext-dark p-4 rounded-xl text-base border border-transparent dark:border-white/10 mb-6"
+                    className="bg-light dark:bg-dark text-light dark:text-dark p-4 rounded-xl text-base border border-transparent dark:border-white/10 mb-6"
                     placeholderTextColor={theme.icon}
                 />
                 

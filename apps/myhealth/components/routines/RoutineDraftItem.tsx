@@ -25,12 +25,12 @@ export const RoutineDraftItem = ({
                 onLongPress={drag}
                 disabled={isActive}
                 activeOpacity={1}
-                className={`bg-bg-light dark:bg-bg-light-dark rounded-xl mb-3 overflow-hidden border p-3 flex-row items-center justify-between ${isActive ? 'border-primary dark:border-primary-dark' : 'border-bg-dark dark:border-bg-dark-dark'}`}
+                className={`bg-light-lighter dark:bg-dark-lighter rounded-xl mb-3 overflow-hidden border p-3 flex-row items-center justify-between ${isActive ? 'border-primary dark:border-primary-dark' : 'border-bg-dark dark:border-bg-dark-dark'}`}
             >
                 <View className="flex-row items-center flex-1 mr-2">
                         <View>
                         <ThemedText type="defaultSemiBold">{item.name}</ThemedText>
-                        <Text className="text-apptext-muted dark:text-apptext-muted-dark text-sm">
+                        <Text className="text-light-muted dark:text-dark-muted text-sm">
                             {item.type === 'rest' ? 'Rest Day' : 'Workout'}
                         </Text>
                     </View>

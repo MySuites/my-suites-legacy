@@ -85,14 +85,14 @@ export default function SettingsScreen() {
         <View className="mb-6">
           <Text className="text-sm font-semibold text-gray-500 mb-2 uppercase">Account</Text>
           <View className="py-3">
-            <Text className="text-base text-apptext dark:text-apptext-dark">Email</Text>
-            <Text className="text-base text-apptext dark:text-apptext-dark">{user?.email}</Text>
+            <Text className="text-base text-light dark:text-dark">Email</Text>
+            <Text className="text-base text-light dark:text-dark">{user?.email}</Text>
           </View>
           
           <View className="py-3">
-            <Text className="text-base text-apptext dark:text-apptext-dark">Username</Text>
+            <Text className="text-base text-light dark:text-dark">Username</Text>
             <TextInput
-              className="p-3 border border-border dark:border-border-dark rounded-lg mt-2 text-base text-apptext dark:text-apptext-dark"
+              className="p-3 border border-light dark:border-dark rounded-lg mt-2 text-base text-light dark:text-dark"
               value={username}
               onChangeText={setUsername}
               placeholder="Username"
@@ -101,9 +101,9 @@ export default function SettingsScreen() {
           </View>
 
           <View className="py-3">
-            <Text className="text-base text-apptext dark:text-apptext-dark">Full Name</Text>
+            <Text className="text-base text-light dark:text-dark">Full Name</Text>
             <TextInput
-              className="p-3 border border-border dark:border-border-dark rounded-lg mt-2 text-base text-apptext dark:text-apptext-dark"
+              className="p-3 border border-light dark:border-dark rounded-lg mt-2 text-base text-light dark:text-dark"
               value={fullName}
               onChangeText={setFullName}
               placeholder="Full Name"
@@ -112,7 +112,7 @@ export default function SettingsScreen() {
           </View>
 
           <TouchableOpacity 
-            className="mt-4 p-4 items-center bg-bg-dark dark:bg-bg-dark-dark rounded-lg" 
+            className="mt-4 p-4 items-center bg-dark dark:bg-dark-darker rounded-lg" 
             onPress={handleUpdateProfile}
             disabled={loading}
           >
@@ -122,18 +122,18 @@ export default function SettingsScreen() {
 
         <View className="mb-6">
           <Text className="text-sm font-semibold text-gray-500 mb-2 uppercase">Legal</Text>
-          <TouchableOpacity className="flex-row justify-between items-center py-3 border-b border-border dark:border-border-dark" onPress={() => Alert.alert('Privacy Policy', 'Link to Privacy Policy')}>
-            <Text className="text-base text-apptext dark:text-apptext-dark">Privacy Policy</Text>
+          <TouchableOpacity className="flex-row justify-between items-center py-3 border-b border-light dark:border-dark" onPress={() => Alert.alert('Privacy Policy', 'Link to Privacy Policy')}>
+            <Text className="text-base text-light dark:text-dark">Privacy Policy</Text>
             <IconSymbol name="chevron.right" size={20} color={theme.icon || '#ccc'} />
           </TouchableOpacity>
-          <TouchableOpacity className="flex-row justify-between items-center py-3 border-b border-border dark:border-border-dark" onPress={() => Alert.alert('Terms of Service', 'Link to Terms of Service')}>
-            <Text className="text-base text-apptext dark:text-apptext-dark">Terms of Service</Text>
+          <TouchableOpacity className="flex-row justify-between items-center py-3 border-b border-light dark:border-dark" onPress={() => Alert.alert('Terms of Service', 'Link to Terms of Service')}>
+            <Text className="text-base text-light dark:text-dark">Terms of Service</Text>
             <IconSymbol name="chevron.right" size={20} color={theme.icon || '#ccc'} />
           </TouchableOpacity>
         </View>
 
         <View className="mb-6">
-          <TouchableOpacity className="p-4 items-center border-b border-border dark:border-border-dark" onPress={handleSignOut}>
+          <TouchableOpacity className="p-4 items-center border-b border-light dark:border-dark" onPress={handleSignOut}>
             <Text className="text-base font-semibold text-primary dark:text-primary-dark">Sign Out</Text>
           </TouchableOpacity>
           

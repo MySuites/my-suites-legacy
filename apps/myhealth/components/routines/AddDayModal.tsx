@@ -30,7 +30,7 @@ export const AddDayModal = ({
             onRequestClose={onClose}
         >
             <ThemedView className="flex-1">
-                <View className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10 pt-4 android:pt-10">
+                <View className="flex-row items-center justify-between p-4 border-b border-light dark:border-white/10 pt-4 android:pt-10">
                     <TouchableOpacity onPress={onClose} className="p-2">
                             <ThemedText type="link">Cancel</ThemedText>
                     </TouchableOpacity>
@@ -42,7 +42,7 @@ export const AddDayModal = ({
                     <ThemedText type="defaultSemiBold" className="mb-3">Options</ThemedText>
                     <TouchableOpacity 
                         onPress={onAddRestDay} 
-                        className="bg-surface dark:bg-surface_dark p-4 rounded-xl border border-black/5 dark:border-white/10 mb-6 flex-row items-center"
+                        className="bg-light-lighter dark:bg-border-dark p-4 rounded-xl border border-black/5 dark:border-white/10 mb-6 flex-row items-center"
                     >
                         <IconSymbol name="moon.zzz.fill" size={24} color={theme.primary} />
                         <ThemedText className="ml-3 font-semibold text-lg">Rest Day</ThemedText>
@@ -56,7 +56,7 @@ export const AddDayModal = ({
                             <TouchableOpacity 
                                 key={workout.id}
                                 onPress={() => onAddWorkout(workout)}
-                                className="bg-surface dark:bg-surface_dark p-4 rounded-xl border border-black/5 dark:border-white/10 mb-3 flex-row items-center justify-between"
+                                className="bg-light-lighter dark:bg-border-dark p-4 rounded-xl border border-black/5 dark:border-white/10 mb-3 flex-row items-center justify-between"
                             >
                                 <View>
                                     <ThemedText className="font-semibold text-lg">{workout.name}</ThemedText>

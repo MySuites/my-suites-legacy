@@ -47,7 +47,7 @@ export function ActiveWorkoutOverlay() {
     return (
         <Animated.View 
             style={{ paddingTop: insets.top + 50 }} // Top padding for Persistent Header
-            className="absolute inset-0 z-[999] bg-background dark:bg-background_dark"
+            className="absolute inset-0 z-[999] bg-light dark:bg-dark"
             entering={SlideInUp.duration(400)} 
             exiting={SlideOutUp.duration(400)}
         >
@@ -69,10 +69,10 @@ export function ActiveWorkoutOverlay() {
                                 />
                             ))}
                             <TouchableOpacity 
-                                className="mt-5 p-4 rounded-xl border border-dashed border-primary dark:border-primary_dark items-center justify-center"
+                                className="mt-5 p-4 rounded-xl border border-dashed border-primary dark:border-primary-dark items-center justify-center"
                                 onPress={() => router.push('/exercises')}
                             >
-                                <Text className="text-base font-semibold text-primary dark:text-primary_dark">+ Add Exercise</Text>
+                                <Text className="text-base font-semibold text-primary dark:text-primary-dark">+ Add Exercise</Text>
                             </TouchableOpacity>
                         </>
                      )}

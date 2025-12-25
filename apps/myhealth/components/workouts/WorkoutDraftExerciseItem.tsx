@@ -47,7 +47,7 @@ export const WorkoutDraftExerciseItem = ({
     const { showBodyweight, showWeight, showReps, showDuration, showDistance } = getExerciseFields(item.properties);
 
     return (
-        <View className="bg-surface dark:bg-surface_dark rounded-xl mb-3 overflow-hidden border border-black/5 dark:border-white/10">
+        <View className="bg-light-lighter dark:bg-border-dark rounded-xl mb-3 overflow-hidden border border-black/5 dark:border-white/10">
             <TouchableOpacity 
                 onPress={onToggleExpand}
                 className="flex-row items-center justify-between p-3"
@@ -74,7 +74,7 @@ export const WorkoutDraftExerciseItem = ({
             </TouchableOpacity>
             
             {isExpanded && (
-                <View className="px-3 pb-3 pt-1 bg-background/50 dark:bg-background_dark/30">
+                <View className="px-3 pb-3 pt-1 bg-light/50 dark:bg-dark/30">
                     <View className="flex-row mb-2">
                         <Text className="w-10 text-xs text-gray-500 font-semibold text-center">Set</Text>
                         {showBodyweight && <Text className="w-12 text-xs text-gray-500 font-semibold text-center">{latestBodyWeight ? 'Lbs' : 'BW'}</Text>}
@@ -86,7 +86,7 @@ export const WorkoutDraftExerciseItem = ({
                     </View>
                     {currentTargets.map((set: any, setIdx: number) => (
                         <View key={setIdx} className="flex-row items-center mb-2">
-                            <Text className="w-10 text-apptext dark:text-apptext_dark text-center font-medium">{setIdx + 1}</Text>
+                            <Text className="w-10 text-light dark:text-dark text-center font-medium">{setIdx + 1}</Text>
                             
                             {showBodyweight && (
                                 <View className="w-12 items-center justify-center">
@@ -102,7 +102,7 @@ export const WorkoutDraftExerciseItem = ({
                                         value={String(set.weight || 0)} 
                                         keyboardType="numeric"
                                         onChangeText={(v) => onUpdateSet(setIdx, 'weight', v)}
-                                        className="bg-background dark:bg-background_dark border border-black/10 dark:border-white/10 rounded px-2 py-1 w-16 text-center text-apptext dark:text-apptext_dark"
+                                        className="bg-light dark:bg-dark border border-black/10 dark:border-white/10 rounded px-2 py-1 w-16 text-center text-light dark:text-dark"
                                         selectTextOnFocus
                                     />
                                 </View>
@@ -114,7 +114,7 @@ export const WorkoutDraftExerciseItem = ({
                                         value={String(set.reps || 0)} 
                                         keyboardType="numeric"
                                         onChangeText={(v) => onUpdateSet(setIdx, 'reps', v)}
-                                        className="bg-background dark:bg-background_dark border border-black/10 dark:border-white/10 rounded px-2 py-1 w-16 text-center text-apptext dark:text-apptext_dark"
+                                        className="bg-light dark:bg-dark border border-black/10 dark:border-white/10 rounded px-2 py-1 w-16 text-center text-light dark:text-dark"
                                         selectTextOnFocus
                                     />
                                 </View>
@@ -126,7 +126,7 @@ export const WorkoutDraftExerciseItem = ({
                                         value={String(set.duration || 0)} 
                                         keyboardType="numeric"
                                         onChangeText={(v) => onUpdateSet(setIdx, 'duration', v)}
-                                        className="bg-background dark:bg-background_dark border border-black/10 dark:border-white/10 rounded px-2 py-1 w-16 text-center text-apptext dark:text-apptext_dark"
+                                        className="bg-light dark:bg-dark border border-black/10 dark:border-white/10 rounded px-2 py-1 w-16 text-center text-light dark:text-dark"
                                         selectTextOnFocus
                                     />
                                 </View>
@@ -138,7 +138,7 @@ export const WorkoutDraftExerciseItem = ({
                                         value={String(set.distance || 0)} 
                                         keyboardType="numeric"
                                         onChangeText={(v) => onUpdateSet(setIdx, 'distance', v)}
-                                        className="bg-background dark:bg-background_dark border border-black/10 dark:border-white/10 rounded px-2 py-1 w-16 text-center text-apptext dark:text-apptext_dark"
+                                        className="bg-light dark:bg-dark border border-black/10 dark:border-white/10 rounded px-2 py-1 w-16 text-center text-light dark:text-dark"
                                         selectTextOnFocus
                                     />
                                 </View>
@@ -157,7 +157,7 @@ export const WorkoutDraftExerciseItem = ({
                         className="flex-row items-center justify-center p-2 mt-1 rounded-lg border border-dashed border-black/10 dark:border-white/10"
                     >
                         <IconSymbol name="plus" size={14} color={theme.primary} />
-                        <Text className="ml-2 text-sm text-primary dark:text-primary_dark font-medium">Add Set</Text>
+                        <Text className="ml-2 text-sm text-primary dark:text-primary-dark font-medium">Add Set</Text>
                     </TouchableOpacity>
                 </View>
             )}

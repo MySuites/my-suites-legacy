@@ -184,7 +184,7 @@ export function RadialMenu({
 
       <GestureDetector gesture={composedGesture}>
         <Animated.View style={buttonStyle}>
-           <View className="absolute inset-0" style={[{ backgroundColor: style && (style as any).backgroundColor ? (style as any).backgroundColor : theme.surface, borderRadius: buttonSize/2 }]} />
+           <View className="absolute inset-0" style={[{ backgroundColor: style && (style as any).backgroundColor ? (style as any).backgroundColor : theme.bgLight, borderRadius: buttonSize/2 }]} />
           <IconSymbol name={icon as any} size={buttonSize * 0.5} color={theme.text} />
         </Animated.View>
       </GestureDetector>

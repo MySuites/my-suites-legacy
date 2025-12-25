@@ -65,13 +65,13 @@ export function BodyWeightCard({
   };
 
   return (
-    <View className="p-4 rounded-xl mb-4 bg-bg-light dark:bg-bg-light-dark border border-bg-dark dark:border-bg-dark-dark">
+    <View className="p-4 rounded-xl mb-4 bg-light-lighter dark:bg-dark-lighter border border-bg-dark dark:border-bg-dark-dark">
       <View className="flex-row justify-between items-center mb-2">
         <View className="flex-row items-center">
             <View className="w-8 h-8 rounded-full bg-primary/10 items-center justify-center mr-3">
                  <IconSymbol name="scalemass.fill" size={18} color={primaryColor || '#3b82f6'} />
             </View>
-            <Text className="font-semibold text-base text-apptext dark:text-apptext-dark">Body Weight</Text>
+            <Text className="font-semibold text-base text-light dark:text-dark">Body Weight</Text>
         </View>
         <Pressable 
             onPress={onLogWeight}
@@ -88,10 +88,10 @@ export function BodyWeightCard({
                 <View className="flex-row justify-between items-end mb-4">
                     <View>
                         <View className="flex-row items-baseline">
-                            <Text className="text-3xl font-bold mr-1 text-apptext dark:text-apptext-dark">{displayWeight}</Text>
-                            <Text className="text-apptext-muted dark:text-apptext-muted-dark text-sm">lbs</Text>
+                            <Text className="text-3xl font-bold mr-1 text-light dark:text-dark">{displayWeight}</Text>
+                            <Text className="text-light-muted dark:text-dark-muted text-sm">lbs</Text>
                         </View>
-                        <Text className="text-[11px] font-medium text-apptext-muted dark:text-apptext-muted-dark mt-0.5">
+                        <Text className="text-[11px] font-medium text-light-muted dark:text-dark-muted mt-0.5">
                             {getSelectionLabel()}
                         </Text>
                     </View>

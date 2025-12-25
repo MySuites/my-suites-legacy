@@ -36,7 +36,7 @@ export function WorkoutStickyHeader() {
             entering={FadeIn.duration(300)}
             exiting={FadeOut.duration(300)}
             style={{ paddingTop: insets.top + 8 }}
-            className="absolute top-0 left-0 right-0 z-[1001] pb-6 px-4 border-b border-black/5 bg-surface dark:bg-surface_dark"
+            className="absolute top-0 left-0 right-0 z-[1001] pb-6 px-4 border-b border-black/5 bg-light-lighter dark:bg-border-dark"
         >
             <TouchableOpacity 
                 className="flex-row items-center justify-between"
@@ -44,12 +44,12 @@ export function WorkoutStickyHeader() {
                 activeOpacity={0.8}
             >
                  <View className="flex-row items-center gap-2">
-                     <View className={`w-2 h-2 rounded-full ${isRunning ? 'bg-primary dark:bg-primary_dark' : 'bg-gray-400'}`} />
-                     <Text className="text-sm font-semibold text-apptext dark:text-apptext_dark">{title}</Text>
+                     <View className={`w-2 h-2 rounded-full ${isRunning ? 'bg-primary dark:bg-primary-dark' : 'bg-gray-400'}`} />
+                     <Text className="text-sm font-semibold text-light dark:text-dark">{title}</Text>
                  </View>
                  
                  <View className="flex-row items-center gap-2">
-                     <Text className="text-sm font-semibold tabular-nums text-apptext dark:text-apptext_dark">{formatSeconds(workoutSeconds)}</Text>
+                     <Text className="text-sm font-semibold tabular-nums text-light dark:text-dark">{formatSeconds(workoutSeconds)}</Text>
                      <IconSymbol name={rightIcon} size={16} color={theme.icon ?? '#000'} />
                  </View>
             </TouchableOpacity>

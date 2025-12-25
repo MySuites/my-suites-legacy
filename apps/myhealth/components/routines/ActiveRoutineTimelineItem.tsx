@@ -73,7 +73,7 @@ export function ActiveRoutineTimelineItem({
 
         {!isLastInView && (
           <View
-            className="w-[2px] flex-1 bg-bg-dark dark:bg-bg-dark-dark -my-0.5 z-[1]"
+            className="w-[2px] flex-1 bg-dark dark:bg-dark-darker -my-0.5 z-[1]"
           />
         )}
 
@@ -104,7 +104,7 @@ export function ActiveRoutineTimelineItem({
                 fontSize: isToday ? 18 : 16,
                 textDecorationLine: isCompletedToday ? 'line-through' : 'none',
               }}
-              className={`${isCompletedToday ? 'text-apptext-muted dark:text-apptext-muted-dark' : isToday ? 'text-apptext dark:text-apptext-dark' : 'text-apptext-muted dark:text-apptext-muted-dark'}`}
+              className={`${isCompletedToday ? 'text-light-muted dark:text-dark-muted' : isToday ? 'text-light dark:text-dark' : 'text-light-muted dark:text-dark-muted'}`}
             >
               {item.type === 'rest'
                 ? 'Rest Day'
@@ -136,8 +136,8 @@ export function ActiveRoutineTimelineItem({
                 </Text>
               )}
               {isToday && !isCompletedToday && (
-                <View className="bg-bg-dark dark:bg-bg-dark-dark px-2 py-0.5 rounded">
-                  <Text className="text-[10px] text-apptext-muted dark:text-apptext-muted-dark font-bold">
+                <View className="bg-dark dark:bg-dark-darker px-2 py-0.5 rounded">
+                  <Text className="text-[10px] text-light-muted dark:text-dark-muted font-bold">
                     TODAY
                   </Text>
                 </View>
@@ -174,10 +174,10 @@ export function ActiveRoutineTimelineItem({
             </TouchableOpacity>
 
             <TouchableOpacity
-              className="p-2.5 rounded-lg border border-bg-dark dark:border-white/10 bg-bg-light dark:bg-bg-light-dark px-4 items-center justify-center"
+              className="p-2.5 rounded-lg border border-bg-dark dark:border-white/10 bg-light-lighter dark:bg-dark-lighter px-4 items-center justify-center"
               onPress={() => onMarkComplete()}
             >
-              <Text className="text-apptext dark:text-apptext-dark">Skip</Text>
+              <Text className="text-light dark:text-dark">Skip</Text>
             </TouchableOpacity>
           </View>
         )}

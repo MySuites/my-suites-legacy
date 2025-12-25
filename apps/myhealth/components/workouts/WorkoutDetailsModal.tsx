@@ -51,8 +51,8 @@ export function WorkoutDetailsModal({ visible, onClose, workoutLogId }: WorkoutD
     return (
         <Modal visible={visible} animationType="slide" transparent={true}>
             <View className="flex-1 justify-center items-center bg-black/50">
-                <View className="w-[90%] bg-background dark:bg-background_dark rounded-2xl p-5 max-h-[80%]">
-                    <Text className="text-xl font-bold text-center mb-4 text-apptext dark:text-apptext_dark">Workout Details</Text>
+                <View className="w-[90%] bg-light dark:bg-dark rounded-2xl p-5 max-h-[80%]">
+                    <Text className="text-xl font-bold text-center mb-4 text-light dark:text-dark">Workout Details</Text>
                     
                     {loading ? (
                         <View className="p-6 items-center justify-center">
@@ -72,8 +72,8 @@ export function WorkoutDetailsModal({ visible, onClose, workoutLogId }: WorkoutD
                             keyExtractor={(item, index) => item.name + index}
                             contentContainerStyle={{ paddingBottom: 16 }}
                             renderItem={({ item }) => (
-                                <View className="mb-4 bg-surface dark:bg-surface_dark p-3 rounded-lg">
-                                    <Text className="text-base font-semibold text-apptext dark:text-apptext_dark mb-2">{item.name}</Text>
+                                <View className="mb-4 bg-light-lighter dark:bg-border-dark p-3 rounded-lg">
+                                    <Text className="text-base font-semibold text-light dark:text-dark mb-2">{item.name}</Text>
                                     {item.sets.map((set: any, idx: number) => {
                                         const parts = [];
                                         const props = item.properties || [];
@@ -113,8 +113,8 @@ export function WorkoutDetailsModal({ visible, onClose, workoutLogId }: WorkoutD
                     )}
 
                     <View className="items-center mt-4">
-                        <TouchableOpacity onPress={onClose} className="px-6 py-2.5 bg-surface dark:bg-surface_dark rounded-lg">
-                            <Text className="text-apptext dark:text-apptext_dark font-semibold text-base">Close</Text>
+                        <TouchableOpacity onPress={onClose} className="px-6 py-2.5 bg-light-lighter dark:bg-border-dark rounded-lg">
+                            <Text className="text-light dark:text-dark font-semibold text-base">Close</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

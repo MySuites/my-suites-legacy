@@ -26,21 +26,21 @@ export function AddExerciseModal({ visible, onClose, onAdd }: AddExerciseModalPr
     return (
         <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
             <View className="flex-1 justify-center items-center bg-black/50">
-                <View className="w-[90%] p-5 rounded-2xl bg-background dark:bg-background_dark border border-surface dark:border-white/10">
-                    <Text className="text-xl font-bold mb-4 text-apptext dark:text-apptext_dark">Add Exercise</Text>
+                <View className="w-[90%] p-5 rounded-2xl bg-light dark:bg-dark border border-light dark:border-white/10">
+                    <Text className="text-xl font-bold mb-4 text-light dark:text-dark">Add Exercise</Text>
                     <TextInput 
                         placeholder="Name" 
                         placeholderTextColor={theme.icon || "#9ca3af"}
                         value={name} 
                         onChangeText={setName} 
-                        className="border border-surface dark:border-white/10 rounded-lg p-3 mb-3 text-apptext dark:text-apptext_dark bg-surface dark:bg-surface_dark"
+                        className="border border-light dark:border-white/10 rounded-lg p-3 mb-3 text-light dark:text-dark bg-light-lighter dark:bg-border-dark"
                     />
                     <TextInput 
                         placeholder="Sets" 
                         placeholderTextColor={theme.icon || "#9ca3af"}
                         value={sets} 
                         onChangeText={setSets} 
-                        className="border border-surface dark:border-white/10 rounded-lg p-3 mb-3 text-apptext dark:text-apptext_dark bg-surface dark:bg-surface_dark"
+                        className="border border-light dark:border-white/10 rounded-lg p-3 mb-3 text-light dark:text-dark bg-light-lighter dark:bg-border-dark"
                         keyboardType="number-pad" 
                     />
                     <TextInput 
@@ -48,15 +48,15 @@ export function AddExerciseModal({ visible, onClose, onAdd }: AddExerciseModalPr
                         placeholderTextColor={theme.icon || "#9ca3af"}
                         value={reps} 
                         onChangeText={setReps} 
-                        className="border border-surface dark:border-white/10 rounded-lg p-3 mb-3 text-apptext dark:text-apptext_dark bg-surface dark:bg-surface_dark"
+                        className="border border-light dark:border-white/10 rounded-lg p-3 mb-3 text-light dark:text-dark bg-light-lighter dark:bg-border-dark"
                         keyboardType="number-pad" 
                     />
 
                     <View className="flex-row justify-end mt-2 gap-2">
-                        <TouchableOpacity onPress={onClose} className="px-4 py-2.5 rounded-lg border border-surface dark:border-white/10 bg-transparent"> 
-                            <Text className="text-apptext dark:text-apptext_dark font-semibold">Cancel</Text>
+                        <TouchableOpacity onPress={onClose} className="px-4 py-2.5 rounded-lg border border-light dark:border-white/10 bg-transparent"> 
+                            <Text className="text-light dark:text-dark font-semibold">Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={handleAdd} className="px-4 py-2.5 rounded-lg bg-primary dark:bg-primary_dark">
+                        <TouchableOpacity onPress={handleAdd} className="px-4 py-2.5 rounded-lg bg-primary dark:bg-primary-dark">
                             <Text className="text-white font-bold">Add</Text>
                         </TouchableOpacity>
                     </View>

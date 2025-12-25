@@ -16,7 +16,7 @@ const WorkoutHistoryItem = ({ item, onDelete, onPress }: { item: any, onDelete: 
             className="mb-3"
         >
             <View className="flex-row justify-between mb-2">
-            <Text className="text-lg font-semibold text-apptext dark:text-apptext_dark">{item.workoutName || 'Untitled Workout'}</Text>
+            <Text className="text-lg font-semibold text-light dark:text-dark">{item.workoutName || 'Untitled Workout'}</Text>
             <Text className="text-sm text-gray-500">
                 {new Date(item.workoutTime).toLocaleDateString()}
             </Text>
@@ -25,7 +25,7 @@ const WorkoutHistoryItem = ({ item, onDelete, onPress }: { item: any, onDelete: 
             {item.notes && <Text className="text-sm text-gray-500" numberOfLines={1}>{item.notes}</Text>}
             </View>
             <View className="mt-2 items-end">
-                <Text className="text-xs text-primary dark:text-primary_dark">Tap for details</Text>
+                <Text className="text-xs text-primary dark:text-primary-dark">Tap for details</Text>
             </View>
         </Card>
     );
@@ -37,14 +37,14 @@ export default function WorkoutHistoryScreen() {
   const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
 
   return (
-    <View className="flex-1 bg-background dark:bg-background_dark">
+    <View className="flex-1 bg-light dark:bg-dark">
       <Stack.Screen options={{ headerShown: false }} />
       
       <ScreenHeader 
         title="Workout History" 
         rightAction={
             <TouchableOpacity onPress={() => router.back()} className="p-2">
-              <Text className="text-primary dark:text-primary_dark text-base font-semibold">Close</Text>
+              <Text className="text-primary dark:text-primary-dark text-base font-semibold">Close</Text>
             </TouchableOpacity>
         }
       />

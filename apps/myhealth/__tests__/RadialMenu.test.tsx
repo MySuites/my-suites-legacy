@@ -44,7 +44,7 @@ jest.mock('../components/ui/icon-symbol', () => ({
 jest.mock('@mysuite/ui', () => ({
     useUITheme: () => ({
         background: 'white',
-        surface: 'gray',
+        bgLight: 'gray',
         text: 'black',
         primary: 'blue'
     })

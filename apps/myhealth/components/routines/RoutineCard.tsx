@@ -29,10 +29,10 @@ export function RoutineCard({ routine, onPress, onLongPress, onDelete, onEdit }:
             onLongPress={onLongPress}
             activeOpacity={0.7}
         >
-            <Text className="text-lg font-bold text-apptext dark:text-apptext_dark mb-1" numberOfLines={1}>
+            <Text className="text-lg font-bold text-light dark:text-dark mb-1" numberOfLines={1}>
             {routine.name}
             </Text>
-            <Text className="text-sm text-apptext-muted dark:text-apptext-muted-dark">
+            <Text className="text-sm text-light-muted dark:text-dark-muted">
             {totalDays} Days • {workoutCount} Workouts
             </Text>
         </TouchableOpacity>
@@ -40,7 +40,7 @@ export function RoutineCard({ routine, onPress, onLongPress, onDelete, onEdit }:
         <View className="flex-row items-center gap-2">
             <TouchableOpacity 
                 onPress={onPress}
-                className="bg-primary dark:bg-primary_dark px-4 py-2 rounded-lg"
+                className="bg-primary dark:bg-primary-dark px-4 py-2 rounded-lg"
             >
                 <Text className="text-white font-semibold">Set Active</Text>
             </TouchableOpacity>

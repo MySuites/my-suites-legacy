@@ -54,10 +54,10 @@ export default function ExercisesScreen() {
       </ThemedView>
       
       <View className="px-4 py-3 border-b border-bg-dark dark:border-white/10">
-        <View className="flex-row items-center bg-bg-default dark:bg-bg-default-dark rounded-lg px-2.5 h-10">
+        <View className="flex-row items-center bg-light dark:bg-dark rounded-lg px-2.5 h-10">
             <IconSymbol name="magnifyingglass" size={20} color={theme.icon || '#888'} />
              <TextInput
-                className="flex-1 ml-2 text-base h-full text-apptext dark:text-apptext_dark"
+                className="flex-1 ml-2 text-base h-full text-light dark:text-dark"
                 placeholder="Search exercises..."
                 placeholderTextColor={theme.icon || '#888'}
                 value={searchQuery}

@@ -73,26 +73,26 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
             friction={2}
             containerStyle={{ overflow: 'visible' }}
         >
-             <View className={`flex-row items-center mb-2 h-11 px-1 ${isEvenSet ? 'bg-bg-default dark:bg-bg-default-dark rounded-lg' : ''}`}>
+             <View className={`flex-row items-center mb-2 h-11 px-1 ${isEvenSet ? 'bg-light dark:bg-dark rounded-lg' : ''}`}>
                  {/* Set Number */}
                  <View className="w-[30px] items-center justify-center">
-                     <Text className="text-xs font-bold text-apptext dark:text-apptext-dark">{index + 1}</Text>
+                     <Text className="text-xs font-bold text-light dark:text-dark">{index + 1}</Text>
                  </View>
 
-                 <Text className="flex-1 text-center text-xs text-apptext-muted dark:text-apptext-muted-dark">-</Text>
+                 <Text className="flex-1 text-center text-xs text-light-muted dark:text-dark-muted">-</Text>
 
                  {isCompleted ? (
                       <>
                         {showBodyweight && (
                             <View className="w-[60px] items-center justify-center mx-1">
-                                <Text className="text-sm font-bold text-apptext-muted dark:text-apptext-muted-dark">
+                                <Text className="text-sm font-bold text-light-muted dark:text-dark-muted">
                                     {latestBodyWeight ? `${latestBodyWeight}` : 'BW'}
                                 </Text>
                             </View>
                         )}
                         {showWeight && (
                              <TextInput 
-                                className="w-[60px] bg-transparent text-center text-sm font-bold text-apptext dark:text-apptext-dark mx-1 p-0 -mt-[6px]"
+                                className="w-[60px] bg-transparent text-center text-sm font-bold text-light dark:text-dark mx-1 p-0 -mt-[6px]"
                                 value={getLogValue('weight')}
                                 onChangeText={(t: string) => onUpdateLog?.(index, 'weight', t)}
                                 keyboardType="numeric" 
@@ -102,7 +102,7 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                         )}
                         {showReps && (
                             <TextInput 
-                                className="w-[60px] bg-transparent text-center text-sm font-bold text-apptext dark:text-apptext-dark mx-1 p-0 -mt-[6px]"
+                                className="w-[60px] bg-transparent text-center text-sm font-bold text-light dark:text-dark mx-1 p-0 -mt-[6px]"
                                 value={getLogValue('reps')}
                                 onChangeText={(t: string) => onUpdateLog?.(index, 'reps', t)}
                                 keyboardType="numeric" 
@@ -112,7 +112,7 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                         )}
                         {showDuration && (
                             <TextInput 
-                                className="w-[60px] bg-transparent text-center text-sm font-bold text-apptext dark:text-apptext-dark mx-1 p-0 -mt-[6px]"
+                                className="w-[60px] bg-transparent text-center text-sm font-bold text-light dark:text-dark mx-1 p-0 -mt-[6px]"
                                 value={getLogValue('duration')}
                                 onChangeText={(t: string) => onUpdateLog?.(index, 'duration', t)}
                                 keyboardType="numeric" 
@@ -122,7 +122,7 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                         )}
                          {showDistance && (
                             <TextInput 
-                                className="w-[60px] bg-transparent text-center text-sm font-bold text-apptext dark:text-apptext-dark mx-1 p-0 -mt-[6px]"
+                                className="w-[60px] bg-transparent text-center text-sm font-bold text-light dark:text-dark mx-1 p-0 -mt-[6px]"
                                 value={getLogValue('distance')}
                                 onChangeText={(t: string) => onUpdateLog?.(index, 'distance', t)}
                                 keyboardType="numeric" 
@@ -141,14 +141,14 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                       <>
                         {showBodyweight && (
                             <View className="w-[60px] items-center justify-center mx-1">
-                                <Text className="text-sm font-bold text-apptext-muted dark:text-apptext-muted-dark">
+                                <Text className="text-sm font-bold text-light-muted dark:text-dark-muted">
                                     {latestBodyWeight ? `${latestBodyWeight}` : 'BW'}
                                 </Text>
                             </View>
                         )}
                         {showWeight && (
                             <TextInput 
-                                className="w-[60px] bg-transparent text-center text-sm font-bold text-apptext dark:text-apptext-dark mx-1 p-0 -mt-[6px]"
+                                className="w-[60px] bg-transparent text-center text-sm font-bold text-light dark:text-dark mx-1 p-0 -mt-[6px]"
                                 value={getValue('weight')}
                                 onChangeText={(t: string) => onUpdateSetTarget?.(index, 'weight', t)}
                                 placeholder={getValue('weight') || "-"} 
@@ -159,7 +159,7 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                         )}
                         {showReps && (
                             <TextInput 
-                                className="w-[60px] bg-transparent text-center text-sm font-bold text-apptext dark:text-apptext-dark mx-1 p-0 -mt-[6px]"
+                                className="w-[60px] bg-transparent text-center text-sm font-bold text-light dark:text-dark mx-1 p-0 -mt-[6px]"
                                 value={getValue('reps')} 
                                 onChangeText={(t: string) => onUpdateSetTarget?.(index, 'reps', t)}
                                 placeholder={getValue('reps') || (exercise.reps || 0).toString()}
@@ -170,7 +170,7 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                         )}
                         {showDuration && (
                             <TextInput 
-                                className="w-[60px] bg-transparent text-center text-sm font-bold text-apptext dark:text-apptext-dark mx-1 p-0 -mt-[6px]"
+                                className="w-[60px] bg-transparent text-center text-sm font-bold text-light dark:text-dark mx-1 p-0 -mt-[6px]"
                                 value={getValue('duration')} 
                                 onChangeText={(t: string) => onUpdateSetTarget?.(index, 'duration', t)}
                                 placeholder={getValue('duration') || "-"}
@@ -181,7 +181,7 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                         )}
                         {showDistance && (
                             <TextInput 
-                                className="w-[60px] bg-transparent text-center text-sm font-bold text-apptext dark:text-apptext-dark mx-1 p-0 -mt-[6px]"
+                                className="w-[60px] bg-transparent text-center text-sm font-bold text-light dark:text-dark mx-1 p-0 -mt-[6px]"
                                 value={getValue('distance')} 
                                 onChangeText={(t: string) => onUpdateSetTarget?.(index, 'distance', t)}
                                 placeholder={getValue('distance') || "-"}

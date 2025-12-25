@@ -47,14 +47,14 @@ export default function ExerciseDetailsScreen() {
     const currentColors = {
         primary: theme.primary || '#FF6F61',
         background: theme.bgLight || '#FFF5F5',
-        surface: theme.bgDark || '#EAD4D4',
+        card: theme.bg || '#EAD4D4',
         text: theme.text || '#2D1F1F',
-        border: theme.bgDark || '#EAD4D4'
+        border: theme.border || '#EAD4D4'
     };
     
     // Derived UI colors
-    const cardBackground = currentColors.surface;
-    const toggleBackground = theme.bg || theme.bgDark || '#EAD4D4'; 
+    const cardBackground = currentColors.card;
+    const toggleBackground = theme.bgDark || '#EAD4D4'; 
     const activeToggleBg = theme.bgLight || '#FFF5F5'; 
     const activeToggleText = theme.text || '#2D1F1F';
 
@@ -68,7 +68,7 @@ export default function ExerciseDetailsScreen() {
                  paddingHorizontal: 16,
                  paddingVertical: 12,
                  borderBottomWidth: 1, 
-                 borderBottomColor: currentColors.surface
+                 borderBottomColor: currentColors.border
              }}>
                 <Pressable onPress={() => router.back()} style={{ padding: 4, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                     <IconSymbol name="chevron.left" size={20} color={currentColors.primary} />

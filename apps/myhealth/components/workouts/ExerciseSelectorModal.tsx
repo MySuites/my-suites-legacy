@@ -34,7 +34,7 @@ export const ExerciseSelectorModal = ({
             onRequestClose={onClose}
         >
             <ThemedView className="flex-1">
-                <View className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10 pt-4 android:pt-10">
+                <View className="flex-row items-center justify-between p-4 border-b border-light dark:border-white/10 pt-4 android:pt-10">
                     <TouchableOpacity onPress={onClose} className="p-2">
                             <ThemedText type="link">Cancel</ThemedText>
                     </TouchableOpacity>
@@ -50,7 +50,7 @@ export const ExerciseSelectorModal = ({
                                 <TouchableOpacity 
                                     key={category} 
                                     onPress={() => setSelectedCategory(category)}
-                                    className={`px-4 py-2 rounded-full mr-2 border ${selectedCategory === category ? 'bg-primary dark:bg-primary_dark border-transparent' : 'bg-transparent border-surface dark:border-white/10'}`}
+                                    className={`px-4 py-2 rounded-full mr-2 border ${selectedCategory === category ? 'bg-primary dark:bg-primary-dark border-transparent' : 'bg-transparent border-light dark:border-white/10'}`}
                                 >
                                     <Text className={`font-semibold ${selectedCategory === category ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}>
                                         {category}
@@ -60,10 +60,10 @@ export const ExerciseSelectorModal = ({
                         </ScrollView>
                     </View>
                     
-                    <View className="flex-row items-center bg-surface dark:bg-surface_dark rounded-lg px-2.5 h-12 mb-4 border border-black/5 dark:border-white/10">
+                    <View className="flex-row items-center bg-light-lighter dark:bg-border-dark rounded-lg px-2.5 h-12 mb-4 border border-black/5 dark:border-white/10">
                         <IconSymbol name="magnifyingglass" size={20} color={theme.icon || '#888'} />
                         <TextInput
-                            className="flex-1 ml-2 text-base h-full text-apptext dark:text-apptext_dark"
+                            className="flex-1 ml-2 text-base h-full text-light dark:text-dark"
                             placeholder="Search exercises..."
                             placeholderTextColor={theme.icon || '#888'}
                             value={exerciseSearchQuery}
@@ -90,7 +90,7 @@ export const ExerciseSelectorModal = ({
                             className="flex-1"
                             renderItem={({ item }) => (
                                 <TouchableOpacity 
-                                    className="flex-row items-center justify-between py-3 border-b border-surface dark:border-surface_dark"
+                                    className="flex-row items-center justify-between py-3 border-b border-light dark:border-dark"
                                     onPress={() => {
                                         onSelect(item);
                                         setExerciseSearchQuery(""); // Clear search on select

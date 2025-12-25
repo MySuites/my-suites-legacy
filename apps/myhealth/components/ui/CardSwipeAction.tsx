@@ -231,7 +231,7 @@ export const CardSwipeAction = ({
                                 justifyContent: 'center', 
                                 alignItems: 'center',
                             }}
-                            className="bg-primary dark:bg-primary_dark"
+                            className="bg-primary dark:bg-primary-dark"
                         >
                             <IconSymbol name="pencil" size={18} color="white" />
                         </TouchableOpacity>

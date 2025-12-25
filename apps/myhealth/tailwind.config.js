@@ -11,31 +11,42 @@ module.exports = {
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
-      colors: {
-        // Primary & Accent
+      backgroundColor: {
+        'light-lighter': baseColors.light.bgLight,
+        'light': baseColors.light.bg,
+        'light-darker': baseColors.light.bgDark,
+        
+        'dark-lighter': baseColors.dark.bgLight,
+        'dark': baseColors.dark.bg,
+        'dark-darker': baseColors.dark.bgDark,
+
         primary: brand.light.primary,
-        accent: brand.light.accent,
         'primary-dark': brand.dark.primary,
+        accent: brand.light.accent,
         'accent-dark': brand.dark.accent,
+      },
+      textColor: {
+        'light': baseColors.light.text,
+        'light-muted': baseColors.light.textMuted,
+        'dark': baseColors.dark.text,
+        'dark-muted': baseColors.dark.textMuted,
 
-        // Backgrounds
-        'bg-light': baseColors.light.bgLight,
-        'bg-default': baseColors.light.bg,
-        'bg-dark': baseColors.light.bgDark,
-        
-        'bg-light-dark': baseColors.dark.bgLight,
-        'bg-default-dark': baseColors.dark.bg,
-        'bg-dark-dark': baseColors.dark.bgDark,
+        primary: brand.light.primary,
+        'primary-dark': brand.dark.primary,
+        accent: brand.light.accent,
+        'accent-dark': brand.dark.accent,
+      },
+      borderColor: {
+        'light': baseColors.light.border,
+        'dark': baseColors.dark.border,
 
-        // Text & UI
-        apptext: baseColors.light.text,
-        'apptext-muted': baseColors.light.textMuted,
-        'apptext-dark': baseColors.dark.text,
-        'apptext-muted-dark': baseColors.dark.textMuted,
-        
+        primary: brand.light.primary,
+        'primary-dark': brand.dark.primary,
+        accent: brand.light.accent,
+        'accent-dark': brand.dark.accent,
+      },
+      colors: {
         error: baseColors.light.error,
-        border: baseColors.light.border,
-        'border-dark': baseColors.dark.border,
       },
     },
   },

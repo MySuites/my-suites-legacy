@@ -31,7 +31,7 @@ export const SelectionModal = ({
             onRequestClose={onClose}
         >
             <ThemedView className="flex-1">
-                <View className="flex-row items-center justify-between p-4 border-b border-surface dark:border-white/10 pt-4 android:pt-10">
+                <View className="flex-row items-center justify-between p-4 border-b border-light dark:border-white/10 pt-4 android:pt-10">
                     <TouchableOpacity onPress={onClose} className="p-2">
                         <ThemedText type="link">Done</ThemedText>
                     </TouchableOpacity>
@@ -45,7 +45,7 @@ export const SelectionModal = ({
                         const selected = isSelected(item);
                         return (
                             <TouchableOpacity 
-                                className={`flex-row items-center justify-between p-4 border-b border-surface dark:border-white/5 ${selected ? 'bg-primary/10 dark:bg-primary/20' : ''}`}
+                                className={`flex-row items-center justify-between p-4 border-b border-light dark:border-white/5 ${selected ? 'bg-primary/10 dark:bg-primary/20' : ''}`}
                                 onPress={() => {
                                     onSelect(item);
                                     if (!multiSelect) onClose();
