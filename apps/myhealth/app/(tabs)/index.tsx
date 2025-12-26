@@ -6,7 +6,7 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 bg-light dark:bg-dark">
           <ScreenHeader title="Home" />
-          <ScrollView>
+          <ScrollView className='mt-4'>
              <QuickStartAction />
           </ScrollView>
     </View>
