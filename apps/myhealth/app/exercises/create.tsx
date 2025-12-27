@@ -90,13 +90,13 @@ export default function CreateExerciseScreen() {
 
   return (
     <View className="flex-1 bg-light dark:bg-dark">
-      <View className="flex-row items-center justify-between p-4 border-b border-light dark:border-white/10 pt-4 android:pt-10">
+      <View className="flex-row items-center justify-between p-4 border-b border-light-darker dark:border-highlight-dark pt-4 android:pt-10">
         <TouchableOpacity onPress={() => router.back()} className="p-2">
-            <Text className="text-base leading-[30px] text-[#0a7ea4]">Cancel</Text>
+            <Text className="text-base leading-[30px] text-primary dark:text-primary-dark">Cancel</Text>
         </TouchableOpacity>
-        <Text className="text-xl font-bold">New Exercise</Text>
+        <Text className="text-xl font-bold text-light dark:text-dark">New Exercise</Text>
         <TouchableOpacity onPress={handleCreate} disabled={isSubmitting} className="p-2">
-            <Text className="text-base leading-[30px] text-[#0a7ea4]" style={{ fontWeight: 'bold', opacity: isSubmitting ? 0.5 : 1 }}>Save</Text>
+            <Text className="text-base leading-[30px] text-primary dark:text-primary-dark" style={{ fontWeight: 'bold', opacity: isSubmitting ? 0.5 : 1 }}>Save</Text>
         </TouchableOpacity>
       </View>
 
@@ -105,54 +105,54 @@ export default function CreateExerciseScreen() {
         className="flex-1 p-6"
       >
         <View className="mb-6">
-            <Text className="text-base leading-6 font-semibold mb-2">Name</Text>
+            <Text className="text-base leading-6 font-semibold mb-2 text-light dark:text-dark">Name</Text>
             <TextInput 
-                className="bg-light-lighter dark:bg-border-dark text-light dark:text-dark p-4 rounded-xl text-base border border-transparent dark:border-white/10"
+                className="bg-light-lighter dark:bg-dark-lighter text-light dark:text-dark p-4 rounded-xl text-base border border-transparent dark:border-highlight-dark"
                 placeholder="e.g. Bench Press" 
-                placeholderTextColor={theme.icon}
+                placeholderTextColor={theme.textMuted || '#888'}
                 value={name}
                 onChangeText={setName}
             />
         </View>
 
         <View className="mb-6">
-            <Text className="text-base leading-6 font-semibold mb-2">Properties</Text>
+            <Text className="text-base leading-6 font-semibold mb-2 text-light dark:text-dark">Properties</Text>
             <TouchableOpacity 
                 onPress={() => setShowTypeModal(true)}
-                className="bg-light-lighter dark:bg-border-dark p-4 rounded-xl border border-transparent dark:border-white/10 flex-row justify-between items-center"
+                className="bg-light-lighter dark:bg-dark-lighter p-4 rounded-xl border border-transparent dark:border-highlight-dark flex-row justify-between items-center"
             >
-                <Text numberOfLines={1} className="text-base leading-6">
+                <Text numberOfLines={1} className="text-base leading-6 text-light dark:text-dark">
                     {properties.length > 0 
                         ? properties.map(p => p.label).join(', ') 
                         : 'Select Properties'}
                 </Text>
-                <IconSymbol name="chevron.right" size={16} color={theme.icon || '#888'} />
+                <IconSymbol name="chevron.right" size={16} color={theme.textMuted || '#888'} />
             </TouchableOpacity>
         </View>
 
         <View className="mb-6">
-            <Text className="text-base leading-6 font-semibold mb-2">Primary Muscle Group</Text>
+            <Text className="text-base leading-6 font-semibold mb-2 text-light dark:text-dark">Primary Muscle Group</Text>
             <TouchableOpacity 
                 onPress={() => setShowPrimaryModal(true)}
-                className="bg-light-lighter dark:bg-border-dark p-4 rounded-xl border border-transparent dark:border-white/10 flex-row justify-between items-center"
+                className="bg-light-lighter dark:bg-dark-lighter p-4 rounded-xl border border-transparent dark:border-highlight-dark flex-row justify-between items-center"
             >
-                <Text className="text-base leading-6">{primaryMuscle ? primaryMuscle.name : 'Select Primary Muscle'}</Text>
-                <IconSymbol name="chevron.right" size={16} color={theme.icon || '#888'} />
+                <Text className="text-base leading-6 text-light dark:text-dark">{primaryMuscle ? primaryMuscle.name : 'Select Primary Muscle'}</Text>
+                <IconSymbol name="chevron.right" size={16} color={theme.textMuted || '#888'} />
             </TouchableOpacity>
         </View>
 
         <View className="mb-6">
-            <Text className="text-base leading-6 font-semibold mb-2">Secondary Muscle Groups</Text>
+            <Text className="text-base leading-6 font-semibold mb-2 text-light dark:text-dark">Secondary Muscle Groups</Text>
             <TouchableOpacity 
                 onPress={() => setShowSecondaryModal(true)}
-                className="bg-light-lighter dark:bg-border-dark p-4 rounded-xl border border-transparent dark:border-white/10 flex-row justify-between items-center"
+                className="bg-light-lighter dark:bg-dark-lighter p-4 rounded-xl border border-transparent dark:border-highlight-dark flex-row justify-between items-center"
             >
-                <Text numberOfLines={1} className="text-base leading-6">
+                <Text numberOfLines={1} className="text-base leading-6 text-light dark:text-dark">
                     {secondaryMuscles.length > 0 
                         ? secondaryMuscles.map(m => m.name).join(', ') 
                         : 'Select Secondary Muscles (Optional)'}
                 </Text>
-                <IconSymbol name="chevron.right" size={16} color={theme.icon || '#888'} />
+                <IconSymbol name="chevron.right" size={16} color={theme.textMuted || '#888'} />
             </TouchableOpacity>
         </View>
 
