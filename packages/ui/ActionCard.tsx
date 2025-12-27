@@ -4,6 +4,8 @@ import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Animated, { 
     useAnimatedStyle, 
     useSharedValue,
+    useAnimatedReaction,
+    runOnJS,
 } from 'react-native-reanimated';
 import { CardSwipeAction } from './CardSwipeAction';
 import { cssInterop } from 'nativewind';
@@ -36,6 +38,20 @@ export function ActionCard({ children, style, className, onPress, activeOpacity 
   const sharedDragX = useSharedValue(0);
   const TRIGGER_THRESHOLD = -width * 0.45;
 
+  const [isSwiped, setIsSwiped] = React.useState(false);
+
+  useAnimatedReaction(
+    () => sharedDragX.value,
+    (drag) => {
+        // If dragged left (negative) beyond a small threshold, consider it swiped/interacting
+        const swiped = drag < -5;
+        if (swiped !== isSwiped) {
+            runOnJS(setIsSwiped)(swiped);
+        }
+    },
+    [isSwiped]
+  );
+
   const setReadyToDelete = (ready: boolean) => {
       shouldDelete.current = ready;
   };
@@ -60,12 +76,19 @@ export function ActionCard({ children, style, className, onPress, activeOpacity 
         <Animated.View style={[cardContentStyle]}>
             <Pressable 
             style={[style, shadowStyle]} 
-            className={baseClassName} 
+            className={`${className || ''}`} 
             onPress={onPress} 
             {...(props as PressableProps)}
             >
-             {({ pressed }) => (
-                <View style={{ opacity: pressed ? 0.9 : 1 }}>
+            {({ pressed }) => (
+                <View 
+                  style={{ opacity: 1 }} 
+                  className={`w-full rounded-xl p-3 ${
+                    pressed || isSwiped
+                      ? 'bg-light-darker dark:bg-dark-lightest' 
+                      : 'bg-light dark:bg-dark-lighter'
+                  }`}
+                >
                     {children}
                 </View>
              )}

@@ -17,6 +17,7 @@ module.exports = {
         'light': baseColors.light.bg,
         'light-darker': baseColors.light.bgDark,
         
+        'dark-lightest': baseColors.dark.bgLightest,
         'dark-lighter': baseColors.dark.bgLight,
         'dark': baseColors.dark.bg,
         'dark-darker': baseColors.dark.bgDark,
