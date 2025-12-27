@@ -32,7 +32,7 @@ export const RaisedButton = ({ title, className, textClassName, style, children,
             <LinearGradient
                 colors={theme.dark 
                   ? ['hsla(0, 0%, 40%, 0.25)', 'hsla(0, 0%, 0%, 0.3)'] 
-                  : ['hsla(0, 0%, 98%, 0.9)', 'hsla(0, 0%, 80%, 0.05)']}
+                  : ['hsla(0, 0%, 95%, 0.9)', 'hsla(0, 0%, 80%, 0.05)']}
                 locations={[0.3, 1]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -53,7 +53,7 @@ export const RaisedButton = ({ title, className, textClassName, style, children,
               <LinearGradient
                 colors={theme.dark 
                   ? ['hsla(0, 0%, 50%, 0.25)', 'hsla(0, 0%, 10%, 0.3)'] 
-                  : ['hsla(0, 0%, 98%, 0.9)', 'hsla(0, 0%, 80%, 0.05)']}
+                  : ['hsla(0, 0%, 95%, 0.9)', 'hsla(0, 0%, 80%, 0.05)']}
                 locations={[0.5, 1]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
