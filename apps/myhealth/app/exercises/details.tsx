@@ -3,7 +3,6 @@ import { View, ScrollView, Pressable, Text } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useUITheme } from '@mysuite/ui';
 import { useAuth } from '@mysuite/auth';
-import { IconSymbol } from '../../components/ui/icon-symbol';
 import { useExerciseStats } from '../../hooks/workouts/useExerciseStats';
 import { ExerciseChart } from '../../components/exercises/ExerciseChart';
 import { ExerciseProperties } from '../../components/exercises/ExerciseProperties';

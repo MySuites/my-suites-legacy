@@ -44,7 +44,7 @@ function RootLayoutNav() {
       <Stack.Screen name="workouts/create" options={{ presentation: 'modal', title: 'Create Workout', headerShown: false }} />
       <Stack.Screen name="routines/create" options={{ presentation: 'modal', title: 'Create Routine', headerShown: false }} />
       <Stack.Screen name="exercises/create" options={{ presentation: 'modal', title: 'Create Exercise', headerShown: false }} />
-      <Stack.Screen name="exercises/details" options={{ presentation: 'modal', headerShown: false }} />
+      <Stack.Screen name="exercises/details" options={{ headerShown: false }} />
       <Stack.Screen 
         name="workouts/end" 
         options={{ 
