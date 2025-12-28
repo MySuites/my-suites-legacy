@@ -78,15 +78,20 @@ export default function SavedWorkoutsScreen() {
                     </Text> 
                 </View>
                 <View className="flex-row gap-2">
-                    <TouchableOpacity 
+                    <RaisedButton 
                         onPress={(e) => {
                             e.stopPropagation();
                             handleStart(item.id, item.name, item.exercises);
-                        }} 
-                        className="py-1.5 px-3 rounded-md bg-primary dark:bg-primary-dark"
+                        }}
+                        borderRadius={20}
+                        className="w-10 h-10 p-0 my-0 rounded-full items-center justify-center"
                     >
-                        <Text className="text-white text-sm font-semibold">Start</Text>
-                    </TouchableOpacity>
+                        <IconSymbol 
+                            name="play.fill" 
+                            size={15} 
+                            color={theme.primary} 
+                        />
+                    </RaisedButton>
 
                 </View>
               </RaisedCard>
