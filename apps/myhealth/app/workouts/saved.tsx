@@ -1,15 +1,17 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View, Alert, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-// import { useUITheme } from '@mysuite/ui'; // Removed
+import { useUITheme, RaisedButton } from '@mysuite/ui';
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
 
+import { IconSymbol } from '../../components/ui/icon-symbol';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 
 export default function SavedWorkoutsScreen() {
   const router = useRouter();
+  const theme = useUITheme();
   
   const { savedWorkouts, deleteSavedWorkout } = useWorkoutManager();
   const { hasActiveSession, setExercises } = useActiveWorkout();
@@ -52,9 +54,17 @@ export default function SavedWorkoutsScreen() {
         title="Saved Workouts"
         withBackButton={true}
         rightAction={
-            <TouchableOpacity onPress={() => router.push('/workouts/create')} className="p-2">
-                <Text className="text-base font-semibold text-primary dark:text-primary-dark">Create</Text>
-            </TouchableOpacity>
+            <RaisedButton 
+                onPress={() => router.push('/workouts/create')}
+                borderRadius={20}
+                className="w-10 h-10 p-0 my-0 rounded-full items-center justify-center mr-2"
+            >
+                <IconSymbol 
+                    name="plus" 
+                    size={20} 
+                    color={theme.primary} 
+                />
+            </RaisedButton>
         }
       />
       
