@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View, Alert, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useUITheme } from '@mysuite/ui';
+// import { useUITheme } from '@mysuite/ui'; // Removed
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
@@ -10,7 +10,6 @@ import { ScreenHeader } from '../../components/ui/ScreenHeader';
 
 export default function SavedWorkoutsScreen() {
   const router = useRouter();
-  const theme = useUITheme();
   
   const { savedWorkouts, deleteSavedWorkout } = useWorkoutManager();
   const { hasActiveSession, setExercises } = useActiveWorkout();
