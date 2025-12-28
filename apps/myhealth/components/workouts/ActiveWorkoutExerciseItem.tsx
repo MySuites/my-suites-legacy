@@ -7,7 +7,7 @@ interface ActiveWorkoutExerciseItemProps {
     exercise: any;
     index: number;
     isCurrent: boolean;
-    restSeconds: number;
+
     completeSet: (exerciseIndex: number, setIndex: number, input: any) => void;
     updateExercise: (exerciseIndex: number, updates: any) => void;
 }
@@ -16,7 +16,6 @@ export function ActiveWorkoutExerciseItem({
     exercise,
     index,
     isCurrent,
-    restSeconds,
     completeSet,
     updateExercise,
 }: ActiveWorkoutExerciseItemProps) {
@@ -27,7 +26,7 @@ export function ActiveWorkoutExerciseItem({
         <ExerciseCard 
             exercise={exercise}
             isCurrent={isCurrent}
-            restSeconds={restSeconds}
+
             theme={theme}
             latestBodyWeight={latestBodyWeight}
             onCompleteSet={(setIndex, input) => {

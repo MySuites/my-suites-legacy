@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
-import { formatSeconds } from '../../utils/formatting';
+
 import { Exercise } from '../../hooks/workouts/useWorkoutManager';
 import { RaisedCard, HollowedButton } from '../../../../packages/ui';
 import { SetRow, getExerciseFields } from '../workouts/SetRow';
@@ -15,12 +15,12 @@ interface ExerciseCardProps {
     onUpdateLog?: (index: number, key: 'weight' | 'reps' | 'duration' | 'distance', value: string) => void;
     onAddSet: () => void;
     onDeleteSet: (index: number) => void;
-    restSeconds: number;
+
     theme: any;
     latestBodyWeight?: number | null;
 }
 
-export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onUpdateLog, onAddSet, onDeleteSet, restSeconds, theme, latestBodyWeight }: ExerciseCardProps) {
+export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteSet, onUpdateSetTarget, onUpdateLog, onAddSet, onDeleteSet, theme, latestBodyWeight }: ExerciseCardProps) {
     // Derived state
     const completedSets = exercise.completedSets || 0;
     const isFinished = completedSets >= exercise.sets;
@@ -67,13 +67,7 @@ export function ExerciseCard({ exercise, isCurrent, onCompleteSet, onUncompleteS
                     />
                 ))}
 
-                {/* Rest Timer (Compact) */}
-                {isCurrent && restSeconds > 0 && (
-                     <View className="flex-row items-center justify-center gap-1.5 mt-2 p-2 bg-dark dark:bg-dark-darker rounded-lg">
-                        <IconSymbol name="timer" size={16} color={theme.primary} />
-                        <Text className="text-sm font-bold text-light dark:text-dark tabular-nums">{formatSeconds(restSeconds)}</Text>
-                    </View>
-                )}
+
 
                 {/* Add Set Button */}
                 {/* Add Set Button */}

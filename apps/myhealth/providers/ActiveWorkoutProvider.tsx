@@ -12,7 +12,7 @@ interface ActiveWorkoutContextType {
     setExercises: React.Dispatch<React.SetStateAction<Exercise[]>>;
     isRunning: boolean;
     workoutSeconds: number;
-    restSeconds: number;
+
     currentIndex: number;
     workoutName: string;
     setWorkoutName: (name: string) => void;
@@ -57,9 +57,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         setRunning,
         workoutSeconds,
         setWorkoutSeconds,
-        restSeconds,
         resetTimers,
-        startRestTimer,
     } = useActiveWorkoutTimers();
 
     const { weight: latestBodyWeight } = useLatestBodyWeight();
@@ -178,8 +176,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
             });
         });
 
-        // Rest timer logic
-        startRestTimer(60); 
+ 
     };
 
 
@@ -227,7 +224,7 @@ export function ActiveWorkoutProvider({ children }: { children: React.ReactNode 
         setExercises,
         isRunning,
         workoutSeconds,
-        restSeconds,
+
         currentIndex,
         workoutName,
         startWorkout,

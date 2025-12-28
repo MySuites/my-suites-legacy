@@ -16,7 +16,7 @@ export function ActiveWorkoutOverlay() {
     
     const {
         exercises,
-        restSeconds,
+
         currentIndex,
         completeSet,
         updateExercise,
@@ -64,7 +64,7 @@ export function ActiveWorkoutOverlay() {
                                         exercise={exercise}
                                         index={index}
                                         isCurrent={index === currentIndex}
-                                        restSeconds={restSeconds}
+
                                         completeSet={completeSet}
                                         updateExercise={updateExercise}
                                     />

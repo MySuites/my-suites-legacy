@@ -5,9 +5,6 @@ export function useActiveWorkoutTimers() {
     const [workoutSeconds, setWorkoutSeconds] = useState(0);
     const workoutTimerRef = useRef<number | null>(null as any);
 
-    const [restSeconds, setRestSeconds] = useState(0);
-    const restTimerRef = useRef<number | null>(null as any);
-
     useEffect(() => {
         if (isRunning) {
             workoutTimerRef.current = setInterval(() => {
@@ -25,34 +22,8 @@ export function useActiveWorkoutTimers() {
         };
     }, [isRunning]);
 
-    useEffect(() => {
-        if (restSeconds > 0) {
-            restTimerRef.current = setInterval(() => {
-                setRestSeconds((r) => {
-                    if (r <= 1) {
-                        clearInterval(restTimerRef.current as any);
-                        restTimerRef.current = null;
-                        return 0;
-                    }
-                    return r - 1;
-                });
-            }, 1000) as any;
-        }
-
-        return () => {
-            if (restTimerRef.current) {
-                clearInterval(restTimerRef.current as any);
-            }
-        };
-    }, [restSeconds]);
-
     const resetTimers = useCallback(() => {
         setWorkoutSeconds(0);
-        setRestSeconds(0);
-    }, []);
-
-    const startRestTimer = useCallback((seconds: number = 60) => {
-        setRestSeconds(seconds);
     }, []);
 
     return {
@@ -60,9 +31,6 @@ export function useActiveWorkoutTimers() {
         setRunning,
         workoutSeconds,
         setWorkoutSeconds,
-        restSeconds,
-        setRestSeconds,
         resetTimers,
-        startRestTimer,
     };
 }
