@@ -9,6 +9,7 @@ import { useRoutineDraft } from '../../hooks/routines/useRoutineDraft';
 import { RoutineDraftItem } from '../../components/routines/RoutineDraftItem';
 import { AddDayModal } from '../../components/routines/AddDayModal';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { BackButton } from '../../components/ui/BackButton';
 
 export default function CreateRoutineScreen() {
     const theme = useTheme();
@@ -110,7 +111,7 @@ export default function CreateRoutineScreen() {
         <View className="flex-1 bg-light dark:bg-dark">
              <ScreenHeader
                 title={editingRoutineId ? 'Edit Routine' : 'Create Routine'}
-                withBackButton={true}
+                leftAction={<BackButton />}
                 rightAction={
                     <TouchableOpacity disabled={isSaving} onPress={handleSaveRoutine} className="p-2">
                         {isSaving ? <ActivityIndicator size="small" /> : <Text className="text-base leading-[30px] text-primary dark:text-primary-dark" style={{ fontWeight: 'bold' }}>Save</Text>}

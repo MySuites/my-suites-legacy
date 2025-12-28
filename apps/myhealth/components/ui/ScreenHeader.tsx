@@ -1,17 +1,14 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import { BackButton } from './BackButton';
-
 interface ScreenHeaderProps {
   title: string;
   rightAction?: React.ReactNode;
   leftAction?: React.ReactNode;
-  withBackButton?: boolean;
   className?: string; // Allow additional styling if needed, though we aim for consistency
 }
 
-export function ScreenHeader({ title, rightAction, leftAction, withBackButton, className }: ScreenHeaderProps) {
+export function ScreenHeader({ title, rightAction, leftAction, className }: ScreenHeaderProps) {
   const shadowStyle = {
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 8 },
@@ -27,9 +24,8 @@ export function ScreenHeader({ title, rightAction, leftAction, withBackButton, c
       style={shadowStyle}
     >
       <View className="flex-row justify-center items-center relative min-h-[44px]">
-        {(leftAction || withBackButton) && (
+        {leftAction && (
             <View className="absolute left-5 z-10 flex-row gap-2">
-                {withBackButton && <BackButton />}
                 {leftAction}
             </View>
         )}

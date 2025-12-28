@@ -8,6 +8,7 @@ import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
 
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { BackButton } from '../../components/ui/BackButton';
 
 export default function RoutinesScreen() {
   const router = useRouter();
@@ -61,7 +62,7 @@ export default function RoutinesScreen() {
     <View className="flex-1 bg-light dark:bg-dark">
       <ScreenHeader
         title="My Routines"
-        withBackButton={true}
+        leftAction={<BackButton />}
         rightAction={
             <RaisedButton 
                 onPress={() => router.push('/routines/editor')}

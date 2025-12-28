@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert } from 'reac
 import { useRouter } from 'expo-router';
 
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { BackButton } from '../../components/ui/BackButton';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 
@@ -105,7 +106,7 @@ export default function EndWorkoutScreen() {
 
     return (
         <View className="flex-1 bg-light dark:bg-dark">
-            <ScreenHeader title="Workout Summary" withBackButton={true} />
+            <ScreenHeader title="Workout Summary" leftAction={<BackButton />} />
             
             <ScrollView className="flex-1 mt-4 p-4">
                 <View className="bg-light-lighter dark:bg-border-dark rounded-xl p-6 mb-6 items-center">

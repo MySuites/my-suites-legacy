@@ -9,6 +9,7 @@ import { IconSymbol } from '../../components/ui/icon-symbol';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { BackButton } from '../../components/ui/BackButton';
 
 export default function ExercisesScreen() {
   const router = useRouter();
@@ -47,7 +48,7 @@ export default function ExercisesScreen() {
     <View className="flex-1 bg-light dark:bg-dark">
       <ScreenHeader
         title="Exercises"
-        withBackButton={true}
+        leftAction={<BackButton />}
         rightAction={
             <RaisedButton 
                 onPress={() => router.push('/exercises/create')}

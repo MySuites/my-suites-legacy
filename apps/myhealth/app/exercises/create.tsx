@@ -6,6 +6,7 @@ import { IconSymbol } from '../../components/ui/icon-symbol';
 import { SelectionModal } from '../../components/ui/SelectionModal';
 import { useWorkoutManager, fetchMuscleGroups } from '../../hooks/workouts/useWorkoutManager';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { BackButton } from '../../components/ui/BackButton';
 
 const EXERCISE_PROPERTIES = [
     { label: 'Weighted', value: 'Weighted' },
@@ -93,7 +94,7 @@ export default function CreateExerciseScreen() {
     <View className="flex-1 bg-light dark:bg-dark">
       <ScreenHeader
         title="New Exercise"
-        withBackButton={true}
+        leftAction={<BackButton />}
         rightAction={
             <TouchableOpacity onPress={handleCreate} disabled={isSubmitting} className="p-2">
                 <Text className="text-base leading-[30px] text-primary dark:text-primary-dark" style={{ fontWeight: 'bold', opacity: isSubmitting ? 0.5 : 1 }}>Save</Text>

@@ -10,6 +10,7 @@ import { WorkoutDraftExerciseItem } from '../../components/workouts/WorkoutDraft
 import { ExerciseSelectorModal } from '../../components/workouts/ExerciseSelectorModal';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { BackButton } from '../../components/ui/BackButton';
 
 export default function CreateWorkoutScreen() {
     const theme = useTheme();
@@ -122,7 +123,7 @@ export default function CreateWorkoutScreen() {
         <View className="flex-1 bg-light dark:bg-dark">
             <ScreenHeader
                 title={editingWorkoutId ? 'Edit Workout' : 'Create Workout'}
-                withBackButton={true}
+                leftAction={<BackButton />}
                 rightAction={
                     <TouchableOpacity disabled={isSaving} onPress={handleSaveWorkoutDraft} className="p-2">
                         {isSaving ? <ActivityIndicator size="small" /> : <Text className="text-base leading-[30px] text-primary dark:text-primary-dark" style={{ fontWeight: 'bold' }}>Save</Text>}

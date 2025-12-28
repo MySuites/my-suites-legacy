@@ -7,6 +7,7 @@ import { useExerciseStats } from '../../hooks/workouts/useExerciseStats';
 import { ExerciseChart } from '../../components/exercises/ExerciseChart';
 import { ExerciseProperties } from '../../components/exercises/ExerciseProperties';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { BackButton } from '../../components/ui/BackButton';
 
 export default function ExerciseDetailsScreen() {
     const router = useRouter();
@@ -61,7 +62,7 @@ export default function ExerciseDetailsScreen() {
     return (
         <View style={{ flex: 1, backgroundColor: currentColors.background }}>
              {/* Header */}
-             <ScreenHeader title="Details" withBackButton={true} />
+             <ScreenHeader title="Details" leftAction={<BackButton />} />
 
             <ScrollView style={{ flex: 1, padding: 16 }}>
                 <View style={{ marginBottom: 24 }}>

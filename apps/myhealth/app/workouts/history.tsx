@@ -6,6 +6,7 @@ import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { WorkoutDetailsModal } from '../../components/workouts/WorkoutDetailsModal';
 import { ActionCard } from '@mysuite/ui';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { BackButton } from '../../components/ui/BackButton';
 
 const WorkoutHistoryItem = ({ item, onDelete, onPress }: { item: any, onDelete: () => void, onPress: () => void }) => {
     return (
@@ -42,7 +43,7 @@ export default function WorkoutHistoryScreen() {
       
       <ScreenHeader 
         title="Workout History" 
-        withBackButton={true}
+        leftAction={<BackButton />}
       />
 
       <FlatList

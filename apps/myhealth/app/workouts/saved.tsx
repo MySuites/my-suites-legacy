@@ -8,6 +8,7 @@ import { useFloatingButton } from '../../providers/FloatingButtonContext';
 
 import { IconSymbol } from '../../components/ui/icon-symbol';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
+import { BackButton } from '../../components/ui/BackButton';
 
 export default function SavedWorkoutsScreen() {
   const router = useRouter();
@@ -52,7 +53,7 @@ export default function SavedWorkoutsScreen() {
     <View className="flex-1 bg-light dark:bg-dark">
       <ScreenHeader
         title="Saved Workouts"
-        withBackButton={true}
+        leftAction={<BackButton />}
         rightAction={
             <RaisedButton 
                 onPress={() => router.push('/workouts/editor')}
