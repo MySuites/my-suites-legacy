@@ -49,7 +49,7 @@ export default function WorkoutHistoryScreen() {
       <FlatList
         data={workoutHistory}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+        contentContainerStyle={{ paddingTop: 120, padding: 16, paddingBottom: 100 }}
         renderItem={({ item }) => (
             <WorkoutHistoryItem 
                 item={item} 
