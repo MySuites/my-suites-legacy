@@ -56,7 +56,7 @@ export default function SavedWorkoutsScreen() {
       />
       
       {savedWorkouts.length === 0 ? (
-          <View className="flex-1 items-center justify-center p-8">
+          <View className="mt-28 flex-1 items-center justify-center p-8">
               <Text className="text-base leading-6 text-light-muted dark:text-dark-muted">No saved workouts found.</Text>
           </View>
       ) : (
@@ -98,7 +98,7 @@ export default function SavedWorkoutsScreen() {
               </TouchableOpacity>
             )}
             className="flex-1"
-            contentContainerStyle={{ paddingBottom: 120, paddingHorizontal: 16, paddingTop: 16 }}
+            contentContainerStyle={{ paddingBottom: 120, paddingHorizontal: 16, paddingTop: 124 }}
           />
       )}
     </View>

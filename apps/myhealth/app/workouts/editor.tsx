@@ -142,7 +142,7 @@ export default function CreateWorkoutScreen() {
                 }
             />
 
-            <View className="flex-1 p-4">
+            <View className="mt-28 flex-1 p-4">
                 <TextInput 
                     placeholder="Workout Name" 
                     value={workoutDraftName} 

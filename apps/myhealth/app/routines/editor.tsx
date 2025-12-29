@@ -131,7 +131,7 @@ export default function CreateRoutineScreen() {
             />
 
             <View className="flex-1">
-                <View className="px-4 pt-4">
+                <View className="mt-28 px-4 pt-4">
                     <TextInput 
                         placeholder="Routine Name" 
                         value={routineDraftName} 

@@ -104,7 +104,7 @@ export default function RoutinesScreen() {
               </TouchableOpacity>
             )}
             className="flex-1"
-            contentContainerStyle={{ paddingBottom: 120, paddingHorizontal: 16, paddingTop: 16 }}
+            contentContainerStyle={{ paddingBottom: 120, paddingHorizontal: 16, paddingTop: 124 }}
           />
       )}
     </View>

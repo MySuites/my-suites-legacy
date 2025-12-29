@@ -64,7 +64,7 @@ export default function ExercisesScreen() {
         }
       />
       
-      <View className="px-4 py-3 border-b border-light-darker dark:border-highlight-dark">
+      <View className="mt-28 px-4 py-3 border-b border-light-darker dark:border-highlight-dark">
         <View className="flex-row items-center bg-light dark:bg-dark rounded-lg px-2.5 h-10 border border-light-darker dark:border-highlight-dark">
             <IconSymbol name="magnifyingglass" size={20} color={theme.textMuted || '#888'} />
              <TextInput
