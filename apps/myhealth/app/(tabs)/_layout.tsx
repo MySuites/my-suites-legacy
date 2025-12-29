@@ -11,9 +11,9 @@ import { useColorScheme } from '../../hooks/ui/use-color-scheme';
 
 import { ActiveWorkoutHeader } from '../../components/workouts/ActiveWorkoutHeader';
 import { ActiveWorkoutOverlay } from '../../components/workouts/ActiveWorkoutOverlay';
-import { GlobalOverlay } from '../../components/ui/GlobalOverlay';
+// import { GlobalOverlay } from '../../components/ui/GlobalOverlay';
 // import { QuickNavigationButton } from '../../components/ui/QuickNavigationMenu';
-import { QuickUtilityButton } from '../../components/ui/QuickUtilityMenu';
+// import { QuickUtilityButton } from '../../components/ui/QuickUtilityMenu';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -54,10 +54,10 @@ export default function TabLayout() {
 
       <ActiveWorkoutHeader />
       <ActiveWorkoutOverlay />
-      <GlobalOverlay>
-        {/* <QuickNavigationButton /> */}
+      {/* <GlobalOverlay>
+        <QuickNavigationButton />
         <QuickUtilityButton />
-      </GlobalOverlay>
+      </GlobalOverlay> */}
     </View>
   );
 }
