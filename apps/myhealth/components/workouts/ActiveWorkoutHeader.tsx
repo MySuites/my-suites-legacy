@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { useUITheme, RaisedButton } from '@mysuite/ui';
 import Animated from 'react-native-reanimated';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
@@ -11,7 +11,7 @@ export function ActiveWorkoutHeader() {
     const theme = useUITheme();
     const router = useRouter();
 
-    const { isRunning, workoutSeconds, workoutName, isExpanded, toggleExpanded, hasActiveSession, pauseWorkout } = useActiveWorkout();
+    const { isRunning, workoutSeconds, workoutName, isExpanded, toggleExpanded, hasActiveSession, pauseWorkout, exercises } = useActiveWorkout();
     
 
     const hasActiveWorkout = hasActiveSession;
@@ -33,6 +33,17 @@ export function ActiveWorkoutHeader() {
         // Stop propagation to prevent toggling expansion
         e?.stopPropagation();
         
+        const completedSetsCount = exercises.reduce((acc, ex) => acc + (ex.completedSets || 0), 0);
+
+        if (completedSetsCount === 0) {
+            Alert.alert(
+                "No Sets Completed",
+                "Please complete at least one set or discard this workout session below.",
+                [{ text: "OK" }]
+            );
+            return;
+        }
+
         // Pause and navigate to end screen
         pauseWorkout();
         router.push('/workouts/end');
