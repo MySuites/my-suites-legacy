@@ -54,7 +54,7 @@ export default function RoutinesScreen() {
             <RaisedButton 
                 onPress={() => router.push('/routines/editor')}
                 borderRadius={20}
-                className="w-10 h-10 p-0 my-0 rounded-full items-center justify-center mr-2"
+                className="w-10 h-10 p-0 my-0 rounded-full items-center justify-center"
             >
                 <IconSymbol 
                     name="square.and.pencil" 

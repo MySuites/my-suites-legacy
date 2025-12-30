@@ -53,7 +53,7 @@ export default function ExercisesScreen() {
             <RaisedButton 
                 onPress={() => router.push('/exercises/create')}
                 borderRadius={20}
-                className="w-10 h-10 p-0 my-0 rounded-full items-center justify-center mr-2"
+                className="w-10 h-10 p-0 my-0 rounded-full items-center justify-center"
             >
                 <IconSymbol 
                     name="square.and.pencil" 
@@ -64,8 +64,8 @@ export default function ExercisesScreen() {
         }
       />
       
-      <View className="mt-28 px-4 py-3 border-b border-light-darker dark:border-highlight-dark">
-        <View className="flex-row items-center bg-light dark:bg-dark rounded-lg px-2.5 h-10 border border-light-darker dark:border-highlight-dark">
+      <View className="mt-28 px-4 py-3">
+        <View className="flex-row items-center bg-light dark:bg-dark rounded-full px-4 h-10 border border-light-darker dark:border-highlight-dark">
             <IconSymbol name="magnifyingglass" size={20} color={theme.textMuted || '#888'} />
              <TextInput
                 className="flex-1 ml-2 text-base h-full text-light dark:text-dark"
@@ -93,7 +93,7 @@ export default function ExercisesScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity 
-            className="flex-row items-center justify-between p-4 border-b border-light-darker dark:border-highlight-dark"
+            className="flex-row items-center justify-between p-4"
             onPress={() => {
                 router.push({
                     pathname: '/exercises/details',
