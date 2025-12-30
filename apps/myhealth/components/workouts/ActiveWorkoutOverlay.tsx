@@ -6,7 +6,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
-import { ActiveWorkoutEmptyState } from './ActiveWorkoutEmptyState';
 import { ActiveWorkoutExerciseItem } from './ActiveWorkoutExerciseItem';
 import { HollowedButton, RaisedButton } from '@mysuite/ui';
 
@@ -57,10 +56,12 @@ export function ActiveWorkoutOverlay() {
             <View className="flex-1">
                 <ScrollView contentContainerStyle={{ padding: 12, paddingTop: 30, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
                      {(!exercises || exercises.length === 0) ? (
-                        <ActiveWorkoutEmptyState />
+                        <View className="flex-1 items-center justify-center py-20">
+                            <Text className="text-xl text-light dark:text-dark mb-6 text-center">No exercises found</Text>
+                        </View>
                      ) : (
                         <>
-                            {exercises.map((exercise, index) => (
+                             {exercises.map((exercise, index) => (
                                 <View key={index} className="mb-6">
                                     <ActiveWorkoutExerciseItem
                                         exercise={exercise}
@@ -73,36 +74,37 @@ export function ActiveWorkoutOverlay() {
                                     />
                                 </View>
                             ))}
-                            <HollowedButton
-                                title="+ Add Exercise"
-                                onPress={() => router.push('/exercises')}
-                                className="mt-5"
-                                textClassName="text-base font-semibold text-primary dark:text-primary-dark"
-                            />
-
-                            <View className="mt-4 flex-row gap-4">
-                                <RaisedButton
-                                    onPress={resetWorkout}
-                                    className="flex-1 h-12 bg-light dark:bg-dark-lighter"
-                                >
-                                    <View>
-                                        <Text className="text-warning font-bold text-center text-lg">Reset</Text>
-                                    </View>
-                                </RaisedButton>
-
-                                <RaisedButton
-                                    onPress={() => {
-                                        cancelWorkout();
-                                    }}
-                                    className="flex-1 h-12 bg-light dark:bg-dark-lighter"
-                                >
-                                    <View>
-                                        <Text className="text-danger font-bold text-center text-lg">Discard</Text>
-                                    </View>
-                                </RaisedButton>
-                            </View>
                         </>
                      )}
+
+                    <HollowedButton
+                        title="+ Add Exercise"
+                        onPress={() => router.push('/exercises')}
+                        className="mt-5"
+                        textClassName="text-base font-semibold text-primary dark:text-primary-dark"
+                    />
+
+                    <View className="mt-4 flex-row gap-4">
+                        <RaisedButton
+                            onPress={resetWorkout}
+                            className="flex-1 h-12 bg-light dark:bg-dark-lighter"
+                        >
+                            <View>
+                                <Text className="text-warning font-bold text-center text-lg">Reset</Text>
+                            </View>
+                        </RaisedButton>
+
+                        <RaisedButton
+                            onPress={() => {
+                                cancelWorkout();
+                            }}
+                            className="flex-1 h-12 bg-light dark:bg-dark-lighter"
+                        >
+                            <View>
+                                <Text className="text-danger font-bold text-center text-lg">Discard</Text>
+                            </View>
+                        </RaisedButton>
+                    </View>
                 </ScrollView>
             </View>
 
