@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { View, ScrollView, BackHandler, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
-import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
+import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { ActiveWorkoutExerciseItem } from './ActiveWorkoutExerciseItem';
 import { HollowedButton, RaisedButton } from '@mysuite/ui';
@@ -48,10 +48,10 @@ export function ActiveWorkoutOverlay() {
 
     return (
         <Animated.View 
-            style={{ paddingTop: insets.top + 50 }} // Top padding for Persistent Header
+            style={{ paddingTop: insets.top + 70 }} // Increased top padding for standard header look
             className="absolute inset-0 z-[999] bg-light dark:bg-dark"
-            entering={SlideInUp.duration(400)} 
-            exiting={SlideOutUp.duration(400)}
+            entering={SlideInDown.duration(400)} 
+            exiting={SlideOutDown.duration(400)}
         >
             <View className="flex-1">
                 <ScrollView contentContainerStyle={{ padding: 12, paddingTop: 30, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>

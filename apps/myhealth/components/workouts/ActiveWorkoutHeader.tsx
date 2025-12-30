@@ -6,9 +6,11 @@ import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { formatSeconds } from '../../utils/formatting';
 import { IconSymbol } from '../ui/icon-symbol';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export function ActiveWorkoutHeader() {
     const router = useRouter();
+    const insets = useSafeAreaInsets();
 
     const { isRunning, workoutSeconds, workoutName, isExpanded, toggleExpanded, hasActiveSession, pauseWorkout, exercises } = useActiveWorkout();
     
@@ -52,47 +54,85 @@ export function ActiveWorkoutHeader() {
         <Animated.View 
             style={{ 
                 zIndex: 1001,
-                top: 0,
+                top: isExpanded ? 0 : undefined,
+                bottom: isExpanded ? undefined : (insets.bottom + 12),
+                left: isExpanded ? 0 : 16,
+                right: isExpanded ? 0 : 16,
+                paddingTop: isExpanded ? insets.top : 10,
+                paddingBottom: isExpanded ? 16 : 10,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: isExpanded ? 0 : 0.15,
+                shadowRadius: 10,
+                elevation: isExpanded ? 0 : 5,
             }}
-            className="absolute top-0 left-0 right-0 py-4 pt-16 rounded-b-3xl bg-light/70 dark:bg-dark/70"
+            className={`absolute bg-light/80 dark:bg-dark/80 ${isExpanded ? 'rounded-b-3xl' : 'rounded-full'}`}
         >
-            {/* Background Tappable Area for Toggle */}
+            {/* Main Interactive Entity (entire pill + semi-circle area) */}
             <TouchableOpacity 
+                activeOpacity={isExpanded ? 1 : 0.7}
+                onPress={handlePress}
                 className="absolute inset-0 z-0"
-                onPress={handlePress} 
-                activeOpacity={1}
-            />
+                style={!isExpanded ? { overflow: 'visible' } : undefined}
+            >
+                {!isExpanded && (
+                    <View 
+                        style={{
+                            position: 'absolute',
+                            left: '50%',
+                            transform: [{ translateX: -20 }],
+                            top: -20, // Height is 20, sitting exactly on top of pill (offset by padding)
+                            width: 40,
+                            height: 20,
+                            borderTopLeftRadius: 20,
+                            borderTopRightRadius: 20,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                        className="bg-light/80 dark:bg-dark/80"
+                    >
+                        <View style={{ marginTop: 4 }}>
+                            <IconSymbol 
+                                name={rightIcon} 
+                                size={14} 
+                                className="text-light dark:text-dark"
+                            />
+                        </View>
+                    </View>
+                )}
+            </TouchableOpacity>
 
-            {/* Content with pointerEvents check */}
+            {/* Content Container */}
             <View 
-                className="flex-row justify-center items-center relative min-h-[44px] z-10"
+                className={`flex-row justify-center items-center relative z-10 ${isExpanded ? 'min-h-[44px]' : 'min-h-[40px]'}`}
                 pointerEvents="box-none"
             >
                  {/* Left: Timer + Status */}
-                 <View className="absolute left-5 z-10 flex-row items-center gap-2" pointerEvents="none">
+                 <View className={`absolute z-10 flex-row items-center gap-2 ${isExpanded ? 'left-5' : 'left-4'}`} pointerEvents="none">
                      <View className={`w-2 h-2 rounded-full ${isRunning ? 'bg-primary dark:bg-primary-dark' : 'bg-gray-400'}`} />
-                     <Text className="text-sm font-semibold tabular-nums text-light dark:text-dark">{formatSeconds(workoutSeconds)}</Text>
+                     <Text className={`${isExpanded ? 'text-sm' : 'text-xs'} font-semibold tabular-nums text-light dark:text-dark`}>{formatSeconds(workoutSeconds)}</Text>
                  </View>
                  
                  {/* Center: Title */}
-                 <Text className="text-2xl font-bold text-light dark:text-dark text-center flex-1 mx-20" numberOfLines={1}>{title}</Text>
+                 <Text 
+                    className={`${isExpanded ? 'text-2xl' : 'text-lg'} font-bold text-light dark:text-dark text-center flex-1 mx-20`} 
+                    numberOfLines={1}
+                    pointerEvents="none"
+                 >
+                    {title}
+                 </Text>
                  
-                 {/* Right: End Button + Chevron */}
-                 <View className="absolute right-5 z-10 flex-row items-center gap-3">
+                 {/* Right: End Button Only */}
+                 <View className={`absolute z-10 flex-row items-center gap-3 ${isExpanded ? 'right-5' : 'right-4'}`}>
                      <RaisedButton 
                         onPress={handleEnd}
-                        className="h-8 px-3 py-0 bg-light dark:bg-dark-lighter"
+                        className={`${isExpanded ? 'h-8 px-3' : 'h-7 px-2.5'} py-0 bg-light dark:bg-dark-lighter`}
                         variant="custom"
                         borderRadius={16}
                         showGradient={false}
                      >
                          <Text className="text-danger text-xs font-bold">End</Text>
                      </RaisedButton>
-                     <IconSymbol 
-                        name={rightIcon} 
-                        size={16} 
-                        className="text-light dark:text-dark"
-                     />
                  </View>
             </View>
         </Animated.View>
