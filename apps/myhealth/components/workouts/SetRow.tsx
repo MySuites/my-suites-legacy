@@ -243,7 +243,7 @@ export const SetRow = ({ index, exercise, onCompleteSet, onUncompleteSet, onUpda
                                 onChangeText={(t: string) => onUpdateSetTarget?.(index, 'distance', t)}
                                 placeholder={getValue('distance') || "-"}
                                 keyboardType="numeric" 
-                                placeholderTextColor={theme.placeholder || '#888'}
+                                placeholderTextColor={theme.placeholder}
                                 textAlignVertical="center"
                             />
                         )}

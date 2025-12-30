@@ -12,7 +12,7 @@ interface ScreenHeaderProps {
 export function ScreenHeader({ title, rightAction, leftAction, className }: ScreenHeaderProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const backgroundColor = isDark ? 'hsla(0, 0%, 15%, 0.85)' : 'hsla(0, 0%, 95%, 0.60)';
+  const backgroundColor = isDark ? 'hsla(0, 0%, 10%, 0.70)' : 'hsla(0, 0%, 95%, 0.60)';
 
   return (
     <View 

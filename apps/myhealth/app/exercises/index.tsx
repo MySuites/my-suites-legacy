@@ -66,7 +66,7 @@ export default function ExercisesScreen() {
       
       <View className="mt-28 px-4 py-3">
         <View className="flex-row items-center bg-light dark:bg-dark rounded-full px-4 h-10 border border-light-darker dark:border-highlight-dark">
-            <IconSymbol name="magnifyingglass" size={20} color={theme.textMuted || '#888'} />
+            <IconSymbol name="magnifyingglass" size={20} color={theme.placeholder || theme.textMuted || '#888'} />
              <TextInput
                 className="flex-1 ml-2 text-base h-full text-light dark:text-dark"
                 placeholder="Search exercises..."
@@ -77,7 +77,7 @@ export default function ExercisesScreen() {
             />
             {searchQuery.length > 0 && (
                 <TouchableOpacity onPress={() => setSearchQuery('')}>
-                     <IconSymbol name="xmark.circle.fill" size={20} color={theme.textMuted || '#888'} />
+                     <IconSymbol name="xmark.circle.fill" size={20} color={theme.placeholder || theme.textMuted || '#888'} />
                 </TouchableOpacity>
             )}
         </View>

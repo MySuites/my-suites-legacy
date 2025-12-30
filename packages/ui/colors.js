@@ -14,6 +14,7 @@ const baseColors = {
     danger: 'hsl(0, 84%, 60%)',
     warning: 'hsl(45, 93%, 40%)',
     success: 'hsl(142, 76%, 36%)',
+    placeholder: 'hsl(0, 0%, 60%)',
   },
   dark: {
     bgLightest: 'hsl(0, 0%, 20%)',
@@ -31,6 +32,7 @@ const baseColors = {
     danger: 'hsl(0, 84%, 60%)',
     warning: 'hsl(45, 93%, 47%)',
     success: 'hsl(142, 76%, 36%)',
+    placeholder: 'hsl(0, 0%, 50%)',
   }
 };
 

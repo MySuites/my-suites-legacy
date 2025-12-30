@@ -13,6 +13,7 @@ export type AppTheme = {
   tabIconDefault?: string;
   tabIconSelected?: string;
   error?: string;
+  placeholder?: string;
   highlight?: string;
   [k: string]: any;
 };
