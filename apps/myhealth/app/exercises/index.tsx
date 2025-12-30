@@ -107,12 +107,14 @@ export default function ExercisesScreen() {
                     {item.category} • {item.properties?.join(', ') || item.rawType}
                 </Text> 
             </View>
-            <TouchableOpacity onPress={(e) => {
-                e.stopPropagation(); // Prevent navigation
-                handleAddExercise(item);
-            }}>
-                <IconSymbol name="plus.circle" size={24} color={theme.primary} />
-            </TouchableOpacity>
+            {hasActiveSession && (
+              <TouchableOpacity onPress={(e) => {
+                  e.stopPropagation(); // Prevent navigation
+                  handleAddExercise(item);
+              }}>
+                  <IconSymbol name="plus.circle" size={24} color={theme.primary} />
+              </TouchableOpacity>
+            )}
           </TouchableOpacity>
         )}
         className="flex-1"
