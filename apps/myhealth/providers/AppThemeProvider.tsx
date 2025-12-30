@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { useColorScheme as rnUseColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../constants/theme';
@@ -19,37 +19,48 @@ export const ThemePreferenceContext = createContext<ThemePreferenceContextValue 
 
 export const AppThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const system = rnUseColorScheme();
-  const { setColorScheme } = useNativeWindColorScheme();
+  const { colorScheme: nwColorScheme, setColorScheme: setNWColorScheme } = useNativeWindColorScheme();
   const [preference, setPreferenceState] = useState<ThemePreference>('system');
 
+  // Load preference on mount
   useEffect(() => {
     (async () => {
       try {
         const stored = await AsyncStorage.getItem(THEME_PREF_KEY);
-        // Cast stored value to ThemePreference if it matches
         if (stored === 'light' || stored === 'dark' || stored === 'system') {
           setPreferenceState(stored as ThemePreference);
+          // Sync NativeWind to stored preference on load
+          if (stored !== 'system') {
+            setNWColorScheme(stored as 'light' | 'dark');
+          }
         }
       } catch {
         // ignore
       }
     })();
-  }, []);
+  }, [setNWColorScheme]);
 
-  const effectiveScheme: 'light' | 'dark' = preference === 'system' ? (system === 'dark' ? 'dark' : 'light') : preference;
-
-  // Sync with NativeWind
-  useEffect(() => {
-    setColorScheme(effectiveScheme);
-  }, [effectiveScheme, setColorScheme]);
+  // Use NativeWind's state as the source of truth for the rest of the app's context
+  // This ensures that IF NativeWind takes a frame to update, the context matches that frame
+  // No more staggered "flicker" between context-based and tailwind-based components.
+  const effectiveScheme: 'light' | 'dark' = useMemo(() => {
+    if (nwColorScheme) return nwColorScheme as 'light' | 'dark';
+    return system === 'dark' ? 'dark' : 'light';
+  }, [nwColorScheme, system]);
 
   const setPreference = async (p: ThemePreference) => {
+    setPreferenceState(p);
     try {
       await AsyncStorage.setItem(THEME_PREF_KEY, p);
     } catch {
       // ignore
     }
-    setPreferenceState(p);
+    
+    if (p === 'system') {
+      setNWColorScheme('system');
+    } else {
+      setNWColorScheme(p);
+    }
   };
 
   const theme = effectiveScheme === 'dark' ? Colors.dark : Colors.light;

@@ -1,7 +1,9 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 import { hslToHex } from '../../utils/colors';
+import { cssInterop } from 'nativewind';
+
+cssInterop(MaterialIcons, { className: 'style' });
 
 
 type IconSymbolName = keyof typeof MAPPING;
@@ -66,13 +68,24 @@ export function IconSymbol({
   size = 24,
   color,
   style,
+  className,
 }: {
   name: IconSymbolName;
   size?: number;
-  color: string | OpaqueColorValue;
+  color?: string | OpaqueColorValue;
   style?: StyleProp<TextStyle>;
+  className?: string;
 }) {
   const safeColor = (typeof color === 'string' && color.startsWith('hsl')) ? hslToHex(color) : color;
-  return <MaterialIcons color={safeColor} size={size} name={MAPPING[name]} style={style} />;
+  return (
+    <MaterialIcons 
+      color={safeColor} 
+      size={size} 
+      name={MAPPING[name]} 
+      style={style} 
+      className={className} 
+    />
+  );
 }
 
+cssInterop(IconSymbol, { className: { target: 'style', nativeStyleToProp: { color: true } } });

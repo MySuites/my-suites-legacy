@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { View, Pressable, ViewProps, PressableProps, useWindowDimensions } from 'react-native';
-import { cssInterop } from 'nativewind';
+import { cssInterop, useColorScheme } from 'nativewind';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useUITheme } from './theme';
 
 cssInterop(Pressable, { className: 'style' });
 
@@ -12,7 +11,8 @@ interface CardProps extends ViewProps {
 }
 
 export function RaisedCard({ children, style, className, onPress, activeOpacity = 0.9, ...props }: CardProps) {
-  const theme = useUITheme();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
   // Refined Neumorphic RaisedCard: matches background, uses highlight top-border and soft bottom shadow
   const baseClassName = `bg-light dark:bg-dark-lighter rounded-xl p-3 w-full mb-1 border border-light dark:border-dark border-t-highlight dark:border-t-highlight-dark border-l-highlight dark:border-l-highlight-dark ${className || ''}`;
   const shadowStyle = { 
@@ -26,7 +26,7 @@ export function RaisedCard({ children, style, className, onPress, activeOpacity 
 
   const Gradient = (
     <LinearGradient
-        colors={theme.dark 
+        colors={isDark 
           ? ['hsla(0, 0%, 10%, 0.2)', 'hsla(0, 0%, 0%, 0.3)'] 
           : ['hsla(0, 0%, 97%, 0.7)', 'hsla(0, 0%, 90%, 0.05)']}
         locations={[0, 1]}

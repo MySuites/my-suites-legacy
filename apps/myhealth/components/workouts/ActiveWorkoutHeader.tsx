@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
-import { useUITheme, RaisedButton } from '@mysuite/ui';
+import { RaisedButton } from '@mysuite/ui';
 import Animated from 'react-native-reanimated';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { formatSeconds } from '../../utils/formatting';
@@ -8,7 +8,6 @@ import { IconSymbol } from '../ui/icon-symbol';
 import { useRouter } from 'expo-router';
 
 export function ActiveWorkoutHeader() {
-    const theme = useUITheme();
     const router = useRouter();
 
     const { isRunning, workoutSeconds, workoutName, isExpanded, toggleExpanded, hasActiveSession, pauseWorkout, exercises } = useActiveWorkout();
@@ -101,7 +100,11 @@ export function ActiveWorkoutHeader() {
                      >
                          <Text className="text-danger text-xs font-bold">End</Text>
                      </RaisedButton>
-                     <IconSymbol name={rightIcon} size={16} color={theme.icon ?? '#000'} />
+                     <IconSymbol 
+                        name={rightIcon} 
+                        size={16} 
+                        className="text-light dark:text-dark"
+                     />
                  </View>
             </View>
         </Animated.View>

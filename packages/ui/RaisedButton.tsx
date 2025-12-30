@@ -1,13 +1,14 @@
 import { Text, View, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 import { cssInterop } from 'nativewind';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useUITheme } from './theme';
+import { useColorScheme } from 'nativewind';
 
 // Enable className support for React Native components (if not already enabled globally)
 cssInterop(Text, { className: 'style' });
 
 export const RaisedButton = ({ title, className, textClassName, style, children, borderRadius = 12, showGradient = true, variant = 'default', ...props }: { title?: string; className?: string; textClassName?: string; children?: React.ReactNode; borderRadius?: number; showGradient?: boolean; variant?: 'default' | 'custom' } & TouchableOpacityProps) => {
-  const theme = useUITheme();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
   
   let baseClasses = 'rounded-xl items-center justify-center border border-t-highlight border-l-highlight border-b-transparent border-r-transparent dark:border-t-highlight-dark dark:border-l-highlight-dark';
   
@@ -33,7 +34,7 @@ export const RaisedButton = ({ title, className, textClassName, style, children,
       style={[shadowStyle, { borderRadius }, style] as any}>
         {showGradient && (
         <LinearGradient
-            colors={theme.dark 
+            colors={isDark 
                 ? ['hsla(0, 0%, 40%, 0.25)', 'hsla(0, 0%, 0%, 0.3)'] 
                 : ['hsla(0, 0%, 95%, 0.9)', 'hsla(0, 0%, 80%, 0.05)']}
             locations={[0.3, 1]}
