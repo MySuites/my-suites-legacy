@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, TouchableOpacity, View, Alert, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useUITheme, RaisedButton, RaisedCard } from '@mysuite/ui';
+import { useUITheme, RaisedButton, RaisedCard, HollowedCard } from '@mysuite/ui';
 import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
@@ -56,8 +56,12 @@ export default function SavedWorkoutsScreen() {
       />
       
       {savedWorkouts.length === 0 ? (
-          <View className="mt-28 flex-1 items-center justify-center p-8">
-              <Text className="text-base leading-6 text-light-muted dark:text-dark-muted">No saved workouts found.</Text>
+          <View className="mt-28 flex-1 p-4">
+              <HollowedCard className="p-8 w-full">
+                  <Text className="text-base text-center leading-6 text-light-muted dark:text-dark-muted">
+                      No saved workouts found. Create one to get started!
+                  </Text>
+              </HollowedCard>
           </View>
       ) : (
           <FlatList
