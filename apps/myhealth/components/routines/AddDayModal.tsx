@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import { View, Text, Modal, ScrollView } from 'react-native';
 import { useUITheme, RaisedCard, RaisedButton } from '@mysuite/ui';
 import { IconSymbol } from '../ui/icon-symbol';
+import { ScreenHeader } from '../ui/ScreenHeader';
+import { BackButton } from '../ui/BackButton';
 
 
 interface AddDayModalProps {
@@ -25,19 +27,16 @@ export const AddDayModal = ({
         <Modal
             visible={visible}
             animationType="slide"
-            presentationStyle="pageSheet"
+            presentationStyle="fullScreen"
             onRequestClose={onClose}
         >
             <View className="flex-1 bg-light dark:bg-dark">
-                <View className="flex-row items-center justify-between p-4 border-b border-light dark:border-white/10 pt-4 android:pt-10">
-                    <TouchableOpacity onPress={onClose} className="p-2">
-                            <Text className="text-base leading-[30px] text-[#0a7ea4]">Cancel</Text>
-                    </TouchableOpacity>
-                    <Text className="text-xl font-bold">Add Day</Text>
-                    <View style={{ width: 50 }} />
-                </View>
+                <ScreenHeader 
+                    title="Add Day"
+                    leftAction={<BackButton onPress={onClose} />}
+                />
                 
-                <ScrollView className="flex-1 p-4">
+                <ScrollView className="flex-1 mt-28 p-4">
                     <RaisedCard
                         onPress={onAddRestDay}
                         className="p-4 mb-6"

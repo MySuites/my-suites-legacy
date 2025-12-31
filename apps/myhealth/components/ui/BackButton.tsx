@@ -36,13 +36,13 @@ export function useBackButtonAction() {
     return { handleBack };
 }
 
-export function BackButton() {
+export function BackButton({ onPress }: { onPress?: () => void }) {
     const theme = useUITheme();
     const { handleBack } = useBackButtonAction();
 
     return (
         <RaisedButton
-            onPress={handleBack}
+            onPress={onPress || handleBack}
             className="w-10 h-10 p-0 rounded-full items-center justify-center"
             borderRadius={20}
         >
