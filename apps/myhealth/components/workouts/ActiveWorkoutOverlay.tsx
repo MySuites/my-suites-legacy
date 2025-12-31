@@ -14,7 +14,6 @@ export function ActiveWorkoutOverlay() {
     const insets = useSafeAreaInsets();
     const {
         exercises,
-
         currentIndex,
         completeSet,
         updateExercise,
@@ -48,13 +47,12 @@ export function ActiveWorkoutOverlay() {
 
     return (
         <Animated.View 
-            style={{ paddingTop: insets.top + 70 }} // Increased top padding for standard header look
             className="absolute inset-0 z-[999] bg-light dark:bg-dark"
             entering={SlideInDown.duration(400)} 
             exiting={SlideOutDown.duration(400)}
         >
             <View className="flex-1">
-                <ScrollView contentContainerStyle={{ padding: 12, paddingTop: 30, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+                <ScrollView contentContainerStyle={{ padding: 12, paddingTop: insets.top + 80, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
                      {(!exercises || exercises.length === 0) ? (
                         <View className="flex-1 items-center justify-center py-20">
                             <Text className="text-xl text-light dark:text-dark mb-6 text-center">No exercises found</Text>
