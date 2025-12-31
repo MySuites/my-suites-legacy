@@ -49,6 +49,7 @@ export default function CreateWorkoutScreen() {
 
     const [isSaving, setIsSaving] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [hasInitialized, setHasInitialized] = useState(false);
 
     const [isAddingExercise, setIsAddingExercise] = useState(false);
     const [availableExercises, setAvailableExercises] = useState<any[]>([]);
@@ -62,13 +63,19 @@ export default function CreateWorkoutScreen() {
             if (workout) {
                 setWorkoutDraftName(workout.name);
                 setWorkoutDraftExercises(workout.exercises ? JSON.parse(JSON.stringify(workout.exercises)) : []);
-            } else {
+                setHasInitialized(true);
+                setIsLoading(false);
+            } else if (savedWorkouts.length > 0 && !hasInitialized) {
+                // If we've loaded workouts but ours isn't there and we haven't initialized yet,
+                // then it's actually missing. If we HAVE initialized, it was probably just deleted.
                 Alert.alert("Error", "Workout not found");
                 router.back();
+                setIsLoading(false);
             }
+        } else {
+            setIsLoading(false);
         }
-        setIsLoading(false);
-    }, [editingWorkoutId, savedWorkouts, router, setWorkoutDraftExercises]);
+    }, [editingWorkoutId, savedWorkouts, router, setWorkoutDraftExercises, hasInitialized]);
 
     async function handleSaveWorkoutDraft() {
         if (!workoutDraftName.trim()) {

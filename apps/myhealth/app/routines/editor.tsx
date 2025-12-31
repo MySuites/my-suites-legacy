@@ -44,6 +44,7 @@ export default function CreateRoutineScreen() {
 
     const [isSaving, setIsSaving] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [hasInitialized, setHasInitialized] = useState(false);
 
     // Add Day State
     const [isAddingDay, setIsAddingDay] = useState(false);
@@ -55,13 +56,19 @@ export default function CreateRoutineScreen() {
             if (routine) {
                 setRoutineDraftName(routine.name);
                 setRoutineSequence(routine.sequence ? JSON.parse(JSON.stringify(routine.sequence)) : []);
-            } else {
+                setHasInitialized(true);
+                setIsLoading(false);
+            } else if (routines.length > 0 && !hasInitialized) {
+                // If we've loaded routines but ours isn't there and we haven't initialized yet,
+                // then it's actually missing. If we HAVE initialized, it was probably just deleted.
                 Alert.alert("Error", "Routine not found");
                 router.back();
+                setIsLoading(false);
             }
+        } else {
+            setIsLoading(false);
         }
-        setIsLoading(false);
-    }, [editingRoutineId, routines, router, setRoutineSequence]);
+    }, [editingRoutineId, routines, router, setRoutineSequence, hasInitialized]);
 
     async function handleSaveRoutine() {
         if (!routineDraftName.trim()) {
