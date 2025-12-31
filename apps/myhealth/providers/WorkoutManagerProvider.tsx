@@ -45,7 +45,7 @@ interface WorkoutManagerContextType {
     updateSavedWorkout: (id: string, name: string, exercises: Exercise[], onSuccess: () => void) => Promise<void>;
     saveRoutineDraft: (name: string, sequence: any[], onSuccess: () => void) => Promise<void>;
     updateRoutine: (id: string, name: string, sequence: any[], onSuccess: () => void, suppressAlert?: boolean) => Promise<void>;
-    deleteRoutine: (id: string, onSuccess?: () => void) => void;
+    deleteRoutine: (id: string, options?: { onSuccess?: () => void; skipConfirmation?: boolean }) => void;
     createCustomExercise: (name: string, type: string, primary?: string, secondary?: string[]) => Promise<{ data?: any, error?: any }>;
     workoutHistory: WorkoutLog[];
     fetchWorkoutLogDetails: (logId: string) => Promise<{ data: any[], error: any }>;
@@ -492,30 +492,36 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
         }
     }, [user]);
 
-    function deleteRoutine(id: string, onSuccess?: () => void) {
-        Alert.alert("Delete routine", "Are you sure? This cannot be undone.", [
-            { text: "Cancel", style: "cancel" },
-            {
-                text: "Delete",
-                style: "destructive",
-                onPress: async () => {
-                    if (user) {
-                        try {
-                           await deleteRoutineFromSupabase(user, id);
-                        } catch (e) {
-                             console.warn("Failed to delete routine on server", e);
-                        }
-                    }
-                    setRoutines((rs) => rs.filter((x) => x.id !== id));
-                    if (activeRoutine?.id === id) {
-                        clearActiveRoutine();
-                    }
-                    onSuccess?.();
+    function deleteRoutine(id: string, options?: { onSuccess?: () => void; skipConfirmation?: boolean }) {
+        const performDelete = async () => {
+            if (user) {
+                try {
+                    await deleteRoutineFromSupabase(user, id);
+                } catch (e) {
+                    console.warn("Failed to delete routine on server", e);
+                }
+            }
+            setRoutines((rs) => rs.filter((x) => x.id !== id));
+            if (activeRoutine?.id === id) {
+                clearActiveRoutine();
+            }
+            options?.onSuccess?.();
+        };
 
+        if (options?.skipConfirmation) {
+            performDelete();
+        } else {
+            Alert.alert("Delete routine", "Are you sure? This cannot be undone.", [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: performDelete,
                 },
-            },
-        ]);
+            ]);
+        }
     }
+
 
     const deleteWorkoutLog = async (id: string, options?: { onSuccess?: () => void; skipConfirmation?: boolean }) => {
         const performDelete = async () => {

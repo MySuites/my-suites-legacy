@@ -198,6 +198,7 @@ export default function CreateWorkoutScreen() {
                                     style: 'destructive', 
                                     onPress: () => {
                                         deleteSavedWorkout(editingWorkoutId, {
+                                            skipConfirmation: true,
                                             onSuccess: () => {
                                                 router.back();
                                             }

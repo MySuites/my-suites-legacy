@@ -175,10 +175,13 @@ export default function CreateRoutineScreen() {
                                     text: 'Delete', 
                                     style: 'destructive', 
                                     onPress: () => {
-                                        deleteRoutine(editingRoutineId, () => {
-                                            router.back();
-                                        });
-                                    }
+                                         deleteRoutine(editingRoutineId, {
+                                             skipConfirmation: true,
+                                             onSuccess: () => {
+                                                 router.back();
+                                             }
+                                         });
+                                     }
                                 }
                             ])
                         }} 
