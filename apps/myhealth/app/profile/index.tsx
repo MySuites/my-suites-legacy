@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { View } from 'react-native';
 import { useAuth, supabase } from '@mysuite/auth';
-import { useUITheme, RaisedButton } from '@mysuite/ui';
+import { useUITheme, RaisedButton, useToast } from '@mysuite/ui';
 import { useRouter } from 'expo-router';
 import { IconSymbol } from '../../components/ui/icon-symbol';
 import { BodyWeightCard } from '../../components/profile/BodyWeightCard';
@@ -21,6 +21,7 @@ export default function ProfileScreen() {
   const [isWeightModalVisible, setIsWeightModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedRange, setSelectedRange] = useState<DateRange>('Week');
+  const { showToast } = useToast();
   const theme = useUITheme();
   
   useEffect(() => {
@@ -137,6 +138,8 @@ export default function ProfileScreen() {
       
     if (error) {
         console.log('Error fetching weight history:', error);
+        showToast({ message: "Failed to load weight history", type: 'error' });
+        setIsLoading(false);
         return;
     }
 
@@ -209,7 +212,7 @@ export default function ProfileScreen() {
 
     setWeightHistory(result);
     setIsLoading(false);
-  }, [user, selectedRange]);
+  }, [user, selectedRange, showToast]);
 
   useEffect(() => {
     if (user) {

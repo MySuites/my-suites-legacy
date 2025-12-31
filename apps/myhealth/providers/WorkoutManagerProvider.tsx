@@ -21,6 +21,7 @@ import {
     createCustomExerciseInSupabase
 } from "../utils/workout-api";
 import { useRoutineManager } from "../hooks/routines/useRoutineManager";
+import { useToast } from "@mysuite/ui";
 
 // Re-export types for compatibility
 export type { Exercise, SetLog, WorkoutLog };
@@ -58,6 +59,7 @@ const WorkoutManagerContext = createContext<WorkoutManagerContextType | undefine
 
 export function WorkoutManagerProvider({ children }: { children: React.ReactNode }) {
     const { user } = useAuth();
+    const { showToast } = useToast();
     const [savedWorkouts, setSavedWorkouts] = useState<any[]>([]);
     const [routines, setRoutines] = useState<any[]>([]);
     const [workoutHistory, setWorkoutHistory] = useState<WorkoutLog[]>([]);
@@ -103,6 +105,8 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
                                 w.name && w.name.trim().toLowerCase() !== "rest"
                             ); // Filter out "Rest" workouts
                         setSavedWorkouts(mapped);
+                    } else if (wError) {
+                        showToast({ message: "Failed to load workouts", type: 'error' });
                     }
 
                     // Fetch routines
@@ -126,6 +130,8 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
                             };
                         });
                         setRoutines(mappedRoutines);
+                    } else if (rError) {
+                        showToast({ message: "Failed to load routines", type: 'error' });
                     }
 
                     // Fetch history
@@ -134,7 +140,7 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
                         setWorkoutHistory(hData);
                     } else {
                         console.error("Failed to fetch workout history:", hError);
-                        Alert.alert("History Error", "Failed to load workout history: " + (hError.message || JSON.stringify(hError)));
+                        showToast({ message: "Failed to load workout history", type: 'error' });
                     }
                 } else {
                     const rawW = await AsyncStorage.getItem("myhealth_saved_workouts");
@@ -160,7 +166,7 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
             }
         }
         fetchSaved();
-    }, [user, setRoutineState]);
+    }, [user, setRoutineState, showToast]);
 
     // Persist saved workouts and routines when changed
     useEffect(() => {
@@ -213,10 +219,7 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
 
                 if (error || !data) {
                     console.warn("Failed to create workout on server", error);
-                    Alert.alert(
-                        "Error",
-                        "Failed to save workout to server. Saved locally instead.",
-                    );
+                    showToast({ message: "Failed to save workout to server", type: 'error' });
                 } else {
                     const payload = {
                         id: data.workout_id,
@@ -226,7 +229,7 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
                     };
                     setSavedWorkouts((rs) => [payload, ...rs]);
                     onSuccess();
-                    Alert.alert("Saved", `Workout '${payload.name}' saved.`);
+                    showToast({ message: `Workout '${payload.name}' saved`, type: 'success' });
                     return;
                 }
             } finally {
@@ -244,7 +247,7 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
         };
         setSavedWorkouts((rs) => [payload, ...rs]);
         onSuccess();
-        Alert.alert("Saved", `Workout '${payload.name}' saved locally.`);
+        showToast({ message: `Workout '${payload.name}' saved locally`, type: 'success' });
     }
 
     async function saveCompletedWorkout(
@@ -268,7 +271,7 @@ export function WorkoutManagerProvider({ children }: { children: React.ReactNode
                 );
 
                 if (error) {
-                    Alert.alert("Error", "Failed to save workout log.");
+                    showToast({ message: "Failed to save workout log", type: 'error' });
                 } else {
                     // Refresh history
                     const { data: hData } = await fetchWorkoutHistory(user);

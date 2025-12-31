@@ -13,6 +13,7 @@ export { RaisedCard } from './RaisedCard';
 export { HollowedCard } from './HollowedCard';
 export { ActionCard } from './ActionCard';
 export { Skeleton } from './Skeleton';
+export { ToastProvider, useToast } from './Toast';
 
 
 

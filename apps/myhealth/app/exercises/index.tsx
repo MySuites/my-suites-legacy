@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity, View, TextInput, Alert, Text } from 'react-native'; 
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
-import { useUITheme, RaisedButton, HollowedCard, Skeleton } from '@mysuite/ui';
+import { useUITheme, RaisedButton, HollowedCard, Skeleton, useToast } from '@mysuite/ui';
 import { useAuth } from '@mysuite/auth';
 import { fetchExercises } from '../../hooks/workouts/useWorkoutManager';
 import { IconSymbol } from '../../components/ui/icon-symbol';
@@ -19,8 +19,8 @@ export default function ExercisesScreen() {
   const { user } = useAuth();
   const [exercises, setExercises] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true);
-  
+  const [isLoading, setIsLoading] = useState(true);
+  const { showToast } = useToast();
   const { addExercise, hasActiveSession } = useActiveWorkout();
 
   const handleAddExercise = (exercise: any) => {
@@ -33,17 +33,26 @@ export default function ExercisesScreen() {
   };
 
   useEffect(() => {
+    let isMounted = true; // For cleanup to prevent state updates on unmounted component
     async function load() {
         if (!user) {
-            setLoading(false);
+            setIsLoading(false);
             return;
         }
-        const { data } = await fetchExercises(user);
-        setExercises(data || []);
-        setLoading(false);
+        const { data, error } = await fetchExercises(user);
+        if (error) {
+          showToast({ message: "Failed to load exercises", type: 'error' });
+        } else if (data && isMounted) {
+          setExercises(data);
+        }
+        setIsLoading(false);
     }
     load();
-  }, [user]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user, showToast]);
 
   return (
     <View className="flex-1 bg-light dark:bg-dark">
@@ -84,7 +93,7 @@ export default function ExercisesScreen() {
         </View>
       </View>
       
-      {loading ? (
+      {isLoading ? (
         <View className="flex-1 px-4 mt-4">
              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <View key={i} className="flex-row items-center justify-between py-4 border-b border-light-darker/10 dark:border-highlight-dark/10">

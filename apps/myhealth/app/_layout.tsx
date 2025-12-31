@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { ActiveWorkoutProvider } from '../providers/ActiveWorkoutProvider'; // Fixed import path
 import { WorkoutManagerProvider } from '../providers/WorkoutManagerProvider';
 import { FloatingButtonProvider } from '../providers/FloatingButtonContext';
+import { ToastProvider } from '@mysuite/ui';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -66,14 +67,16 @@ function RootLayoutContent() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <WorkoutManagerProvider>
-        <ActiveWorkoutProvider>
-          <FloatingButtonProvider>
-            <RootLayoutNav />
-          </FloatingButtonProvider>
-          <StatusBar style="auto" />
-        </ActiveWorkoutProvider>
-      </WorkoutManagerProvider>
+      <ToastProvider>
+        <WorkoutManagerProvider>
+          <ActiveWorkoutProvider>
+            <FloatingButtonProvider>
+              <RootLayoutNav />
+            </FloatingButtonProvider>
+            <StatusBar style="auto" />
+          </ActiveWorkoutProvider>
+        </WorkoutManagerProvider>
+      </ToastProvider>
     </ThemeProvider>
   );
 }
