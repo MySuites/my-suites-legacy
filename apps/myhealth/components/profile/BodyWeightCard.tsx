@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
 import { BodyWeightChart } from './BodyWeightChart';
 import { SegmentedControl, SegmentedControlOption } from '../ui/SegmentedControl';
-import { RaisedCard, HollowedCard, RaisedButton, useUITheme } from '../../../../packages/ui';
+import { RaisedCard, HollowedCard, RaisedButton, useUITheme, Skeleton } from '../../../../packages/ui';
 
 // Defined locally to avoid circular dependencies if any
 type DateRange = 'Week' | 'Month' | '6Month' | 'Year';
@@ -24,6 +24,7 @@ interface BodyWeightCardProps {
   rangeAverage: number | null;
   primaryColor?: string;
   textColor?: string;
+  isLoading?: boolean;
 }
 
 export function BodyWeightCard({ 
@@ -35,6 +36,7 @@ export function BodyWeightCard({
   rangeAverage,
   primaryColor,
   textColor,
+  isLoading,
 }: BodyWeightCardProps) {
   const theme = useUITheme();
   const [selectedPoint, setSelectedPoint] = React.useState<{ value: number; date: string } | null>(null);
@@ -109,7 +111,11 @@ export function BodyWeightCard({
                         {getSelectionLabel()}
                     </Text>
                 </View>
-                {history.length > 0 ? (
+                {isLoading ? (
+                    <View className="h-40 items-center justify-center bg-gray-50/50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
+                        <Skeleton height="70%" width="90%" borderRadius={4} />
+                    </View>
+                ) : history.length > 0 ? (
                     <BodyWeightChart 
                         data={history} 
                         color={primaryColor}
@@ -137,6 +143,22 @@ export function BodyWeightCard({
                         </Text>
                     </View>
                 )}
+            </View>
+        ) : isLoading ? (
+            <View>
+                <View className="mb-4">
+                    <View className="flex-row justify-between items-center mb-1">
+                        <View className="flex-row items-baseline">
+                            <Skeleton height={32} width={60} className="mr-2" />
+                            <Skeleton height={14} width={20} />
+                        </View>
+                        <Skeleton height={32} width={120} borderRadius={16} />
+                    </View>
+                    <Skeleton height={12} width={100} />
+                </View>
+                <View className="h-40 items-center justify-center bg-gray-50/50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-white/10">
+                    <Skeleton height="70%" width="90%" borderRadius={4} />
+                </View>
             </View>
         ) : (
             <HollowedCard className="p-8">

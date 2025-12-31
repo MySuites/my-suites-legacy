@@ -19,6 +19,7 @@ export default function ProfileScreen() {
   const [weightHistory, setWeightHistory] = useState<{ value: number; label: string; date: string }[]>([]);
   const [rangeAverage, setRangeAverage] = useState<number | null>(null);
   const [isWeightModalVisible, setIsWeightModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedRange, setSelectedRange] = useState<DateRange>('Week');
   const theme = useUITheme();
   
@@ -77,6 +78,7 @@ export default function ProfileScreen() {
 
   const fetchWeightHistory = useCallback(async () => {
     if (!user) return;
+    setIsLoading(true);
 
     // 1. Generate Spine (Target Dates)
     let spine: string[] = [];
@@ -206,6 +208,7 @@ export default function ProfileScreen() {
     });
 
     setWeightHistory(result);
+    setIsLoading(false);
   }, [user, selectedRange]);
 
   useEffect(() => {
@@ -293,6 +296,7 @@ export default function ProfileScreen() {
           onRangeChange={setSelectedRange}
           primaryColor={theme.primary}
           textColor={theme.textMuted}
+          isLoading={isLoading}
       />
       </View> 
 
