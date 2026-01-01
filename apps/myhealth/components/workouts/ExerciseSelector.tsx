@@ -6,7 +6,7 @@ import { ScreenHeader } from '../ui/ScreenHeader';
 import { BackButton } from '../ui/BackButton';
 
 
-interface ExerciseSelectorModalProps {
+interface ExerciseSelectorProps {
     visible: boolean;
     onClose: () => void;
     onSelect: (exercise: any) => void;
@@ -14,13 +14,13 @@ interface ExerciseSelectorModalProps {
     isLoading: boolean;
 }
 
-export const ExerciseSelectorModal = ({
+export const ExerciseSelector = ({
     visible,
     onClose,
     onSelect,
     exercises,
     isLoading
-}: ExerciseSelectorModalProps) => {
+}: ExerciseSelectorProps) => {
     const theme = useUITheme();
     const [exerciseSearchQuery, setExerciseSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");

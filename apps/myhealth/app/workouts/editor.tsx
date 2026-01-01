@@ -7,7 +7,7 @@ import { useWorkoutManager, fetchExercises } from '../../hooks/workouts/useWorko
 import { useFloatingButton } from '../../providers/FloatingButtonContext';
 import { useWorkoutDraft } from '../../hooks/workouts/useWorkoutDraft';
 import { WorkoutDraftExerciseItem } from '../../components/workouts/WorkoutDraftExerciseItem';
-import { ExerciseSelectorModal } from '../../components/workouts/ExerciseSelectorModal';
+import { ExerciseSelector } from '../../components/workouts/ExerciseSelector';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { BackButton } from '../../components/ui/BackButton';
@@ -226,7 +226,7 @@ export default function CreateWorkoutScreen() {
             </View>
 
             {/* Add Exercise Modal */}
-            <ExerciseSelectorModal
+            <ExerciseSelector
                 visible={isAddingExercise}
                 onClose={() => setIsAddingExercise(false)}
                 onSelect={handleAddExercise}
