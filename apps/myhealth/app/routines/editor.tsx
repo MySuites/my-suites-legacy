@@ -76,6 +76,11 @@ export default function CreateRoutineScreen() {
             return;
         }
 
+        if (routineSequence.length === 0) {
+            Alert.alert("Empty Routine", "Please add at least one day to the routine");
+            return;
+        }
+
         setIsSaving(true);
         const onSuccess = () => {
              setIsSaving(false);
