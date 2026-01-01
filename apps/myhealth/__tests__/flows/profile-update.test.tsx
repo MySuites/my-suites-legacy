@@ -1,52 +1,68 @@
 import React from 'react';
-import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import ProfileScreen from '../../app/profile/index';
-import { supabase } from '@mysuite/auth';
-import { View, Text, Button } from 'react-native';
+import SettingsScreen from '../../app/settings/index';
+import { supabase, useAuth } from '@mysuite/auth';
+import * as RN from 'react-native';
+
+const mockRN = RN;
+const { Alert } = RN;
 
 // Mock Dependencies
 jest.mock('../../components/profile/BodyWeightCard', () => {
-    const { View, Text, Button } = require('react-native');
     return {
         BodyWeightCard: ({ weight, onLogWeight }: any) => (
-            <View testID="body-weight-card">
-                <Text testID="current-weight">{weight ? `${weight} kg` : 'No Data'}</Text>
-                <Button title="Log Weight" onPress={onLogWeight} />
-            </View>
+            <mockRN.View testID="body-weight-card">
+                <mockRN.Text testID="current-weight">{weight ? `${weight} kg` : 'No Data'}</mockRN.Text>
+                <mockRN.Button title="Log Weight" onPress={onLogWeight} />
+            </mockRN.View>
         )
     };
 });
 
 jest.mock('../../components/profile/WeightLogModal', () => {
-    const { View, Button } = require('react-native');
     return {
         WeightLogModal: ({ visible, onSave }: any) => visible ? (
-            <View testID="weight-log-modal">
-                <Button title="Save 75kg" onPress={() => onSave(75, new Date())} />
-            </View>
+            <mockRN.View testID="weight-log-modal">
+                <mockRN.Button title="Save 75kg" onPress={() => onSave(75, new Date())} />
+            </mockRN.View>
         ) : null
     };
 });
 
+jest.mock('../../components/ui/ProfileEditModal', () => {
+    // Simple mock that calls onSave with new values when a "Save" button is pressed
+    return {
+        ProfileEditModal: ({ visible, onSave }: any) => visible ? (
+            <mockRN.View testID="profile-edit-modal">
+                <mockRN.Button title="Save Profile" onPress={() => onSave('NewUser', 'New Name')} />
+            </mockRN.View>
+        ) : null
+    };
+});
+
+jest.mock('../../providers/AppThemeProvider', () => ({
+    useThemePreference: () => ({ preference: 'system', setPreference: jest.fn() })
+}));
+
 jest.mock('@mysuite/ui', () => {
-    const { View, Text } = require('react-native');
     return {
         useUITheme: () => ({ primary: 'blue', textMuted: 'gray' }),
         RaisedButton: ({ children, onPress }: any) => (
-            <View accessibilityRole="button">
-                <Text onPress={onPress}>RaisedButton</Text>
+            <mockRN.View accessibilityRole="button">
+                <mockRN.Text onPress={onPress}>RaisedButton</mockRN.Text>
                 {children}
-            </View>
+            </mockRN.View>
         ),
         useToast: () => ({ showToast: jest.fn() }),
-        IconSymbol: () => <View />,
+        IconSymbol: () => <mockRN.View />,
+        ThemeToggle: () => <mockRN.View testID="theme-toggle" />,
     };
 });
 
 jest.mock('../../components/ui/BackButton', () => {
-    const { View } = require('react-native');
     return {
-        BackButton: () => <View testID="back-button" />
+        BackButton: () => <mockRN.View testID="back-button" />
     };
 });
 
@@ -59,7 +75,7 @@ describe('Profile Update Flow', () => {
         bodyMeasurements = [];
         
         // Mock User
-        (require('@mysuite/auth').useAuth as jest.Mock).mockReturnValue({
+        (useAuth as jest.Mock).mockReturnValue({
             user: { id: 'test-user-id' }
         });
         
@@ -81,7 +97,9 @@ describe('Profile Update Flow', () => {
                 order: jest.fn(() => chain),
                 limit: jest.fn(() => chain),
                 maybeSingle: jest.fn(async () => {
-                    if (table === 'profiles') return { data: { username: 'TestUser' }, error: null };
+                    if (table === 'profiles') {
+                         return { data: { username: 'TestUser', full_name: 'Test Name' }, error: null };
+                    }
                     
                     if (table === 'body_measurements') {
                         console.log('Mock: maybeSingle for columns:', chain.columns, 'Table size:', bodyMeasurements.length);
@@ -115,6 +133,10 @@ describe('Profile Update Flow', () => {
                      }
                      return { error: null };
                 }),
+                upsert: jest.fn(async (row) => {
+                    // Simulate success
+                    return { error: null };
+                }),
                 then: (resolve: any) => Promise.resolve({ data: bodyMeasurements, error: null }).then(resolve) // fallback for array returns
             } as any;
             return chain;
@@ -123,22 +145,86 @@ describe('Profile Update Flow', () => {
 
     it('updates body weight successfully', async () => {
         const { getByTestId, getByText } = render(<ProfileScreen />);
+        await waitFor(() => expect(getByTestId('current-weight').children[0]).toBe('No Data'));
+        fireEvent.press(getByText('Log Weight'));
+        fireEvent.press(getByText('Save 75kg'));
+        await waitFor(() => expect(getByTestId('current-weight').children[0]).toBe('75 kg'));
+    });
 
-        // 1. Initial State
+    it('handles body weight save error', async () => {
+         // Override mock for this test to return error
+         (supabase.from as jest.Mock).mockImplementationOnce((table) => {
+             // Return a chain that fails on insert
+             return {
+                 select: jest.fn(() => ({
+                     eq: jest.fn(() => ({
+                         maybeSingle: jest.fn(() => Promise.resolve({ data: null, error: null })), // Check existing
+                         // For fetchLatestWeight...
+                         order: jest.fn(() => ({ order: jest.fn(() => ({ limit: jest.fn(() => ({ maybeSingle: jest.fn(() => Promise.resolve({ data: null, error: null })) })) })) }))
+                     }))
+                 })),
+                 insert: jest.fn(() => Promise.resolve({ error: { message: 'Insert failed' } })),
+                 then: (r: any) => Promise.resolve({ error: { message: 'Insert failed' } }).then(r)
+             };
+         });
+
+        const { getByTestId, getByText } = render(<ProfileScreen />);
+        await waitFor(() => expect(getByTestId('current-weight').children[0]).toBe('No Data'));
+        
+        fireEvent.press(getByText('Log Weight'));
+        fireEvent.press(getByText('Save 75kg'));
+        
+        // Should NOT update to 75kg (remain No Data or just invalid)
+        // Ideally we check for Toast error, but Toast mock is just jest.fn()
+        // We can check that state didn't change
+         await waitFor(() => expect(getByTestId('current-weight').children[0]).toBe('No Data'));
+    });
+
+    it('updates username and full name successfully in Settings', async () => {
+        const { getByText } = render(<SettingsScreen />);
         await waitFor(() => {
-            expect(getByTestId('current-weight').children[0]).toBe('No Data');
+            expect(getByText('TestUser')).toBeTruthy();
+            expect(getByText('Test Name')).toBeTruthy();
+        });
+        fireEvent.press(getByText('Edit'));
+        fireEvent.press(getByText('Save Profile'));
+        await waitFor(() => {
+            expect(getByText('NewUser')).toBeTruthy();
+            expect(getByText('New Name')).toBeTruthy();
+        });
+    });
+
+    it('handles profile update error in Settings', async () => {
+         // Mock upsert failure - Use mockImplementation to cover both initial render and update call
+         (supabase.from as jest.Mock).mockImplementation((table) => {
+             if (table === 'profiles') {
+                return {
+                     select: jest.fn(() => ({
+                         eq: jest.fn(() => ({
+                             maybeSingle: jest.fn(() => Promise.resolve({ data: { username: 'OldUser', full_name: 'Old Name' }, error: null }))
+                         }))
+                     })),
+                     upsert: jest.fn(() => Promise.resolve({ error: { message: 'Upsert Error' } })),
+                 };
+             }
+             return { select: jest.fn() }; // fallback
+         });
+         
+         // We also need Alert.alert mock to verify error display
+         const spyAlert = jest.spyOn(Alert, 'alert');
+
+        const { getByText } = render(<SettingsScreen />);
+        await waitFor(() => {
+            expect(getByText('OldUser')).toBeTruthy();
         });
 
-        // 2. Open Modal
-        fireEvent.press(getByText('Log Weight'));
-        
-        // 3. Save Weight (75kg)
-        fireEvent.press(getByText('Save 75kg'));
+        fireEvent.press(getByText('Edit'));
+        fireEvent.press(getByText('Save Profile')); // Triggers failed upsert
 
-        // 4. Verify Update
         await waitFor(() => {
-             // Expect 75kg
-             expect(getByTestId('current-weight').children[0]).toBe('75 kg');
+            expect(spyAlert).toHaveBeenCalledWith('Error', 'Upsert Error');
+            // Check that UI did NOT update (still OldUser)
+            expect(getByText('OldUser')).toBeTruthy();
         });
     });
 });

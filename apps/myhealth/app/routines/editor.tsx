@@ -51,7 +51,7 @@ export default function CreateRoutineScreen() {
     useEffect(() => {
         if (editingRoutineId) {
             const routine = routines.find((r: any) => r.id === editingRoutineId);
-            if (routine) {
+            if (routine && !hasInitialized) {
                 setRoutineDraftName(routine.name);
                 setRoutineSequence(routine.sequence ? JSON.parse(JSON.stringify(routine.sequence)) : []);
                 setHasInitialized(true);

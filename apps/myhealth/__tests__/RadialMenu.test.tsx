@@ -25,30 +25,24 @@ jest.mock('react-native-gesture-handler', () => {
     return {
         GestureDetector: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
         Gesture: {
-            Pan: () => ({
-                activateAfterLongPress: () => ({
-                    onStart: () => ({ onUpdate: () => ({ onEnd: () => {} }) })
-                }),
-            }),
+            Pan: () => {
+                const chain: any = {};
+                chain.onStart = () => chain;
+                chain.onUpdate = () => chain;
+                chain.onEnd = () => chain;
+                chain.onFinalize = () => chain;
+                chain.onTouchesDown = () => chain;
+                chain.onTouchesUp = () => chain;
+                chain.activateAfterLongPress = () => chain;
+                return chain;
+            },
             Tap: () => ({ onEnd: () => {} }),
             Race: () => {},
         }
     };
 });
 
-jest.mock("/ui", () => ({
-    IconSymbol: 'IconSymbol'
-}));
-
-// Mock useUITheme
-jest.mock('@mysuite/ui', () => ({
-    useUITheme: () => ({
-        background: 'white',
-        bgLight: 'gray',
-        text: 'black',
-        primary: 'blue'
-    })
-}));
+// Obsolete Mocks Removed
 
 jest.mock('expo-haptics', () => ({
     ImpactFeedbackStyle: {

@@ -73,9 +73,9 @@ export function useRoutineManager(routines: any[]) {
         setActiveRoutine(null);
     }
 
-    const setRoutineState = (newState: typeof activeRoutine) => {
+    const setRoutineState = useCallback((newState: typeof activeRoutine) => {
         setActiveRoutine(newState);
-    };
+    }, []);
 
     return {
         activeRoutine,

@@ -56,3 +56,25 @@ jest.mock("expo-router", () => ({
         Screen: jest.fn(() => null),
     },
 }));
+
+jest.mock("@mysuite/ui", () => ({
+    useUITheme: () => ({
+        primary: "blue",
+        textMuted: "gray",
+        icon: "gray",
+        background: "white",
+        bgLight: "lightgray",
+    }),
+    RaisedButton: ({ children, title }: any) => title || children || null,
+    HollowedButton: ({ children, title }: any) => title || children || null,
+    useToast: () => {
+        // Return stable mock to prevent useEffect re-run loops
+        const showToast = jest.fn();
+        return { showToast };
+    },
+    IconSymbol: () => null,
+    ToastProvider: ({ children }: any) => children || null,
+    RaisedCard: ({ children }: any) => children || null,
+    HollowedCard: ({ children }: any) => children || null,
+    ThemeToggle: () => null,
+}));

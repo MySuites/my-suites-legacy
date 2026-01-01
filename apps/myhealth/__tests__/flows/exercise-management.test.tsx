@@ -1,94 +1,170 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import { Text, View, TextInput, Button, FlatList } from 'react-native';
-import { useWorkoutManager } from '../../providers/WorkoutManagerProvider';
+import ExercisesScreen from '../../app/exercises/index';
+import CreateExerciseScreen from '../../app/exercises/create';
+import { useWorkoutManager, fetchExercises, fetchMuscleGroups } from '../../providers/WorkoutManagerProvider';
+import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import * as RN from 'react-native';
 
-// Mock dependencies
+const mockRN = RN;
+
+// Mocks
 jest.mock('../../providers/WorkoutManagerProvider', () => ({
     useWorkoutManager: jest.fn(),
+    fetchExercises: jest.fn(),
+    fetchMuscleGroups: jest.fn(),
 }));
 
-// Mock Data
-const MOCK_EXERCISES = [
-    { id: '1', name: 'Push Ups', muscle: 'Chest' },
-    { id: '2', name: 'Pull Ups', muscle: 'Back' },
-    { id: '3', name: 'Squats', muscle: 'Legs' },
-];
+jest.mock('../../providers/ActiveWorkoutProvider', () => ({
+    useActiveWorkout: jest.fn()
+}));
 
-const ExerciseManagementTestComponent = () => {
-    const { createCustomExercise } = useWorkoutManager();
-    const [searchQuery, setSearchQuery] = useState('');
-    const [exercises, setExercises] = useState(MOCK_EXERCISES);
+jest.mock('expo-router', () => ({
+    useRouter: jest.fn(),
+    useLocalSearchParams: jest.fn(),
+    usePathname: jest.fn()
+}));
 
-    const filteredExercises = exercises.filter(ex => 
-        ex.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+jest.mock('@mysuite/auth', () => ({
+    useAuth: () => ({ user: { id: 'test-user' } })
+}));
 
-    const handleCreateExercise = (name: string) => {
-        const newEx = { id: '99', name, muscle: 'Custom' };
-        createCustomExercise(name, 'Custom'); // Call the provider method
-        setExercises(prev => [...prev, newEx]); // Optimistic update for test UI
+jest.mock('@mysuite/ui', () => {
+    return {
+        useUITheme: () => ({ primary: 'blue' }),
+        RaisedButton: ({ children, onPress, testID }: any) => (
+            <mockRN.TouchableOpacity onPress={onPress} testID={testID}>
+                {children}
+            </mockRN.TouchableOpacity>
+        ),
+        HollowedCard: ({ children }: any) => <mockRN.View>{children}</mockRN.View>,
+        Skeleton: () => <mockRN.View />,
+        useToast: () => ({ showToast: jest.fn() }),
+        IconSymbol: ({ name }: any) => <mockRN.Text>Icon:{name}</mockRN.Text>,
+        ScreenHeader: ({ title, rightAction }: any) => (
+            <mockRN.View>
+                <mockRN.Text>{title}</mockRN.Text>
+                {rightAction}
+            </mockRN.View>
+        ),
+        BackButton: () => <mockRN.View />
     };
+});
 
-    return (
-        <View>
-            <TextInput 
-                testID="search-input"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholder="Search exercises"
-            />
-            
-            <FlatList
-                data={filteredExercises}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <Text testID={`exercise-${item.id}`}>{item.name}</Text>
-                )}
-            />
+// Mock SelectionModal (it's in components/ui/SelectionModal)
+jest.mock('../../components/ui/SelectionModal', () => {
+    return {
+        SelectionModal: ({ visible, title, items, onSelect, onClose, multiSelect }: any) => visible ? (
+            <mockRN.View testID="selection-modal">
+                <mockRN.Text>{title}</mockRN.Text>
+                {items.map((item: any) => (
+                    <mockRN.TouchableOpacity key={item.id || item.value} onPress={() => { onSelect(item); if(!multiSelect) onClose(); }}>
+                        <mockRN.Text>{item.name || item.label}</mockRN.Text>
+                    </mockRN.TouchableOpacity>
+                ))}
+                <mockRN.TouchableOpacity onPress={onClose}><mockRN.Text>Done</mockRN.Text></mockRN.TouchableOpacity>
+            </mockRN.View>
+        ) : null
+    };
+});
 
-            <Button 
-                title="Create 'Burpees'" 
-                onPress={() => handleCreateExercise('Burpees')} 
-            />
-        </View>
-    );
-};
-
-describe('Exercise Management Flow', () => {
-    it('searches for exercises and creates a custom one', async () => {
-        // Setup mock return
-        const mockCreateCustomExercise = jest.fn();
+describe('Exercise Management Integration', () => {
+    const mockRouter = { push: jest.fn(), back: jest.fn() };
+    
+    beforeEach(() => {
+        jest.clearAllMocks();
+        (useRouter as jest.Mock).mockReturnValue(mockRouter);
+        (useLocalSearchParams as jest.Mock).mockReturnValue({});
+        (useActiveWorkout as jest.Mock).mockReturnValue({
+            hasActiveSession: false,
+            addExercise: jest.fn()
+        });
         (useWorkoutManager as jest.Mock).mockReturnValue({
-            createCustomExercise: mockCreateCustomExercise,
+            createCustomExercise: jest.fn().mockResolvedValue({ error: null })
+        });
+        (fetchExercises as jest.Mock).mockResolvedValue({ data: [
+            { id: '1', name: 'Bench Press', category: 'Chest', properties: ['Weighted', 'Reps'] },
+            { id: '2', name: 'Squat', category: 'Legs', properties: ['Weighted', 'Reps'] }
+        ] });
+        (fetchMuscleGroups as jest.Mock).mockResolvedValue({ data: [
+            { id: 'm1', name: 'Chest' },
+            { id: 'm2', name: 'Back' }
+        ] });
+    });
+
+    describe('ExercisesScreen', () => {
+        it('renders list and filters by search', async () => {
+            const { getByText, getByPlaceholderText, queryByText } = render(<ExercisesScreen />);
+            
+            // Wait for initial load
+            await waitFor(() => expect(fetchExercises).toHaveBeenCalled());
+            
+            await waitFor(() => {
+                expect(getByText('Bench Press')).toBeTruthy();
+                expect(getByText('Squat')).toBeTruthy();
+            });
+
+            fireEvent.changeText(getByPlaceholderText('Search exercises...'), 'Bench');
+            
+            expect(getByText('Bench Press')).toBeTruthy();
+            expect(queryByText('Squat')).toBeNull();
         });
 
-        const { getByTestId, queryByText, getByText } = render(<ExerciseManagementTestComponent />);
-
-        // 1. Initial State (All exercises visible)
-        expect(getByText('Push Ups')).toBeTruthy();
-        expect(getByText('Pull Ups')).toBeTruthy();
-
-        // 2. Search filtering
-        fireEvent.changeText(getByTestId('search-input'), 'Pull');
-        
-        await waitFor(() => {
-            expect(getByText('Pull Ups')).toBeTruthy();
-            expect(queryByText('Push Ups')).toBeNull();
+        it('navigates to create when pencil clicked', async () => {
+             const { getByText } = render(<ExercisesScreen />);
+             fireEvent.press(getByText('Icon:square.and.pencil'));
+             expect(mockRouter.push).toHaveBeenCalledWith('/exercises/create');
         });
+    });
 
-        // 3. Create Custom Exercise
-        fireEvent.press(getByText("Create 'Burpees'"));
+    describe('CreateExerciseScreen', () => {
+        it('completes full creation flow', async () => {
+            const mockCreateCustomExercise = jest.fn().mockResolvedValue({ error: null });
+            (useWorkoutManager as jest.Mock).mockReturnValue({
+                createCustomExercise: mockCreateCustomExercise
+            });
 
-        await waitFor(() => {
-            expect(mockCreateCustomExercise).toHaveBeenCalledWith('Burpees', 'Custom');
-        });
+            const { getByPlaceholderText, getByText, queryByTestId } = render(<CreateExerciseScreen />);
+            
+            // 1. Enter name
+            fireEvent.changeText(getByPlaceholderText('e.g. Bench Press'), 'Custom Pushup');
+            
+            // 2. Select primary muscle
+            // Wait for muscle groups to load (fetched in useEffect)
+            await waitFor(() => expect(fetchMuscleGroups).toHaveBeenCalled());
+            
+            fireEvent.press(getByText('Select Primary Muscle'));
+            
+            await waitFor(() => expect(queryByTestId('selection-modal')).toBeTruthy());
+            fireEvent.press(getByText('Chest'));
+            
+            await waitFor(() => {
+                expect(queryByTestId('selection-modal')).toBeNull();
+                expect(getByText('Chest')).toBeTruthy(); // Should show selected muscle on button
+            });
 
-        // 4. Clear search to see the new exercise
-        fireEvent.changeText(getByTestId('search-input'), '');
+            // 3. Select secondary muscles (multi-select)
+            fireEvent.press(getByText('Select Secondary Muscles (Optional)'));
+            fireEvent.press(getByText('Back'));
+            fireEvent.press(getByText('Done'));
+            
+            await waitFor(() => {
+                expect(getByText('Back')).toBeTruthy();
+            });
 
-        await waitFor(() => {
-            expect(getByText('Burpees')).toBeTruthy();
+            // 4. Submit
+            fireEvent.press(getByText('Icon:checkmark'));
+            
+            await waitFor(() => {
+                expect(mockCreateCustomExercise).toHaveBeenCalledWith(
+                    'Custom Pushup',
+                    'Weighted, Reps', // default properties
+                    'm1', // Chest id
+                    ['m2'] // Back id
+                );
+                expect(mockRouter.back).toHaveBeenCalled();
+            });
         });
     });
 });

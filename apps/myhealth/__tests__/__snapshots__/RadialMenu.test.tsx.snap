@@ -33,7 +33,7 @@ exports[`RadialMenu renders without crashing 1`] = `
       [
         {},
         {
-          "backgroundColor": "blue",
+          "backgroundColor": "lightgray",
           "borderRadius": 100,
           "bottom": -70,
           "height": 200,
@@ -49,21 +49,112 @@ exports[`RadialMenu renders without crashing 1`] = `
     style={{}}
   >
     <View
-      className="w-[52px] h-[52px] rounded-full items-center justify-center shadow-sm"
       style={
         [
           {
-            "backgroundColor": "blue",
+            "elevation": 8,
+            "shadowColor": "#000",
+            "shadowOffset": {
+              "height": 6,
+              "width": 6,
+            },
+            "shadowOpacity": 0.3,
+            "shadowRadius": 5,
           },
           {},
+          {
+            "alignItems": "center",
+            "backgroundColor": "lightgray",
+            "borderRadius": 26,
+            "height": 52,
+            "justifyContent": "center",
+            "overflow": "hidden",
+            "width": 52,
+          },
         ]
       }
     >
-      <IconSymbol
-        color="#fff"
-        name="star"
-        size={28}
+      <ViewManagerAdapter_ExpoLinearGradient
+        colors={
+          [
+            3875207930,
+            231525580,
+          ]
+        }
+        endPoint={
+          [
+            1,
+            1,
+          ]
+        }
+        locations={
+          [
+            0.3,
+            1,
+          ]
+        }
+        startPoint={
+          [
+            0,
+            0,
+          ]
+        }
+        style={
+          {
+            "bottom": 0,
+            "left": 0,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+          }
+        }
       />
+      <View
+        style={
+          [
+            {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            },
+            {},
+          ]
+        }
+      >
+        <ViewManagerAdapter_ExpoLinearGradient
+          colors={
+            [
+              3875207930,
+              231525580,
+            ]
+          }
+          endPoint={
+            [
+              1,
+              1,
+            ]
+          }
+          locations={
+            [
+              0.5,
+              1,
+            ]
+          }
+          startPoint={
+            [
+              0,
+              0,
+            ]
+          }
+          style={
+            {
+              "flex": 1,
+            }
+          }
+        />
+      </View>
     </View>
     <Text
       className="absolute -top-7 text-xs font-semibold w-20 text-center"
@@ -90,21 +181,112 @@ exports[`RadialMenu renders without crashing 1`] = `
     style={{}}
   >
     <View
-      className="w-[52px] h-[52px] rounded-full items-center justify-center shadow-sm"
       style={
         [
           {
-            "backgroundColor": "blue",
+            "elevation": 8,
+            "shadowColor": "#000",
+            "shadowOffset": {
+              "height": 6,
+              "width": 6,
+            },
+            "shadowOpacity": 0.3,
+            "shadowRadius": 5,
           },
           {},
+          {
+            "alignItems": "center",
+            "backgroundColor": "lightgray",
+            "borderRadius": 26,
+            "height": 52,
+            "justifyContent": "center",
+            "overflow": "hidden",
+            "width": 52,
+          },
         ]
       }
     >
-      <IconSymbol
-        color="#fff"
-        name="heart"
-        size={28}
+      <ViewManagerAdapter_ExpoLinearGradient
+        colors={
+          [
+            3875207930,
+            231525580,
+          ]
+        }
+        endPoint={
+          [
+            1,
+            1,
+          ]
+        }
+        locations={
+          [
+            0.3,
+            1,
+          ]
+        }
+        startPoint={
+          [
+            0,
+            0,
+          ]
+        }
+        style={
+          {
+            "bottom": 0,
+            "left": 0,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+          }
+        }
       />
+      <View
+        style={
+          [
+            {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            },
+            {},
+          ]
+        }
+      >
+        <ViewManagerAdapter_ExpoLinearGradient
+          colors={
+            [
+              3875207930,
+              231525580,
+            ]
+          }
+          endPoint={
+            [
+              1,
+              1,
+            ]
+          }
+          locations={
+            [
+              0.5,
+              1,
+            ]
+          }
+          startPoint={
+            [
+              0,
+              0,
+            ]
+          }
+          style={
+            {
+              "flex": 1,
+            }
+          }
+        />
+      </View>
     </View>
     <Text
       className="absolute -top-7 text-xs font-semibold w-20 text-center"
@@ -135,17 +317,96 @@ exports[`RadialMenu renders without crashing 1`] = `
         style={
           [
             {
-              "backgroundColor": "gray",
+              "backgroundColor": "lightgray",
               "borderRadius": 30,
             },
           ]
         }
       />
-      <IconSymbol
-        color="black"
-        name="plus"
-        size={30}
+      <ViewManagerAdapter_ExpoLinearGradient
+        colors={
+          [
+            3875207930,
+            231525580,
+          ]
+        }
+        endPoint={
+          [
+            1,
+            1,
+          ]
+        }
+        locations={
+          [
+            0.3,
+            1,
+          ]
+        }
+        startPoint={
+          [
+            0,
+            0,
+          ]
+        }
+        style={
+          {
+            "borderRadius": 30,
+            "bottom": 0,
+            "left": 0,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+          }
+        }
       />
+      <View
+        style={
+          [
+            {
+              "borderRadius": 30,
+              "bottom": 0,
+              "left": 0,
+              "overflow": "hidden",
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            },
+            {},
+          ]
+        }
+      >
+        <ViewManagerAdapter_ExpoLinearGradient
+          colors={
+            [
+              3875207930,
+              231525580,
+            ]
+          }
+          endPoint={
+            [
+              1,
+              1,
+            ]
+          }
+          locations={
+            [
+              0.5,
+              1,
+            ]
+          }
+          startPoint={
+            [
+              0,
+              0,
+            ]
+          }
+          style={
+            {
+              "flex": 1,
+            }
+          }
+        />
+      </View>
     </View>
   </View>
 </View>

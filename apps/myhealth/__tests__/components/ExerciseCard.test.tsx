@@ -2,49 +2,44 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import { ExerciseCard } from '../../components/exercises/ExerciseCard';
 import { Exercise } from '../../providers/WorkoutManagerProvider';
+import * as RN from 'react-native';
+
+const mockRN = RN;
 
 // Mock Card
-jest.mock('../../components/ui/RaisedCard', () => ({
-  RaisedCard: ({ children }: any) => <>{children}</>,
-}));
-
-// Mock IconSymbol
-jest.mock("/ui", () => ({
-    IconSymbol: () => null
-}));
+// Local mock for UI to ensure proper text rendering
+jest.mock('@mysuite/ui', () => {
+    return {
+        // Mock components properly wrapping text
+        RaisedCard: ({ children }: any) => children,
+        HollowedButton: ({ title }: any) => <mockRN.TouchableOpacity><mockRN.Text>{title}</mockRN.Text></mockRN.TouchableOpacity>,
+        RaisedButton: ({ title }: any) => <mockRN.TouchableOpacity><mockRN.Text>{title}</mockRN.Text></mockRN.TouchableOpacity>,
+        IconSymbol: () => null,
+        useUITheme: () => ({ primary: 'blue', text: 'black' }),
+    };
+});
 
 // Mock SetRow
 jest.mock('../../components/workouts/SetRow', () => {
-    // eslint-disable-next-line
-    const React = require('react');
-    // eslint-disable-next-line
-    const { TouchableOpacity } = require('react-native');
-    
-    // Copy of helper function for mock
-    const getExerciseFields = (properties?: string[]) => {
-        const props = properties || [];
-        const lowerProps = props.map(p => p.toLowerCase());
-        return { 
-            showBodyweight: lowerProps.includes('bodyweight'),
-            showWeight: lowerProps.includes('weighted'),
-            showReps: lowerProps.includes('reps'),
-            showDuration: lowerProps.includes('duration'),
-            showDistance: lowerProps.includes('distance')
-        };
-    };
-
     return {
         SetRow: ({ index, onCompleteSet }: any) => (
-            <TouchableOpacity 
+            <mockRN.TouchableOpacity 
                 testID={`set-row-${index}`} 
                 onPress={() => onCompleteSet({ weight: "100", reps: "10" })}
             >
                 <></>
-            </TouchableOpacity>
+            </mockRN.TouchableOpacity>
         ),
-        getExerciseFields,
+        getExerciseFields: () => ({
+            showBodyweight: false,
+            showWeight: true,
+            showReps: true,
+            showDuration: false,
+            showDistance: false
+        }),
     };
 });
+
 
 describe('ExerciseCard', () => {
     const mockExercise: Exercise = {
@@ -89,7 +84,7 @@ describe('ExerciseCard', () => {
 
     it('should render Add Set button and call onAddSet', () => {
         const { getByText } = render(<ExerciseCard {...defaultProps} />);
-        const addSetBtn = getByText('+ Add Set');
+        const addSetBtn = getByText(/\+ Add Set/i);
         fireEvent.press(addSetBtn);
         expect(mockOnAddSet).toHaveBeenCalled();
     });
