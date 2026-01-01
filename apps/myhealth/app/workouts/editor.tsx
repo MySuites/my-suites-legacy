@@ -160,9 +160,13 @@ export default function CreateWorkoutScreen() {
                 
                 <View className="flex-row justify-between items-center mb-2">
                     <Text className="text-base leading-6 font-semibold text-light dark:text-dark">Exercises</Text>
-                    <TouchableOpacity onPress={handleOpenAddExercise}>
-                        <Text className="text-base leading-[30px] text-primary dark:text-primary-dark" style={{ fontSize: 16 }}>+ Add Exercise</Text>
-                    </TouchableOpacity>
+                    <RaisedButton 
+                        onPress={handleOpenAddExercise}
+                        className="w-28 h-8 p-0 rounded-full items-center justify-center"
+                        borderRadius={16}
+                    >
+                        <Text className="text-primary dark:text-primary-dark text-sm font-semibold">Add Exercise</Text>
+                    </RaisedButton>
                 </View>
 
                 {workoutDraftExercises.length === 0 ? (
