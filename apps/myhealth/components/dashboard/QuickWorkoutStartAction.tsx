@@ -5,7 +5,7 @@ import { useWorkoutManager } from '../../hooks/workouts/useWorkoutManager';
 import { useActiveWorkout } from '../../providers/ActiveWorkoutProvider';
 import { RaisedCard, RaisedButton } from '@mysuite/ui';
 
-export function QuickStartAction() {
+export function QuickWorkoutStartAction() {
     const router = useRouter();
     const { 
         routines, 
