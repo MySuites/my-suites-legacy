@@ -10,7 +10,7 @@ import { IconSymbol } from "@mysuite/ui";
 import { Colors } from '../../constants/theme';
 import { useColorScheme } from '../../hooks/ui/use-color-scheme';
 
-import { ActiveWorkoutHeader } from '../../components/workouts/ActiveWorkoutHeader';
+// import { ActiveWorkoutHeader } from '../../components/workouts/ActiveWorkoutHeader';
 import { ActiveWorkoutOverlay } from '../../components/workouts/ActiveWorkoutOverlay';
 // import { GlobalOverlay } from '../../components/ui/GlobalOverlay';
 // import { QuickNavigationButton } from '../../components/ui/QuickNavigationMenu';
@@ -67,8 +67,6 @@ export default function TabLayout() {
         />
 
       </Tabs>
-
-      <ActiveWorkoutHeader />
       <ActiveWorkoutOverlay />
       {/* <GlobalOverlay>
         <QuickNavigationButton />
