@@ -19,3 +19,6 @@ export { ToastProvider, useToast } from './Toast';
 
 export { UIThemeProvider, useUITheme } from './theme';
 export { ThemedCard } from './examples/ThemedCard';
+export { ThemeToggle } from './ThemeToggle';
+export { IconSymbol } from './IconSymbol';
+export { hslToHex } from './utils';

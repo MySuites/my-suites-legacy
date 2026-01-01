@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useAuth, supabase } from '@mysuite/auth';
-import { useUITheme, RaisedButton } from '@mysuite/ui';
+import { useUITheme, RaisedButton, ThemeToggle } from '@mysuite/ui';
+import { useThemePreference } from '../../providers/AppThemeProvider';
 import { IconSymbol } from '../../components/ui/icon-symbol';
-import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { BackButton } from '../../components/ui/BackButton';
 import { ProfileEditModal } from '../../components/ui/ProfileEditModal';
@@ -11,6 +11,7 @@ import { ProfileEditModal } from '../../components/ui/ProfileEditModal';
 export default function SettingsScreen() {
   const { user } = useAuth();
   const theme = useUITheme();
+  const { preference, setPreference } = useThemePreference();
   const [username, setUsername] = React.useState('');
   const [fullName, setFullName] = React.useState('');
   const [loading, setLoading] = React.useState(false);
@@ -88,7 +89,7 @@ export default function SettingsScreen() {
       <ScrollView contentContainerStyle={{ padding: 16, paddingTop: 140 }}>
         <View className="mb-6">
           <Text className="text-sm font-semibold text-gray-500 mb-2 uppercase">Appearance</Text>
-          <ThemeToggle />
+          <ThemeToggle preference={preference} setPreference={setPreference} />
         </View>
 
         <View className="mb-6">

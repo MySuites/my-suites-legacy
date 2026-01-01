@@ -1,12 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { View, TouchableOpacity, LayoutChangeEvent, Platform } from 'react-native';
-import { useThemePreference } from '../../providers/AppThemeProvider';
-import { IconSymbol } from './icon-symbol';
-import { RaisedButton } from '@mysuite/ui';
+import { IconSymbol } from './IconSymbol';
+import { RaisedButton } from './RaisedButton';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from 'react-native-reanimated';
 
-export const ThemeToggle = () => {
-  const { preference, setPreference } = useThemePreference();
+export type ThemePreference = 'light' | 'dark' | 'system';
+
+interface ThemeToggleProps {
+  preference: ThemePreference;
+  setPreference: (p: ThemePreference) => void;
+}
+
+export const ThemeToggle = ({ preference, setPreference }: ThemeToggleProps) => {
   const [containerWidth, setContainerWidth] = useState(0);
   
   // Border widths from className
@@ -32,6 +38,15 @@ export const ThemeToggle = () => {
   useEffect(() => {
     if (slideWidth === 0) return;
     
+    // Default to dark position (slideWidth) if 'dark' or 'system' (and effective is dark? no, simplify: light=0, else=slideWidth)
+    // Actually, in the app's provider, 'system' sets NativeWind to 'system'.
+    // The toggle UI has Sun (left) and Moon (right).
+    // If preference is 'light', position is 0.
+    // If preference is 'dark', position is slideWidth.
+    // If preference is 'system', what should it be?
+    // Since the original component logic was `preference === 'light' ? 0 : slideWidth`,
+    // it implies 'system' and 'dark' both go to the right (assuming 'system' usually defaults to dark or simply reusing logic).
+    // I'll keep the logic identical to preserve behavior.
     const targetX = preference === 'light' ? 0 : slideWidth;
     
     translateX.value = withTiming(targetX, {
@@ -105,5 +120,3 @@ export const ThemeToggle = () => {
     </View>
   );
 };
-
-export default ThemeToggle;
