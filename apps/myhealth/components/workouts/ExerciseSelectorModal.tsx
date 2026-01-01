@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, Modal, ScrollView } from 'react-native';
 import { useUITheme, RaisedButton, HollowedCard, Skeleton } from '@mysuite/ui';
 import { IconSymbol } from '../ui/icon-symbol';
+import { ScreenHeader } from '../ui/ScreenHeader';
+import { BackButton } from '../ui/BackButton';
 
 
 interface ExerciseSelectorModalProps {
@@ -29,19 +31,16 @@ export const ExerciseSelectorModal = ({
         <Modal
             visible={visible}
             animationType="slide"
-            presentationStyle="pageSheet"
+            presentationStyle="fullScreen"
             onRequestClose={onClose}
         >
             <View className="flex-1 bg-light dark:bg-dark">
-                <View className="flex-row items-center justify-between p-4 border-b border-light dark:border-white/10 pt-4 android:pt-10">
-                    <TouchableOpacity onPress={onClose} className="p-2">
-                            <Text className="text-base leading-[30px] text-[#0a7ea4]">Cancel</Text>
-                    </TouchableOpacity>
-                    <Text className="text-xl font-bold">Add Exercise</Text>
-                    <View style={{ width: 50 }} />
-                </View>
+                <ScreenHeader 
+                    title="Add Exercise" 
+                    leftAction={<BackButton onPress={onClose} />}
+                />
                 
-                <View className="flex-1 p-4">
+                <View className="flex-1 px-4 pt-32">
                     {/* Filter Chips */}
                     <View className="mb-4">
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
@@ -117,7 +116,7 @@ export const ExerciseSelectorModal = ({
                                             onSelect(item);
                                             setExerciseSearchQuery(""); // Clear search on select
                                         }}
-                                        className="w-10 h-10 p-0 rounded-full bg-light-lighter dark:bg-dark-lighter"
+                                        className="w-10 h-10 p-0 rounded-full bg-light-lighter dark:bg-dark-lighter right-2"
                                         borderRadius={20}
                                     >
                                         <IconSymbol name="plus" size={24} color={theme.primary} />
