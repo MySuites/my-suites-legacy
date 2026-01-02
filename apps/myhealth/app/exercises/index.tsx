@@ -34,10 +34,7 @@ export default function ExercisesScreen() {
   useEffect(() => {
     let isMounted = true; // For cleanup to prevent state updates on unmounted component
     async function load() {
-        if (!user) {
-            setIsLoading(false);
-            return;
-        }
+        // if (!user) { ... } <- Removed to allow guest loading
         const { data, error } = await fetchExercises(user);
         if (error) {
           showToast({ message: "Failed to load exercises", type: 'error' });

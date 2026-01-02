@@ -1,23 +1,39 @@
 import { supabase } from "@mysuite/auth";
 
+import ExerciseDefaultData from "../../assets/data/default-exercises.json";
+
 export async function fetchExercises(user: any) {
-    if (!user) return { data: [], error: null };
+    let data;
 
-    // Fetch user specific exercises with muscle groups
-    const { data, error } = await supabase
-        .from("exercises")
-        .select(`
-            exercise_id, 
-            exercise_name, 
-            properties,
-            exercise_muscle_groups (
-                role,
-                muscle_groups ( name )
-            )
-        `)
-        .order("exercise_name", { ascending: true });
+    if (user) {
+        // Fetch user specific exercises with muscle groups
+        const { data: userData, error } = await supabase
+            .from("exercises")
+            .select(`
+                exercise_id, 
+                exercise_name, 
+                properties,
+                exercise_muscle_groups (
+                    role,
+                    muscle_groups ( name )
+                )
+            `)
+            .order("exercise_name", { ascending: true });
 
-    if (error) return { data: [], error };
+        if (error) return { data: [], error };
+        data = userData;
+    } else {
+        // Guest: Use default data
+        data = ExerciseDefaultData.map((e: any) => ({
+            exercise_id: e.id,
+            exercise_name: e.name,
+            properties: e.type,
+            exercise_muscle_groups: [{
+                role: "primary",
+                muscle_groups: { name: e.muscle_group },
+            }],
+        }));
+    }
 
     const mapped = data.map((e: any) => {
         // Get primary muscle group or first available
