@@ -1,5 +1,6 @@
 import { supabase } from "@mysuite/auth";
 import { Exercise } from "./types";
+import { DataRepository } from "../../providers/DataRepository";
 
 function isUUID(str: string) {
     const regex =
@@ -194,7 +195,37 @@ export async function persistCompletedWorkoutToSupabase(
 }
 
 export async function fetchWorkoutLogDetails(user: any, logId: string) {
-    if (!user) return { data: [], error: "User not logged in" };
+    if (!user) {
+        // Guest: Fetch from local DataRepository
+        const history = await DataRepository.getHistory();
+        const log = history.find((h) => h.id === logId);
+
+        if (!log) return { data: [], error: "Workout log not found locally" };
+
+        // Map local format to UI format
+        // Local: exercises: Exercise[] (with logs)
+        // UI expects groups similar to what the main function constructs
+
+        // The main set_logs logic groups by exercise and creates a structure:
+        // { name, sets: [{ setNumber, details: SetLog, notes }] }
+
+        const mappedData = log.exercises.map((ex, index) => ({
+            name: ex.name,
+            position: index,
+            sets: ex.logs?.map((setLog, setIndex) => ({
+                setNumber: setIndex + 1,
+                details: {
+                    ...setLog,
+                    exercise_name: ex.name,
+                    exercise_id: ex.id,
+                },
+                notes: null, // Local logs inside exercise don't store per-set notes currently?
+            })) || [],
+            properties: ex.properties || [],
+        }));
+
+        return { data: mappedData, error: null };
+    }
 
     try {
         // 1. Fetch workout log to get the snapshot of exercises (with properties)

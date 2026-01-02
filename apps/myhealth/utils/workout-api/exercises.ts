@@ -1,6 +1,7 @@
 import { supabase } from "@mysuite/auth";
 
 import ExerciseDefaultData from "../../assets/data/default-exercises.json";
+import { DataRepository } from "../../providers/DataRepository";
 
 export async function fetchExercises(user: any) {
     let data;
@@ -76,10 +77,100 @@ export async function fetchExerciseStats(
     exerciseId: string,
     metric: "weight" | "reps" | "duration" | "distance" = "weight",
 ) {
-    if (!user) return { data: [], error: null };
+    if (!user) {
+        // Guest: Calculate from local history
+        // DataRepository.getExerciseStats only supports 'maxWeight' logic.
+        // We need full day-by-day aggregation for the chart.
+        // So we reimplement the aggregation logic using local history here.
+
+        try {
+            const history = await DataRepository.getHistory();
+            const grouped = new Map();
+
+            history.forEach((h: any) => {
+                h.exercises.forEach((e: any) => {
+                    // Check if matches by ID or Name (for reliability)
+                    if (
+                        e.id === exerciseId ||
+                        e.name === exerciseId /* Fallback if ID is name */
+                    ) {
+                        if (e.logs) {
+                            const dateKey = new Date(h.date).toDateString();
+
+                            e.logs.forEach((log: any) => {
+                                let val = 0;
+                                let valid = false;
+
+                                // Logic mirror from supabase version
+                                if (metric === "weight" && log.weight) {
+                                    val = log.weight;
+                                    valid = true;
+                                } else if (metric === "reps" && log.reps) {
+                                    val = log.reps;
+                                    valid = true;
+                                } else if (
+                                    metric === "duration" && log.duration
+                                ) {
+                                    val = log.duration;
+                                    valid = true;
+                                } else if (
+                                    metric === "distance" && log.distance
+                                ) {
+                                    val = log.distance;
+                                    valid = true;
+                                }
+
+                                if (valid) {
+                                    if (!grouped.has(dateKey)) {
+                                        grouped.set(dateKey, {
+                                            date: h.date,
+                                            max: val,
+                                            total: val,
+                                            dataPointText: val.toString(),
+                                        });
+                                    } else {
+                                        const entry = grouped.get(dateKey);
+                                        if (val > entry.max) {
+                                            entry.max = val;
+                                            entry.dataPointText = val
+                                                .toString();
+                                        }
+                                        entry.total += val;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+
+            const sorted = Array.from(grouped.values()).sort((a: any, b: any) =>
+                new Date(a.date).getTime() - new Date(b.date).getTime()
+            );
+
+            const chartData = sorted.map((item: any) => ({
+                value: item.max,
+                label: new Date(item.date).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                }),
+                dataPointText: item.dataPointText,
+            }));
+
+            return { data: chartData, error: null };
+        } catch (e) {
+            console.error("Local stats error", e);
+            return { data: [], error: e };
+        }
+    }
 
     const { data: setLogs, error } = await supabase
         .from("set_logs")
+        // ...
+        // ...
+
+        // ... (Perform similar update for fetchLastExercisePerformance)
+
         .select(`
             details,
             created_at,
@@ -242,6 +333,36 @@ export async function fetchLastExercisePerformance(
     exerciseId: string,
     exerciseName?: string,
 ) {
+    if (!user) {
+        try {
+            const history = await DataRepository.getHistory();
+            // Find latest log containing this exercise
+            // Sort history desc by date (it might be sorting naturally, but explicit is good if date is reliable)
+            // LocalWorkoutLog usually ordered desc? Not guaranteed.
+            // Better to iterate and find max date. Or sort.
+
+            const sortedHistory = [...history].sort((a: any, b: any) =>
+                new Date(b.date).getTime() - new Date(a.date).getTime()
+            );
+
+            for (const h of sortedHistory) {
+                const ex = h.exercises.find((e) =>
+                    e.id === exerciseId || e.name === exerciseName
+                );
+                if (ex && ex.logs && ex.logs.length > 0) {
+                    // Found latest session
+                    // Return details from this session
+                    // Need to map SetLog to match what UI expects (just details)
+                    // The UI expects an array of "details" objects (SetLogDetails)
+                    return { data: ex.logs, error: null };
+                }
+            }
+            return { data: null, error: "No previous performance found" };
+        } catch (e) {
+            return { data: null, error: e };
+        }
+    }
+
     if (!user) return { data: null, error: "User not logged in" };
 
     let latestLogId = null;
