@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import { useAuth, supabase } from '@mysuite/auth';
+import { useAuth } from '@mysuite/auth';
 import { useUITheme, ThemeToggle, IconSymbol, useToast } from '@mysuite/ui';
 import { useThemePreference } from '../../providers/AppThemeProvider';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
@@ -8,6 +8,7 @@ import { BackButton } from '../../components/ui/BackButton';
 import { ProfileButton } from '../../components/ui/ProfileButton';
 import { BodyWeightCard } from '../../components/profile/BodyWeightCard';
 import { WeightLogModal } from '../../components/profile/WeightLogModal';
+import { BodyWeightService } from '../../services/BodyWeightService';
 
 type DateRange = 'Week' | 'Month' | '6Month' | 'Year';
 
@@ -25,23 +26,9 @@ export default function SettingsScreen() {
   const [selectedRange, setSelectedRange] = useState<DateRange>('Week');
 
   const fetchLatestWeight = useCallback(async () => {
-    if (!user) return;
-    
     // Fetch the most recent weight entry
-    const { data: latestData, error: latestError } = await supabase
-      .from('body_measurements')
-      .select('weight')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false })
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (latestError) {
-        console.log('Error fetching weight:', latestError);
-    } else if (latestData) {
-        setLatestWeight(latestData.weight);
-    }
+    const weight = await BodyWeightService.getLatestWeight(user?.id || null);
+    setLatestWeight(weight);
   }, [user]);
 
   // Helper to format date label
@@ -55,7 +42,6 @@ export default function SettingsScreen() {
   };
 
   const fetchWeightHistory = useCallback(async () => {
-    if (!user) return;
     setIsLoading(true);
 
     // 1. Generate Spine (Target Dates)
@@ -101,23 +87,12 @@ export default function SettingsScreen() {
     }
 
     // 2. Fetch Data
-    const { data: rawData, error } = await supabase
-      .from('body_measurements')
-      .select('weight, date')
-      .eq('user_id', user.id)
-      .gte('date', spine[0])
-      .order('date', { ascending: true });
-      
-    if (error) {
-        console.log('Error fetching weight history:', error);
-        showToast({ message: "Failed to load weight history", type: 'error' });
-        setIsLoading(false);
-        return;
-    }
+    const rawData = await BodyWeightService.getWeightHistory(user?.id || null, spine[0]);
 
     if (!rawData || rawData.length === 0) {
         setWeightHistory([]);
         setRangeAverage(null);
+        setIsLoading(false);
         return;
     }
 
@@ -181,59 +156,21 @@ export default function SettingsScreen() {
 
     setWeightHistory(result);
     setIsLoading(false);
-  }, [user, selectedRange, showToast]);
+  }, [user, selectedRange]);
 
   useEffect(() => {
-    if (user) {
-        fetchLatestWeight();
-    }
-  }, [user, fetchLatestWeight]);
-
-  useEffect(() => {
-      if (user) {
-          fetchWeightHistory().catch(err => console.error(err));
-      }
-  }, [user, fetchWeightHistory]);
+     fetchLatestWeight();
+     fetchWeightHistory().catch(err => console.error(err));
+  }, [user, fetchLatestWeight, fetchWeightHistory]);
 
   const handleSaveWeight = async (weight: number, date: Date) => {
-    if (!user) return;
-
-    const dateStr = date.toISOString().split('T')[0];
-    const { data: existingData, error: fetchError } = await supabase
-        .from('body_measurements')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('date', dateStr)
-        .maybeSingle();
-
-    if (fetchError) {
-        console.log('Error checking existing weight:', fetchError);
-        return;
-    }
-
-    let error;
-    if (existingData) {
-        const { error: updateError } = await supabase
-            .from('body_measurements')
-            .update({ weight: weight })
-            .eq('id', existingData.id);
-        error = updateError;
-    } else {
-        const { error: insertError } = await supabase
-            .from('body_measurements')
-            .insert({
-                user_id: user.id,
-                weight: weight,
-                date: dateStr,
-            });
-        error = insertError;
-    }
-
-    if (error) {
-        console.log('Error saving weight:', error);
-    } else {
+    try {
+        await BodyWeightService.saveWeight(user?.id || null, weight, date);
         fetchLatestWeight();
         fetchWeightHistory();
+    } catch (error) {
+        console.log('Error saving weight:', error);
+        showToast({ message: "Failed to save weight", type: 'error' });
     }
   };
 
