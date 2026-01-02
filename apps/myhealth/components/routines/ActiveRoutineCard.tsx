@@ -1,16 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { ActiveRoutineTimelineItem } from './ActiveRoutineTimelineItem';
-import { SegmentedControl, SegmentedControlOption } from '../ui/SegmentedControl';
 import { RaisedCard, RaisedButton, useUITheme, IconSymbol } from '@mysuite/ui';
-
-type ViewMode = 'next_3' | 'next_7' | 'week';
-
-const VIEW_MODE_OPTIONS: SegmentedControlOption<ViewMode>[] = [
-  { label: 'Next 3', value: 'next_3' },
-  { label: 'Next 7', value: 'next_7' },
-  { label: 'Week', value: 'week' },
-];
 
 interface ActiveRoutineCardProps {
   activeRoutineObj: {
@@ -25,8 +16,6 @@ interface ActiveRoutineCardProps {
   onStartWorkout: (exercises: any[], name?: string, workoutId?: string) => void;
   onMarkComplete: () => void;
   onJumpToDay: (index: number) => void;
-  viewMode: ViewMode;
-  onViewModeChange: (mode: ViewMode) => void;
   onMenuPress: () => void;
 }
 
@@ -39,14 +28,11 @@ export function ActiveRoutineCard({
   onStartWorkout,
   onMarkComplete,
   onJumpToDay,
-  viewMode,
-  onViewModeChange,
   onMenuPress,
 }: ActiveRoutineCardProps) {
   const theme = useUITheme();
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const daysToShow = isCollapsed ? timelineDays.slice(0, 1) : timelineDays;
+  const daysToShow = timelineDays;
 
   return (
     <View className="mb-6">
@@ -75,23 +61,6 @@ export function ActiveRoutineCard({
         </View>
         {/* Active Routine Timeline */}
         <View className="py-2">
-          <View className="flex-row justify-end items-center mb-4 px-1 gap-2">
-            <SegmentedControl
-              options={VIEW_MODE_OPTIONS}
-              value={viewMode}
-              onChange={onViewModeChange}
-            />
-            <TouchableOpacity
-              onPress={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 bg-light dark:bg-dark rounded-xl h-[28px] w-[28px] items-center justify-center"
-            >
-              <IconSymbol
-                name={isCollapsed ? "chevron.down" : "chevron.up"}
-                size={16}
-                color={theme.primary}
-              />
-            </TouchableOpacity>
-          </View>
           {daysToShow.map((item: any, index: number) => (
             <ActiveRoutineTimelineItem
               key={index}
@@ -101,7 +70,6 @@ export function ActiveRoutineCard({
               isDayCompleted={isDayCompleted}
               activeRoutineLength={activeRoutineObj.sequence.length}
               isLastInView={index === daysToShow.length - 1}
-              isCollapsed={isCollapsed}
               onJumpToDay={onJumpToDay}
               onStartWorkout={onStartWorkout}
               onMarkComplete={onMarkComplete}

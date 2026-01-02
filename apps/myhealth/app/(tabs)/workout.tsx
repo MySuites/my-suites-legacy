@@ -63,7 +63,6 @@ export default function Workout() {
             startWorkout([], "Empty Workout");
         }
     };
-    const [routineViewMode, setRoutineViewMode] = useState<'next_3' | 'next_7' | 'week'>('week');
     const [activeSwipedCardId, setActiveSwipedCardId] = useState<string | null>(null);
 
     const { 
@@ -80,7 +79,7 @@ export default function Workout() {
     const activeRoutineObj = routines.find(r => r.id === activeRoutine?.id);
     const dayIndex = activeRoutine?.dayIndex || 0;
     
-    const timelineDays = useRoutineTimeline(activeRoutineObj, dayIndex, routineViewMode);
+    const timelineDays = useRoutineTimeline(activeRoutineObj, dayIndex, 'week');
     
     // Check if the current day has been completed today
     const isDayCompleted = !!(activeRoutine?.lastCompletedDate && 
@@ -256,8 +255,6 @@ export default function Workout() {
                                     }}
                                     onMarkComplete={markRoutineDayComplete}
                                     onJumpToDay={setActiveRoutineIndex}
-                                    viewMode={routineViewMode}
-                                    onViewModeChange={setRoutineViewMode}
                                     onMenuPress={() => router.push('/routines')}
                                 />
                             </View>

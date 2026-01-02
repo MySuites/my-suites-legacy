@@ -10,7 +10,6 @@ const mockOnClearRoutine = jest.fn();
 const mockOnStartWorkout = jest.fn();
 const mockOnMarkComplete = jest.fn();
 const mockOnJumpToDay = jest.fn();
-const mockOnViewModeChange = jest.fn();
 const mockOnMenuPress = jest.fn();
 
 jest.mock('@mysuite/ui', () => {
@@ -27,13 +26,7 @@ jest.mock('@mysuite/ui', () => {
 });
 
 jest.mock('../../components/ui/SegmentedControl', () => ({
-    SegmentedControl: ({ value, onChange }: any) => {
-        return (
-             <mockRN.TouchableOpacity onPress={() => onChange('next_7')}>
-                 <mockRN.Text>Mode: {value}</mockRN.Text>
-             </mockRN.TouchableOpacity>
-        );
-    }
+    SegmentedControl: () => null
 }));
 
 jest.mock('../../components/routines/ActiveRoutineTimelineItem', () => ({
@@ -61,8 +54,6 @@ describe('ActiveRoutineCard', () => {
                 onStartWorkout={mockOnStartWorkout}
                 onMarkComplete={mockOnMarkComplete}
                 onJumpToDay={mockOnJumpToDay}
-                viewMode="next_3"
-                onViewModeChange={mockOnViewModeChange}
                 onMenuPress={mockOnMenuPress}
             />
         );
@@ -83,8 +74,6 @@ describe('ActiveRoutineCard', () => {
                 onStartWorkout={mockOnStartWorkout}
                 onMarkComplete={mockOnMarkComplete}
                 onJumpToDay={mockOnJumpToDay}
-                viewMode="next_3"
-                onViewModeChange={mockOnViewModeChange}
                 onMenuPress={mockOnMenuPress}
             />
         );
@@ -94,42 +83,6 @@ describe('ActiveRoutineCard', () => {
 
         fireEvent.press(getByTestId('menu-button'));
         expect(mockOnMenuPress).toHaveBeenCalled();
-
-        fireEvent.press(getByText('Mode: next_3'));
-        expect(mockOnViewModeChange).toHaveBeenCalledWith('next_7');
     });
 
-    it('handles collapse toggle', () => {
-        // Initially expanded
-        const { getByText, getAllByText } = render(
-            <ActiveRoutineCard
-                activeRoutineObj={mockRoutine}
-                timelineDays={mockTimeline}
-                dayIndex={0}
-                isDayCompleted={false}
-                onClearRoutine={mockOnClearRoutine}
-                onStartWorkout={mockOnStartWorkout}
-                onMarkComplete={mockOnMarkComplete}
-                onJumpToDay={mockOnJumpToDay}
-                viewMode="next_3"
-                onViewModeChange={mockOnViewModeChange}
-                onMenuPress={mockOnMenuPress}
-            />
-        );
-        
-        expect(getAllByText(/Day:/).length).toBe(2);
-        expect(getByText('chevron.up')).toBeTruthy();
-
-        // Toggle collapse
-        // Find the toggle button - simpler to find by icon text 'chevron.up' parent
-        // Mock IconSymbol renders Text{name}.
-        // The button is TouchableOpacity wrapping the Icon.
-        fireEvent.press(getByText('chevron.up'));
-
-        // Should check collapse state
-        // In component: isCollapsed ? slice(0, 1) : timelineDays
-        // Should show 1 item
-        expect(getAllByText(/Day:/).length).toBe(1);
-        expect(getByText('chevron.down')).toBeTruthy();
-    });
 });

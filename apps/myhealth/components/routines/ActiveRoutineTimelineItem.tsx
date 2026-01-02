@@ -9,7 +9,6 @@ interface ActiveRoutineTimelineItemProps {
   isDayCompleted: boolean;
   activeRoutineLength: number;
   isLastInView: boolean;
-  isCollapsed: boolean;
   onJumpToDay: (index: number) => void;
   onStartWorkout: (exercises: any[], name?: string, workoutId?: string) => void;
   onMarkComplete: () => void;
@@ -23,7 +22,6 @@ export function ActiveRoutineTimelineItem({
   isDayCompleted,
   activeRoutineLength,
   isLastInView,
-  isCollapsed,
   onJumpToDay,
   onStartWorkout,
   onMarkComplete,
@@ -75,7 +73,7 @@ export function ActiveRoutineTimelineItem({
           />
         )}
 
-        {isLastInView && !isCollapsed &&
+        {isLastInView &&
           globalDayNum === activeRoutineLength && (
             <View
               style={{ backgroundColor: theme.bgDark }}
