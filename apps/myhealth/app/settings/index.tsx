@@ -128,11 +128,11 @@ export default function SettingsScreen() {
           <Text className="text-sm font-semibold text-gray-500 mb-2 uppercase">Legal</Text>
           <TouchableOpacity className="flex-row justify-between items-center py-3 border-b border-light dark:border-dark" onPress={() => Alert.alert('Privacy Policy', 'Link to Privacy Policy')}>
             <Text className="text-base text-light dark:text-dark">Privacy Policy</Text>
-            <IconSymbol name="chevron.right" size={20} color={theme.icon || '#ccc'} />
+            <IconSymbol name="chevron.right" size={20} color={theme.primary} />
           </TouchableOpacity>
           <TouchableOpacity className="flex-row justify-between items-center py-3 border-b border-light dark:border-dark" onPress={() => Alert.alert('Terms of Service', 'Link to Terms of Service')}>
             <Text className="text-base text-light dark:text-dark">Terms of Service</Text>
-            <IconSymbol name="chevron.right" size={20} color={theme.icon || '#ccc'} />
+            <IconSymbol name="chevron.right" size={20} color={theme.primary} />
           </TouchableOpacity>
         </View>
 

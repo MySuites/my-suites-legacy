@@ -16,16 +16,15 @@ export const ThemeToggle = ({ preference, setPreference }: ThemeToggleProps) => 
   const [containerWidth, setContainerWidth] = useState(0);
   
   // Border widths from className
-  const BORDER_LEFT = 3;
-  const BORDER_RIGHT = 1;
+  const BORDER_TOP = 0;
+  const BORDER_LEFT = 2;
+  const BORDER_BOTTOM = 2;
+  const BORDER_RIGHT = 2;
 
-  // Padding values from className (pl-1=4, pr-1.5=6, pt-1=4, pb-1.5=6)
-  const PADDING_LEFT = 4;
-  const PADDING_RIGHT = 6;
-  const PADDING_TOP = 0;
-  const PADDING_BOTTOM = 0;
+  // Use symmetric padding to handle centering reliably
+  const PADDING = 4; // p-1
   
-  const TOTAL_HORIZONTAL_CHROME = BORDER_LEFT + BORDER_RIGHT + PADDING_LEFT + PADDING_RIGHT;
+  const TOTAL_HORIZONTAL_CHROME = BORDER_LEFT + BORDER_RIGHT + (PADDING * 2);
   
   const translateX = useSharedValue(0);
   
@@ -38,15 +37,7 @@ export const ThemeToggle = ({ preference, setPreference }: ThemeToggleProps) => 
   useEffect(() => {
     if (slideWidth === 0) return;
     
-    // Default to dark position (slideWidth) if 'dark' or 'system' (and effective is dark? no, simplify: light=0, else=slideWidth)
-    // Actually, in the app's provider, 'system' sets NativeWind to 'system'.
-    // The toggle UI has Sun (left) and Moon (right).
-    // If preference is 'light', position is 0.
-    // If preference is 'dark', position is slideWidth.
-    // If preference is 'system', what should it be?
-    // Since the original component logic was `preference === 'light' ? 0 : slideWidth`,
-    // it implies 'system' and 'dark' both go to the right (assuming 'system' usually defaults to dark or simply reusing logic).
-    // I'll keep the logic identical to preserve behavior.
+    // Sun is at 0, Moon is at slideWidth
     const targetX = preference === 'light' ? 0 : slideWidth;
     
     translateX.value = withTiming(targetX, {
@@ -64,7 +55,7 @@ export const ThemeToggle = ({ preference, setPreference }: ThemeToggleProps) => 
 
   return (
     <View 
-      className="flex-row items-center my-3 pl-1 pr-1.5 pt-1 pb-1.5 h-12 w-full rounded-full bg-gray-100 dark:bg-dark-darker border-t-[3px] border-l-[3px] border-b-[1px] border-r-[1px] border-t-gray-300 border-l-gray-300 border-b-white border-r-white dark:border-t-black/60 dark:border-l-black/60 dark:border-b-white/10 dark:border-r-white/10"
+      className="flex-row items-center my-3 pt-1 pb-[6px] h-12 w-full rounded-full bg-light dark:bg-dark-darker border-t-[3px] border-l-[3px] border-b-[1px] border-r-[1px] border-t-gray-300 border-l-gray-300 border-b-white border-r-white dark:border-t-black/60 dark:border-l-black/60 dark:border-b-white/10 dark:border-r-white/10"
       onLayout={handleLayout}
     >
       {/* Sliding Background Pill */}
@@ -72,9 +63,7 @@ export const ThemeToggle = ({ preference, setPreference }: ThemeToggleProps) => 
         <Animated.View style={[
           animatedStyle, 
           { 
-            top: PADDING_TOP, 
-            bottom: PADDING_BOTTOM, 
-            left: PADDING_LEFT, 
+            height: '100%',
             zIndex: 0 
           }
         ]}>
@@ -91,8 +80,16 @@ export const ThemeToggle = ({ preference, setPreference }: ThemeToggleProps) => 
         </Animated.View>
       )}
 
-      {/* Interactive Layer */}
-      <View className={`absolute ${Platform.OS === 'web' ? 'top-0' : 'top-1'} flex-row w-full h-full z-10`}>
+      {/* Interactive Layer - Positioning it absolutely inside the padding and borders to match the pill */}
+      <View 
+        className="absolute flex-row z-10" 
+        style={{ 
+            top: BORDER_TOP + PADDING, 
+            left: BORDER_LEFT + PADDING,
+            bottom: BORDER_BOTTOM + PADDING,
+            right: BORDER_RIGHT + PADDING,
+        }}
+      >
         <TouchableOpacity
             onPress={() => setPreference('light')}
             className="flex-1 items-center justify-center bg-transparent"
