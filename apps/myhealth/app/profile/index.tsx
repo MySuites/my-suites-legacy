@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { View } from 'react-native';
 import { useAuth, supabase } from '@mysuite/auth';
-import { useUITheme, RaisedButton, useToast, IconSymbol } from '@mysuite/ui';
-import { useRouter } from 'expo-router';
+import { useUITheme, useToast } from '@mysuite/ui';
 import { BodyWeightCard } from '../../components/profile/BodyWeightCard';
 import { WeightLogModal } from '../../components/profile/WeightLogModal';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
@@ -12,7 +11,6 @@ type DateRange = 'Week' | 'Month' | '6Month' | 'Year';
 
 export default function ProfileScreen() {
   const { user } = useAuth();
-  const router = useRouter();
   const [username, setUsername] = useState('');
   const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [weightHistory, setWeightHistory] = useState<{ value: number; label: string; date: string }[]>([]);
@@ -277,15 +275,6 @@ export default function ProfileScreen() {
       <ScreenHeader 
         title={username || 'Profile'} 
         leftAction={<BackButton />}
-        rightAction={
-            <RaisedButton 
-                onPress={() => router.push('/settings')}
-                borderRadius={20}
-                className="w-10 h-10 p-0 my-0 rounded-full items-center justify-center"
-            >
-              <IconSymbol name="gearshape.fill" size={20} color={theme.primary} />
-            </RaisedButton>
-        } 
       />
       
       <View className="mt-36 px-4">

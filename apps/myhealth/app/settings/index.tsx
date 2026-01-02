@@ -5,6 +5,7 @@ import { useUITheme, RaisedButton, ThemeToggle, IconSymbol } from '@mysuite/ui';
 import { useThemePreference } from '../../providers/AppThemeProvider';
 import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { BackButton } from '../../components/ui/BackButton';
+import { ProfileButton } from '../../components/ui/ProfileButton';
 
 export default function SettingsScreen() {
   const { user } = useAuth();
@@ -92,7 +93,11 @@ export default function SettingsScreen() {
 
   return (
     <View className="flex-1 bg-light dark:bg-dark">
-      <ScreenHeader title="Settings" leftAction={<BackButton />} />
+      <ScreenHeader 
+        title="Settings" 
+        leftAction={<BackButton />} 
+        rightAction={<ProfileButton />}
+      />
 
       <ScrollView contentContainerStyle={{ padding: 16, paddingTop: 140 }}>
         <View className="mb-6">
