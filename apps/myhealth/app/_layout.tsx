@@ -15,6 +15,7 @@ import { ActiveWorkoutProvider } from '../providers/ActiveWorkoutProvider'; // F
 import { WorkoutManagerProvider } from '../providers/WorkoutManagerProvider';
 import { FloatingButtonProvider } from '../providers/FloatingButtonContext';
 import { ToastProvider } from '@mysuite/ui';
+import { PowerSyncProvider } from './powersync/PowerSyncProvider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -56,16 +57,18 @@ function RootLayoutContent() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <ToastProvider>
-        <WorkoutManagerProvider>
-          <ActiveWorkoutProvider>
-            <FloatingButtonProvider>
-              <RootLayoutNav />
-            </FloatingButtonProvider>
-            <StatusBar style="auto" />
-          </ActiveWorkoutProvider>
-        </WorkoutManagerProvider>
-      </ToastProvider>
+      <PowerSyncProvider>
+        <ToastProvider>
+          <WorkoutManagerProvider>
+            <ActiveWorkoutProvider>
+              <FloatingButtonProvider>
+                <RootLayoutNav />
+              </FloatingButtonProvider>
+              <StatusBar style="auto" />
+            </ActiveWorkoutProvider>
+          </WorkoutManagerProvider>
+        </ToastProvider>
+      </PowerSyncProvider>
     </ThemeProvider>
   );
 }

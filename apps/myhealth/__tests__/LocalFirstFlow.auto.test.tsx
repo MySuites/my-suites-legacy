@@ -1,18 +1,24 @@
 
-import { DataRepository, TABLES } from '../providers/DataRepository';
-import { storage } from '../utils/storage';
+import { DataRepository } from '../providers/DataRepository';
 
-// Mock Storage
-jest.mock('../utils/storage', () => ({
-    storage: {
-        getItem: jest.fn(),
-        setItem: jest.fn(),
-    },
-}));
+// Mock PowerSync
+const mockExecute = jest.fn();
+const mockGetAll = jest.fn();
+const mockWriteTransaction = jest.fn(async (cb) => {
+    const tx = { execute: mockExecute };
+    await cb(tx);
+});
 
-describe('Local-First Data Flow', () => {
+const mockDB = {
+    execute: mockExecute,
+    getAll: mockGetAll,
+    writeTransaction: mockWriteTransaction,
+};
+
+describe('Local-First Data Flow (SQLite)', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        DataRepository.initialize(mockDB as any);
     });
 
     it('should save a log to workout_logs and set_logs tables', async () => {
@@ -25,8 +31,8 @@ describe('Local-First Data Flow', () => {
                     id: 'ex-1', 
                     name: 'Pushups', 
                     completedSets: 1, 
-                    sets: 3, // Added missing required field
-                    reps: 10, // Added missing required field
+                    sets: 3, 
+                    reps: 10, 
                     logs: [{ id: 'set-1', weight: 0, reps: 10 }] 
                 }
             ],
@@ -41,28 +47,17 @@ describe('Local-First Data Flow', () => {
 
         // Assert
         expect(result).toBeDefined();
-        expect(result.id).toBeDefined();
-
-        // Check Storage Calls
-        // 1. Initial get table (empty)
-        // 2. setItem for workout_logs
-        // 3. setItem for set_logs
-        
-        // We expect setItem to be called for workout_logs
-        const setItemCalls = (storage.setItem as jest.Mock).mock.calls;
-        const workoutLogsCall = setItemCalls.find(c => c[0] === TABLES.WORKOUT_LOGS);
-        const setLogsCall = setItemCalls.find(c => c[0] === TABLES.SET_LOGS);
-
-        expect(workoutLogsCall).toBeDefined();
-        expect(setLogsCall).toBeDefined();
-
-        const savedWorkoutLog = workoutLogsCall[1][0];
-        expect(savedWorkoutLog.workout_name).toBe('Test Workout');
-        expect(savedWorkoutLog.user_id).toBe('user-1');
-        
-        const savedSetLog = setLogsCall[1][0];
-        expect(savedSetLog.details.reps).toBe(10);
-        expect(savedSetLog.exercise_id).toBe('ex-1');
+        // Check transaction execution
+        // Expect INSERT INTO workout_logs
+        expect(mockExecute).toHaveBeenCalledWith(
+            expect.stringContaining('INSERT INTO workout_logs'),
+            expect.arrayContaining(['Test Workout', 'user-1'])
+        );
+        // Expect INSERT INTO set_logs
+        expect(mockExecute).toHaveBeenCalledWith(
+            expect.stringContaining('INSERT INTO set_logs'),
+            expect.arrayContaining(['ex-1'])
+        );
     });
 
     it('should retrieve history by joining workout_logs and set_logs', async () => {
@@ -74,18 +69,19 @@ describe('Local-First Data Flow', () => {
             workout_time: '2025-01-02T10:00:00Z',
             duration: 60,
             created_at: '2025-01-02T10:00:00Z',
+            updated_at: '2025-01-02T10:00:00Z',
         }];
         const mockSetLogs = [{
             id: 'set-A',
             workout_log_id: 'log-1',
             exercise_id: 'ex-2',
-            details: { exercise_name: 'Squats', reps: 5, weight: 100 }
+            details: JSON.stringify({ exercise_name: 'Squats', reps: 5, weight: 100 })
         }];
 
-        (storage.getItem as jest.Mock).mockImplementation((key) => {
-            if (key === TABLES.WORKOUT_LOGS) return Promise.resolve(mockWorkoutLogs);
-            if (key === TABLES.SET_LOGS) return Promise.resolve(mockSetLogs);
-            return Promise.resolve(null);
+        mockGetAll.mockImplementation((query) => {
+            if (query.includes('workout_logs')) return Promise.resolve(mockWorkoutLogs);
+            if (query.includes('set_logs')) return Promise.resolve(mockSetLogs);
+            return Promise.resolve([]);
         });
 
         // Act

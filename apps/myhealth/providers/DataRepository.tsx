@@ -1,170 +1,119 @@
-import { storage } from "../utils/storage";
-import type { LocalWorkoutLog, Exercise } from "../utils/workout-api/types";
+import { AbstractPowerSyncDatabase } from '@powersync/react-native';
 import uuid from 'react-native-uuid';
 import ExerciseDefaultData from '../assets/data/default-exercises.json';
+import type { LocalWorkoutLog, Exercise, SetLog } from "../utils/workout-api/types";
 
 export const TABLES = {
     EXERCISES: "exercises",
-    WORKOUTS: "workouts", // Templates
-    WORKOUT_LOGS: "workout_logs", // History Headers
-    SET_LOGS: "set_logs", // History Details
+    WORKOUTS: "workouts",
+    WORKOUT_LOGS: "workout_logs",
+    SET_LOGS: "set_logs",
     BODY_MEASUREMENTS: "body_measurements",
 };
 
-// Legacy keys for migration support
-const LEGACY_KEYS = {
-    WORKOUTS: "myhealth_saved_workouts",
-    HISTORY: "myhealth_workout_history",
-};
+let db: AbstractPowerSyncDatabase | null = null;
 
-// --- Generic Table AccessHelpers ---
-const table = async <T extends unknown>(tableName: string) => {
-    const raw = await storage.getItem<T[]>(tableName);
-    return raw || [];
-};
-
-const upsert = async <T extends { id?: string }>(tableName: string, data: T | T[]) => {
-    const current = await table<T>(tableName);
-    const items = Array.isArray(data) ? data : [data];
-    
-    let updated = [...current];
-    items.forEach(item => {
-        if (!item.id) item.id = uuid.v4() as string;
-        const index = updated.findIndex(existing => existing.id === item.id);
-        if (index >= 0) {
-            updated[index] = { ...updated[index], ...item };
-        } else {
-            updated.push(item);
-        }
-    });
-    
-    await storage.setItem(tableName, updated);
-    return items;
+const ensureDB = () => {
+    if (!db) throw new Error("DataRepository: DB not initialized");
+    return db;
 };
 
 export const DataRepository = {
-    // Expose helpers if needed (though internal usage is preferred)
-    table,
-    upsert,
+    initialize: (database: AbstractPowerSyncDatabase) => {
+        db = database;
+    },
     
+    // Legacy helper - mostly used for reading
+    table: async (name: string) => { 
+        const d = ensureDB();
+        return await d.getAll(`SELECT * FROM ${name}`);
+    },
+    
+    // Legacy helper - deprecated, throws to ensure we migrate usages
+    upsert: async (table: string, data: any) => {
+        console.warn("DataRepository.upsert is deprecated. Use specific save methods.");
+        // We could implement generic SQL, but it's risky without schema knowledge per table
+        throw new Error("Generic upsert not supported in SQL. Use specific methods.");
+    },
+
     // --- Workouts (Templates) ---
     getWorkouts: async (): Promise<any[]> => {
-        // Try new table first
-        let workouts = await table<any>(TABLES.WORKOUTS);
-        
-        // Migration Check: If empty, check legacy and migrate
-        if (workouts.length === 0) {
-             const legacy = await storage.getItem<any[]>(LEGACY_KEYS.WORKOUTS);
-             if (legacy && legacy.length > 0) {
-                 console.log("Migrating Legacy Workouts...");
-                 await upsert(TABLES.WORKOUTS, legacy);
-                 workouts = legacy;
-             }
-        }
-
-        return workouts.filter((w: any) => !w.deletedAt);
+        const d = ensureDB();
+        const results = await d.getAll('SELECT * FROM workouts ORDER BY created_at DESC');
+        return results.map((row: any) => ({
+            ...row,
+            exercises: row.exercises ? JSON.parse(row.exercises) : []
+        }));
     },
 
     saveWorkouts: async (workouts: any[]): Promise<void> => {
-        // Overwrite full list (legacy behavior compatibility)
-        await storage.setItem(TABLES.WORKOUTS, workouts);
-    },
-
-    saveWorkout: async (workout: any): Promise<void> => {
-       await upsert(TABLES.WORKOUTS, {
-           ...workout,
-           updatedAt: Date.now(),
-           syncStatus: 'pending',
+       const d = ensureDB();
+       await d.writeTransaction(async (tx) => {
+           // Delete all? Or upsert? Legacy was full overwrite.
+           // To be safe and match legacy behavior:
+           // await tx.execute('DELETE FROM workouts'); 
+           // BUT PowerSync might be syncing. Overwriting fully is dangerous if we have deletions.
+           // Let's assume we just upsert them all.
+           for (const w of workouts) {
+               await tx.execute(
+                   `INSERT OR REPLACE INTO workouts (id, name, user_id, exercises, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
+                   [
+                       w.id || uuid.v4(),
+                       w.name,
+                       w.userId || w.user_id,
+                       JSON.stringify(w.exercises || []),
+                       w.createdAt || new Date().toISOString(),
+                       new Date().toISOString()
+                   ]
+               );
+           }
        });
     },
 
+    saveWorkout: async (workout: any): Promise<void> => {
+        const d = ensureDB();
+        const now = new Date().toISOString();
+        const id = workout.id || uuid.v4();
+        await d.execute(
+            `INSERT OR REPLACE INTO workouts (id, name, user_id, exercises, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
+            [
+                id,
+                workout.name,
+                workout.userId,
+                JSON.stringify(workout.exercises || []),
+                workout.createdAt || now,
+                now
+            ]
+        );
+    },
+
     deleteWorkout: async (id: string): Promise<void> => {
-        const workouts = await DataRepository.getWorkouts();
-        const index = workouts.findIndex((w: any) => w.id === id);
-        if (index >= 0) {
-            workouts[index].deletedAt = Date.now();
-            workouts[index].syncStatus = 'pending';
-            await DataRepository.saveWorkouts(workouts);
-        }
+        const d = ensureDB();
+        await d.execute('DELETE FROM workouts WHERE id = ?', [id]);
     },
 
 
     // --- History (Logs) ---
-    
-    /**
-     * Reconstructs full workout history by joining workout_logs and set_logs.
-     * Use this for UI display.
-     */
     getHistory: async (): Promise<LocalWorkoutLog[]> => {
-        const logs = await table<any>(TABLES.WORKOUT_LOGS);
-        const setLogs = await table<any>(TABLES.SET_LOGS);
+        const d = ensureDB();
         
-        // Migration Check
-        if (logs.length === 0) {
-             const legacy = await storage.getItem<LocalWorkoutLog[]>(LEGACY_KEYS.HISTORY);
-             if (legacy && legacy.length > 0) {
-                 console.log("Migrating Legacy History...");
-                 // This is complex: split legacy logs into headers and sets
-                 // For now, let's return legacy if new tables are empty to avoid data loss during dev
-                 // Ideally we run a one-time migration script.
-                 // Let's implement an on-the-fly migration to new tables:
-                 const migratedLogs: any[] = [];
-                 const migratedSets: any[] = [];
-                 
-                 legacy.forEach(l => {
-                     const logId = l.id || uuid.v4();
-                     migratedLogs.push({
-                         id: logId, // workout_log_id
-                         user_id: l.userId,
-                         workout_time: l.date,
-                         workout_name: l.name,
-                         duration: l.duration,
-                         note: l.note,
-                         created_at: l.createdAt,
-                         syncStatus: 'synced', // Assume legacy was synced if we are migrating
-                     });
-                     
-                     if (l.exercises) {
-                         l.exercises.forEach((ex: any) => {
-                             if (ex.logs) {
-                                 ex.logs.forEach((s: any) => {
-                                     migratedSets.push({
-                                         id: s.id || uuid.v4(),
-                                         workout_log_id: logId,
-                                         exercise_id: ex.id,
-                                         details: {
-                                             ...s,
-                                             exercise_name: ex.name, // denormalize name for easy display if ex missing
-                                             exercise_id: ex.id
-                                         },
-                                         created_at: l.createdAt
-                                     });
-                                 });
-                             }
-                         });
-                     }
-                 });
-                 
-                 await storage.setItem(TABLES.WORKOUT_LOGS, migratedLogs);
-                 await storage.setItem(TABLES.SET_LOGS, migratedSets);
-                 
-                 // Renamed vars for consistency below
-                 return DataRepository.getHistory(); // Recursive call now that data is migrated
-             }
-        }
+        // 1. Get Logs
+        const logs = await d.getAll<any>('SELECT * FROM workout_logs ORDER BY workout_time DESC');
+        if (logs.length === 0) return [];
 
-        // Perform Join
+        // 2. Get Sets
+        const logIds = logs.map(l => `'${l.id}'`).join(',');
+        const sets = await d.getAll<any>(`SELECT * FROM set_logs WHERE workout_log_id IN (${logIds})`);
+
         return logs.map(log => {
-            // Find sets for this log
-            const sets = setLogs.filter(s => s.workout_log_id === log.id);
-            
-            // Group sets by exercise to reconstruct the nested structure UI expects
+            const logSets = sets.filter(s => s.workout_log_id === log.id);
             const exercisesMap = new Map<string, Exercise>();
             
-            sets.forEach(set => {
-                const exId = set.exercise_id || set.details?.exercise_id || 'unknown';
-                const exName = set.details?.exercise_name || 'Unknown Exercise';
-                
+            logSets.forEach(set => {
+                const details = set.details ? JSON.parse(set.details) : {};
+                const exId = set.exercise_id || details.exercise_id || 'unknown';
+                const exName = details.exercise_name || 'Unknown Exercise';
+
                 if (!exercisesMap.has(exId)) {
                     exercisesMap.set(exId, {
                         id: exId,
@@ -173,25 +122,23 @@ export const DataRepository = {
                         reps: 0,
                         completedSets: 0,
                         logs: [],
-                        // Properties would ideally come from Exercises table join
                     });
                 }
-                
                 const ex = exercisesMap.get(exId)!;
                 ex.logs?.push({
-                     id: set.id,
-                     weight: set.details?.weight,
-                     reps: set.details?.reps,
-                     distance: set.details?.distance,
-                     duration: set.details?.duration,
-                     bodyweight: set.details?.bodyweight,
+                    id: set.id,
+                    weight: set.weight || details.weight,
+                    reps: set.reps || details.reps,
+                    bodyweight: set.bodyweight || details.bodyweight,
+                    duration: set.duration || details.duration,
+                    distance: set.distance || details.distance,
                 });
-                ex.completedSets = (ex.completedSets || 0) + 1;
+                ex.completedSets++;
             });
-            
+
             return {
                 id: log.id,
-                workoutId: log.workout_id, // if linked to template
+                workoutId: log.workout_id,
                 userId: log.user_id,
                 date: log.workout_time,
                 workoutTime: log.workout_time,
@@ -201,145 +148,147 @@ export const DataRepository = {
                 notes: log.note,
                 exercises: Array.from(exercisesMap.values()),
                 createdAt: log.created_at,
-                syncStatus: log.syncStatus || 'synced',
-                updatedAt: log.updatedAt || new Date(log.created_at).getTime(),
+                syncStatus: 'synced', 
+                updatedAt: new Date(log.updated_at || log.created_at || Date.now()).getTime(),
             };
-        }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        });
     },
 
     saveHistory: async (logs: LocalWorkoutLog[]): Promise<void> => {
-        // This method is usually called by Sync Service to overwrite local with cloud state
-        // We need to decompose the rich object back into tables
-        
-        const workoutLogs: any[] = [];
-        const setLogs: any[] = [];
-        
-        logs.forEach(l => {
-             workoutLogs.push({
-                 id: l.id,
-                 // map back fields
-                 user_id: l.userId,
-                 workout_time: l.date || l.workoutTime,
-                 workout_name: l.name,
-                 duration: l.duration,
-                 note: l.note,
-                 created_at: l.createdAt,
-                 syncStatus: l.syncStatus,
-                 updatedAt: l.updatedAt
-             });
-             
-             if (l.exercises) {
-                 l.exercises.forEach(ex => {
-                     if (ex.logs) {
-                         ex.logs.forEach(s => {
-                             setLogs.push({
-                                 id: s.id || uuid.v4(),
-                                 workout_log_id: l.id,
-                                 exercise_id: ex.id,
-                                 details: {
-                                     ...s,
-                                     exercise_name: ex.name,
-                                     exercise_id: ex.id
-                                 },
-                                 created_at: l.createdAt
-                             });
-                         });
-                     }
-                 });
-             }
+        const d = ensureDB();
+        await d.writeTransaction(async (tx) => {
+            for (const log of logs) {
+               await tx.execute(
+                   `INSERT OR REPLACE INTO workout_logs (id, user_id, workout_id, workout_name, workout_time, duration, note, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                   [
+                       log.id || uuid.v4(),
+                       log.userId,
+                       log.workoutId,
+                       log.name,
+                       log.date || log.workoutTime,
+                       log.duration,
+                       log.note,
+                       log.createdAt,
+                       new Date(log.updatedAt || Date.now()).toISOString()
+                   ]
+               );
+               
+               if (log.exercises) {
+                   for (const ex of log.exercises) {
+                       if (ex.logs) {
+                           for (const s of ex.logs) {
+                               await tx.execute(
+                                   `INSERT OR REPLACE INTO set_logs (id, workout_log_id, exercise_id, weight, reps, bodyweight, duration, distance, created_at, details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                                   [
+                                       s.id || uuid.v4(),
+                                       log.id,
+                                       ex.id,
+                                       s.weight,
+                                       s.reps,
+                                       s.bodyweight,
+                                       s.duration,
+                                       s.distance,
+                                       log.createdAt,
+                                       JSON.stringify({
+                                           ...s,
+                                           exercise_name: ex.name,
+                                           exercise_id: ex.id
+                                       })
+                                   ]
+                               );
+                           }
+                       }
+                   }
+               }
+            }
         });
-        
-        await storage.setItem(TABLES.WORKOUT_LOGS, workoutLogs);
-        await storage.setItem(TABLES.SET_LOGS, setLogs);
     },
 
     saveLog: async (log: Omit<LocalWorkoutLog, 'updatedAt' | 'syncStatus' | 'id'> & { id?: string }): Promise<LocalWorkoutLog> => {
-        const id = log.id || (uuid.v4() as string);
-        const now = Date.now();
-        const timestamp = new Date().toISOString(); 
-        
-        // 1. Save Header
-        await upsert(TABLES.WORKOUT_LOGS, {
-            id: id,
-            user_id: log.userId,
-            workout_time: log.date || timestamp,
-            workout_name: log.name,
-            duration: log.duration,
-            note: log.note,
-            created_at: timestamp,
-            updatedAt: now,
-            syncStatus: 'pending'
-        });
-        
-        // 2. Save Sets
-        const newSets: any[] = [];
-        if (log.exercises) {
-            log.exercises.forEach(ex => {
-                if (ex.logs) {
-                    ex.logs.forEach(s => {
-                        newSets.push({
-                            id: s.id || uuid.v4(),
-                            workout_log_id: id,
-                            exercise_id: ex.id,
-                            details: {
-                                ...s,
-                                exercise_name: ex.name,
-                                exercise_id: ex.id
-                            },
-                            created_at: timestamp,
-                            syncStatus: 'pending' // Technically set_logs don't have syncStatus in SQL, but useful for local tracking? 
-                            // Actually sync service pushes by workout_log usually.
-                        });
-                    });
-                }
-            });
-        }
-        
-        if (newSets.length > 0) {
-            await upsert(TABLES.SET_LOGS, newSets);
-        }
-
-        // Return full object for UI
-        return {
-            ...log,
-            id,
-            updatedAt: now,
-            syncStatus: 'pending'
-        } as LocalWorkoutLog;
+         const d = ensureDB();
+         const id = log.id || (uuid.v4() as string);
+         const now = new Date().toISOString();
+         
+         await d.writeTransaction(async (tx) => {
+             // 1. Log
+             await tx.execute(
+                `INSERT INTO workout_logs (id, user_id, workout_id, workout_name, workout_time, duration, note, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    id,
+                    log.userId,
+                    log.workoutId,
+                    log.name,
+                    log.date || now,
+                    log.duration,
+                    log.note,
+                    now,
+                    now
+                ]
+             );
+             
+             // 2. Sets
+             if (log.exercises) {
+                 for (const ex of log.exercises) {
+                     if (ex.logs) {
+                         for (const s of ex.logs) {
+                             await tx.execute(
+                                `INSERT INTO set_logs (id, workout_log_id, exercise_id, weight, reps, bodyweight, duration, distance, created_at, details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                                [
+                                    s.id || uuid.v4(),
+                                    id,
+                                    ex.id,
+                                    s.weight,
+                                    s.reps,
+                                    s.bodyweight,
+                                    s.duration,
+                                    s.distance,
+                                    now,
+                                    JSON.stringify({
+                                       ...s,
+                                       exercise_name: ex.name,
+                                       exercise_id: ex.id
+                                   })
+                                ]
+                             );
+                         }
+                     }
+                 }
+             }
+         });
+         
+         return {
+             ...log,
+             id,
+             updatedAt: Date.now(),
+             syncStatus: 'pending'
+         } as LocalWorkoutLog;
     },
     
     // --- Stats ---
     getExerciseStats: async (exerciseName: string) => {
-        // More efficient query now: just scan set_logs
-        const setLogs = await table<any>(TABLES.SET_LOGS);
+        const d = ensureDB();
+        const sets = await d.getAll<any>(
+            `SELECT * FROM set_logs WHERE json_extract(details, '$.exercise_name') = ?`,
+            [exerciseName]
+        );
         
         let maxWeight = 0;
         let totalVolume = 0;
         let prDate = null;
-
-        // Filter and iterate
-        // In SQL: SELECT * FROM set_logs WHERE details->>'exercise_name' = ?
-        for (const set of setLogs) {
-            if (set.details?.exercise_name === exerciseName) {
-                const weight = set.details.weight;
-                const reps = set.details.reps;
-                
-                if (weight && weight > maxWeight) {
-                    maxWeight = weight;
-                    // We need date. set_logs has created_at
-                    prDate = set.created_at;
-                }
-                if (weight && reps) {
-                    totalVolume += weight * reps;
-                }
+        
+        for (const set of sets) {
+            const w = set.weight;
+            const r = set.reps;
+            if (w && w > maxWeight) {
+                maxWeight = w;
+                prDate = set.created_at;
+            }
+            if (w && r) {
+                totalVolume += w * r;
             }
         }
-
-        return {
-            maxWeight,
-            prDate,
-            totalVolume
-        };
+        
+        return { maxWeight, prDate, totalVolume };
     },
     
     // --- Base Data ---
@@ -349,62 +298,46 @@ export const DataRepository = {
 
     // --- Body Measurements ---
     getLatestBodyWeight: async (userId: string | null): Promise<number | null> => {
-        // userId is mainly for validation if we ever scope strictly, but for local first
-        // we generally just store everything. However, if we support multi-user on one device (rare),
-        // we might filter. For now, we assume one active user or guest.
-        // If userId is null, it's a guest.
-        
-        const logs = await table<any>(TABLES.BODY_MEASUREMENTS);
-        if (!logs || logs.length === 0) return null;
-
-        // Filter by userId if provided, or allow all if we assume single-tenant local storage
-        // Ideally we filter to be safe.
-        const filtered = userId 
-            ? logs.filter(l => l.user_id === userId || l.userId === userId) // handle potential casing legacy
-            : logs;
-
-        if (filtered.length === 0) return null;
-
-        // Sort by date desc, then created_at desc
-        filtered.sort((a, b) => {
-            const dateA = new Date(a.date).getTime();
-            const dateB = new Date(b.date).getTime();
-            if (dateA !== dateB) return dateB - dateA;
-            return (new Date(b.createdAt).getTime()) - (new Date(a.createdAt).getTime());
-        });
-
-        return filtered[0].weight;
+        const d = ensureDB();
+        const results = await d.getAll<any>(
+            `SELECT weight FROM body_measurements WHERE user_id = ? ORDER BY date DESC, created_at DESC LIMIT 1`,
+            [userId || 'guest']
+        );
+        return results[0]?.weight || null;
     },
 
     getBodyWeightHistory: async (userId: string | null, startDate?: string): Promise<any[]> => {
-        const logs = await table<any>(TABLES.BODY_MEASUREMENTS);
+        const d = ensureDB();
+        let query = `SELECT * FROM body_measurements WHERE user_id = ?`;
+        const params: any[] = [userId || 'guest'];
         
-        // Filter
-        let filtered = userId 
-             ? logs.filter(l => l.user_id === userId || l.userId === userId)
-             : logs;
-
         if (startDate) {
-            filtered = filtered.filter(l => l.date >= startDate);
+            query += ` AND date >= ?`;
+            params.push(startDate);
         }
-
-        // Sort by date asc for charts
-        return filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        
+        query += ` ORDER BY date ASC`;
+        const res = await d.getAll(query, params);
+        // Map snake_case to camelCase if needed for UI?
+        // UI expects { weight, date }
+        return res;
     },
 
     saveBodyWeight: async (log: { userId: string, weight: number, date: string, id?: string }): Promise<void> => {
+        const d = ensureDB();
         const id = log.id || (uuid.v4() as string);
-        const now = Date.now();
-        const timestamp = new Date().toISOString();
-
-        await upsert(TABLES.BODY_MEASUREMENTS, {
-            id,
-            userId: log.userId,
-            weight: log.weight,
-            date: log.date,
-            createdAt: timestamp,
-            updatedAt: now,
-            syncStatus: 'pending'
-        });
+        const now = new Date().toISOString();
+        
+        await d.execute(
+            `INSERT OR REPLACE INTO body_measurements (id, user_id, weight, date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
+            [
+                id,
+                log.userId,
+                log.weight,
+                log.date,
+                now,
+                now
+            ]
+        );
     }
 };
